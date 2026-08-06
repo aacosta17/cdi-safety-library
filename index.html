@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSA Builder</title>
+
+    <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            background:#f2f5f8;
+            margin:0;
+            padding:40px;
+        }
+
+        .container{
+            max-width:900px;
+            margin:auto;
+            background:white;
+            padding:30px;
+            border-radius:12px;
+            box-shadow:0 5px 20px rgba(0,0,0,.15);
+        }
+
+        h1{
+            color:#003366;
+        }
+
+        input{
+            width:100%;
+            padding:15px;
+            font-size:18px;
+            border-radius:8px;
+            border:1px solid #bbb;
+            margin-bottom:20px;
+        }
+
+        button{
+            background:#0078D4;
+            color:white;
+            border:none;
+            padding:15px 25px;
+            font-size:18px;
+            border-radius:8px;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#005ea6;
+        }
+
+        #results{
+            margin-top:30px;
+            padding:20px;
+            background:#eef6ff;
+            border-radius:10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>JSA Builder</h1>
+
+<p>What task are you performing today?</p>
+
+<input
+id="task"
+placeholder="Example: Installing Cameras">
+
+<button onclick="searchTask()">
+Search
+</button>
+
+<div id="results">
+
+Nothing searched yet.
+
+</div>
+
+</div>
+
+<script>
+
+function searchTask(){
+
+let task=document.getElementById("task").value.toLowerCase();
+
+let output="No hazards found yet.";
+
+if(task.includes("camera")){
+
+output=`
+<h2>Installing Cameras</h2>
+
+<h3>Hazards</h3>
+
+<ul>
+
+<li>Ladder instability</li>
+
+<li>Falling objects</li>
+
+<li>Sharp edges</li>
+
+<li>Electrical hazards</li>
+
+<li>Trip hazards</li>
+
+<li>Eye injuries</li>
+
+<li>Hand injuries</li>
+
+</ul>
+
+<h3>Mitigations</h3>
+
+<ul>
+
+<li>Inspect ladder before use.</li>
+
+<li>Maintain three points of contact.</li>
+
+<li>Wear safety glasses.</li>
+
+<li>Wear gloves.</li>
+
+<li>Barricade work area.</li>
+
+<li>Maintain good housekeeping.</li>
+
+<li>Inspect tools before use.</li>
+
+</ul>
+
+`;
+
+}
+
+document.getElementById("results").innerHTML=output;
+
+}
+
+</script>
+
+</body>
+</html>
