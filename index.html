@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>CDI JSA Hazard Helper</title>
+<style>
+:root{--navy:#12324a;--blue:#166b9c;--light:#eef6fa;--green:#177245;--orange:#b85c00;--red:#a72828;--text:#17212b;--line:#ccd9e2}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7f9;color:var(--text)}
+header{background:linear-gradient(135deg,var(--navy),var(--blue));color:white;padding:22px 16px}
+header .wrap{max-width:1180px;margin:auto}
+h1{margin:0 0 6px;font-size:clamp(26px,4vw,42px)}
+.subtitle{font-size:17px;line-height:1.4;max-width:900px}
+main{max-width:1180px;margin:auto;padding:16px}
+.notice{background:#fff7dd;border-left:6px solid #e0a200;padding:12px 14px;border-radius:8px;margin-bottom:14px;line-height:1.35}
+.panel{background:white;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.step-title{font-weight:800;font-size:20px;margin-bottom:10px;color:var(--navy)}
+.task-buttons{display:flex;flex-wrap:wrap;gap:8px}
+.task-btn,.action-btn{border:0;border-radius:9px;padding:12px 15px;font-size:16px;font-weight:700;cursor:pointer;touch-action:manipulation}
+.task-btn{background:#e7f1f7;color:#12324a;border:1px solid #b7ccda}
+.task-btn.active{background:var(--blue);color:white}
+.search-row{display:grid;grid-template-columns:1fr auto;gap:9px}
+input,textarea{width:100%;font-size:17px;border:2px solid #b7c8d4;border-radius:9px;padding:12px}
+input:focus,textarea:focus{outline:3px solid #bee3f8;border-color:var(--blue)}
+#count{font-weight:700;align-self:center;white-space:nowrap}
+.layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(320px,.8fr);gap:14px}
+.cards{display:grid;gap:10px;max-height:67vh;overflow:auto;padding-right:3px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px;background:white}
+.card.selected{border:3px solid var(--green);padding:10px;background:#f0fbf5}
+.card-top{display:flex;gap:10px;align-items:flex-start}
+.card input[type=checkbox]{width:24px;height:24px;flex:0 0 auto;margin-top:1px}
+.category{display:inline-block;background:#e8f0f5;color:#29485c;border-radius:999px;padding:4px 8px;font-size:12px;font-weight:700;margin-bottom:6px}
+.hazard{font-weight:800;font-size:17px;line-height:1.25}
+.controls{margin:8px 0 0 34px;line-height:1.4;color:#293846}
+.sticky{position:sticky;top:10px}
+.selected-list{max-height:42vh;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:8px;background:#fafcfd}
+.selected-item{border-bottom:1px solid #dce5eb;padding:8px 4px;font-size:14px}
+.selected-item:last-child{border-bottom:0}
+.actions{display:grid;gap:8px;margin-top:10px}
+.action-btn{background:var(--blue);color:white}
+.action-btn.green{background:var(--green)}
+.action-btn.orange{background:var(--orange)}
+.action-btn.gray{background:#5a6872}
+.action-btn.red{background:var(--red)}
+.small{font-size:13px;color:#4c5c67;line-height:1.4}
+.empty{padding:18px;text-align:center;color:#667983}
+footer{max-width:1180px;margin:20px auto;padding:0 16px 30px;color:#53646f;font-size:13px;line-height:1.4}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#17212b;color:white;padding:12px 18px;border-radius:8px;display:none;z-index:50}
+@media(max-width:820px){
+ .layout{grid-template-columns:1fr}
+ .sticky{position:static}
+ .cards{max-height:none}
+ .search-row{grid-template-columns:1fr}
+ #count{white-space:normal}
+}
+@media print{
+ header,.notice,.task-panel,.search-panel,.cards-panel .step-title,.actions,.custom-box,footer{display:none!important}
+ body{background:white}
+ main{max-width:none}
+ .layout{display:block}
+ .selected-list{max-height:none;border:0}
+ .panel{box-shadow:none;border:0}
+}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<h1>CDI JSA Hazard Helper</h1>
+<div class="subtitle">Choose the work, select the hazards that truly apply, then copy the matching control measures into the company JSA template.</div>
+</div></header>
+
+<main>
+<div class="notice"><strong>Important:</strong> This tool helps workers think through hazards. It does not replace inspecting the actual work area, supervisor review, permits, training, manufacturer instructions, customer rules, or applicable safety requirements.</div>
+
+<section class="panel task-panel">
+<div class="step-title">1. Pick the type of work</div>
+<div class="task-buttons" id="taskButtons"></div>
+</section>
+
+<section class="panel search-panel">
+<div class="step-title">2. Search for anything else</div>
+<div class="search-row">
+<input id="search" type="search" placeholder="Examples: ladder, drilling, fiber, pinch point, heat, electrical">
+<div id="count"></div>
+</div>
+</section>
+
+<div class="layout">
+<section class="panel cards-panel">
+<div class="step-title">3. Check every hazard that applies</div>
+<div id="cards" class="cards"></div>
+</section>
+
+<aside>
+<div class="panel sticky">
+<div class="step-title">4. Copy into your JSA</div>
+<div class="small"><strong id="selectedCount">0 selected</strong>. Review the wording and change it to match the actual job.</div>
+<div id="selectedList" class="selected-list"><div class="empty">Nothing selected yet.</div></div>
+
+<div class="custom-box" style="margin-top:10px">
+<label for="customHazard"><strong>Add a job-specific hazard</strong></label>
+<input id="customHazard" placeholder="Hazard">
+<textarea id="customControl" rows="3" placeholder="Control measure"></textarea>
+<button class="action-btn orange" style="width:100%;margin-top:7px" onclick="addCustom()">Add custom item</button>
+</div>
+
+<div class="actions">
+<button class="action-btn green" onclick="copyRows()">Copy hazard + control rows</button>
+<button class="action-btn" onclick="copyHazards()">Copy hazards only</button>
+<button class="action-btn" onclick="copyControls()">Copy controls only</button>
+<button class="action-btn gray" onclick="window.print()">Print selected list</button>
+<button class="action-btn red" onclick="clearAll()">Clear selections</button>
+</div>
+</div>
+</aside>
+</div>
+</main>
+
+<footer>
+<strong>Use rule:</strong> Select only hazards that apply. Add missing job-specific hazards. Stop and revise the JSA when conditions change. Version 1.0 — offline single-file tool.
+</footer>
+<div id="toast" class="toast"></div>
+
+<script>
+const hazards = [{"id": 1, "category": "Planning & Communication", "hazard": "Incomplete pre-task planning", "controls": "Break the job into small steps in the order the work will happen. Review each step, nearby work, tools, equipment, permits, emergency actions, and stop-work rules with the crew.", "tags": ["general", "planning", "all"]}, {"id": 2, "category": "Planning & Communication", "hazard": "Work scope or conditions change", "controls": "Stop work and update the JSA whenever the location, task, crew, weather, equipment, access, or surrounding work changes. Re-brief the crew before restarting.", "tags": ["general", "planning", "all"]}, {"id": 3, "category": "Planning & Communication", "hazard": "Crew does not understand the JSA", "controls": "Read the JSA aloud in plain language. Demonstrate unfamiliar steps, answer questions, and have each worker confirm understanding before signing.", "tags": ["general", "planning", "all"]}, {"id": 4, "category": "Planning & Communication", "hazard": "Poor communication during coordinated work", "controls": "Assign one person to direct the activity. Review hand signals or radio channels, confirm start/stop commands, and stop when communication is lost.", "tags": ["general", "cable-pulling", "mewp", "lifting"]}, {"id": 5, "category": "Planning & Communication", "hazard": "Other trades interfere with the work", "controls": "Coordinate work areas and schedules with nearby trades. Barricade the area, communicate overhead or energized work, and stop if another activity creates a new hazard.", "tags": ["general", "data-center", "overhead"]}, {"id": 6, "category": "Planning & Communication", "hazard": "Unqualified worker performs specialized work", "controls": "Verify training and authorization before assigning electrical, LOTO, lift, forklift, confined-space, hot-work, or other specialized tasks.", "tags": ["general", "mewp", "electrical", "loto", "warehouse"]}, {"id": 7, "category": "Planning & Communication", "hazard": "Required permit or approval is missing", "controls": "Confirm required penetration, shutdown, hot-work, energized-work, roof-access, confined-space, and site permits before starting.", "tags": ["general", "drilling", "electrical", "data-center"]}, {"id": 8, "category": "Planning & Communication", "hazard": "Emergency procedures are unknown", "controls": "Identify exits, muster points, first-aid supplies, fire extinguishers, emergency contacts, and the nearest medical facility before work begins.", "tags": ["general", "emergency", "all"]}, {"id": 9, "category": "Planning & Communication", "hazard": "Worker fatigue, distraction, or poor fitness for duty", "controls": "Supervisor checks fitness for duty, provides breaks or task rotation, and removes anyone who cannot safely perform the assigned work.", "tags": ["general", "fatigue", "all"]}, {"id": 10, "category": "Housekeeping & Access", "hazard": "Trips from cords, cables, tools, packaging, or debris", "controls": "Route cords and cables away from walkways, use approved covers where needed, store tools when not in use, and remove debris throughout the shift.", "tags": ["general", "housekeeping", "cable-pulling", "low-voltage"]}, {"id": 11, "category": "Housekeeping & Access", "hazard": "Slips from water, oil, mud, dust, or spills", "controls": "Clean spills immediately, control the source, use absorbent material or barriers, and wear footwear suitable for the surface.", "tags": ["general", "housekeeping", "outdoor"]}, {"id": 12, "category": "Housekeeping & Access", "hazard": "Blocked exit, aisle, panel, or emergency equipment", "controls": "Maintain clear access to exits, aisles, electrical panels, extinguishers, eyewashes, and emergency equipment. Do not stage material in required clearances.", "tags": ["general", "housekeeping", "electrical", "data-center"]}, {"id": 13, "category": "Housekeeping & Access", "hazard": "Poor lighting hides hazards", "controls": "Provide approved temporary lighting and do not work or travel where the task and walking surface cannot be clearly seen.", "tags": ["general", "housekeeping", "data-center"]}, {"id": 14, "category": "Housekeeping & Access", "hazard": "Uneven floor, hole, opening, or raised threshold", "controls": "Inspect the route, guard or cover openings, mark elevation changes, use an alternate route when possible, and report damaged surfaces.", "tags": ["general", "housekeeping", "warehouse"]}, {"id": 15, "category": "Housekeeping & Access", "hazard": "Unauthorized people enter the work zone", "controls": "Use signs, cones, caution tape, hard barricades, or an attendant appropriate for the hazard. Remove controls only after the area is safe.", "tags": ["general", "barricade", "drilling", "overhead"]}, {"id": 16, "category": "Housekeeping & Access", "hazard": "Congested work area limits movement or escape", "controls": "Reduce staged material, organize tools, limit the number of workers, and maintain a clear escape route.", "tags": ["general", "housekeeping", "data-center"]}, {"id": 17, "category": "PPE", "hazard": "Required PPE is missing, damaged, or worn incorrectly", "controls": "Identify required PPE during the JSA. Inspect it before use, verify proper fit, replace damaged equipment, and follow site-specific PPE rules.", "tags": ["general", "ppe", "all"]}, {"id": 18, "category": "PPE", "hazard": "Eye protection is not adequate for flying particles or dust", "controls": "Use safety glasses with side protection and add sealed goggles or a face shield when the task requires it. A face shield does not replace primary eye protection.", "tags": ["ppe", "drilling", "cutting", "grinding"]}, {"id": 19, "category": "PPE", "hazard": "Gloves are wrong for the hazard", "controls": "Select gloves for cut, puncture, chemical, heat, electrical, or dexterity needs. Inspect them before use and keep gloves away from rotating parts when entanglement is possible.", "tags": ["ppe", "hand-tools", "electrical", "fiber"]}, {"id": 20, "category": "PPE", "hazard": "Hearing protection is not used or fitted correctly", "controls": "Use required hearing protection, insert or fit it correctly, limit exposure time, and maintain a safe communication method.", "tags": ["ppe", "noise", "drilling", "power-tools"]}, {"id": 21, "category": "PPE", "hazard": "Helmet or hard hat is damaged or altered", "controls": "Inspect the shell, suspension, chin strap, and accessories. Remove cracked, impacted, heat-damaged, drilled, or unauthorized modified equipment from service.", "tags": ["ppe", "overhead", "mewp", "general"]}, {"id": 22, "category": "PPE", "hazard": "Loose clothing, jewelry, hair, or badge lanyard can become caught", "controls": "Secure long hair, remove dangling jewelry, control loose clothing, and keep lanyards and cords away from rotating or moving equipment.", "tags": ["ppe", "power-tools", "warehouse", "general"]}, {"id": 23, "category": "Material Handling", "hazard": "Back or shoulder strain from lifting", "controls": "Check the weight and shape before lifting. Use a cart, mechanical aid, or team lift; keep the load close; avoid twisting; and plan where it will be set down.", "tags": ["material-handling", "warehouse", "mobilization", "cabinet"]}, {"id": 24, "category": "Material Handling", "hazard": "Hands or feet crushed while setting down material", "controls": "Use planned hand positions, keep feet clear, communicate before lowering, use blocks or handles, and never place body parts under a shifting load.", "tags": ["material-handling", "pinch", "warehouse", "cabinet"]}, {"id": 25, "category": "Material Handling", "hazard": "Load shifts, rolls, slides, or tips during transport", "controls": "Secure the load, use suitable carts or tie-downs, keep the center of gravity stable, travel slowly, and use a spotter where visibility is limited.", "tags": ["material-handling", "warehouse", "mobilization"]}, {"id": 26, "category": "Material Handling", "hazard": "Cabinet, rack, spool, or equipment tips over", "controls": "Follow the manufacturer handling method, stabilize the item, use correct lifting points, secure it before releasing handling equipment, and keep workers out of the fall zone.", "tags": ["material-handling", "cabinet", "rack", "spool"]}, {"id": 27, "category": "Material Handling", "hazard": "Material falls from cart, pallet, rack, or vehicle", "controls": "Stack evenly, do not exceed capacity, secure tall or round material, inspect carts and pallets, and keep people away from unstable loads.", "tags": ["material-handling", "warehouse", "mobilization"]}, {"id": 28, "category": "Material Handling", "hazard": "Awkward posture, overhead reach, kneeling, or repetitive work", "controls": "Position work at a comfortable height, use platforms or extension tools, rotate tasks, use kneeling protection, and take short recovery breaks.", "tags": ["ergonomics", "overhead", "cable-tray", "low-voltage"]}, {"id": 29, "category": "Material Handling", "hazard": "Load blocks the worker's view while walking", "controls": "Reduce the load size, use a cart or second worker, inspect the route first, and use a spotter when forward vision is blocked.", "tags": ["material-handling", "mobilization", "warehouse"]}, {"id": 30, "category": "Hand & Power Tools", "hazard": "Cuts from knives, snips, blades, or sharp edges", "controls": "Use the correct guarded tool, secure the work, cut away from the body, keep the other hand out of the cutting path, retract blades, and wear suitable gloves.", "tags": ["hand-tools", "cuts", "fiber", "cable"]}, {"id": 31, "category": "Hand & Power Tools", "hazard": "Damaged or incorrect hand tool slips", "controls": "Inspect tools before use, select the correct size and type, remove damaged tools from service, and maintain a stable body position.", "tags": ["hand-tools", "general"]}, {"id": 32, "category": "Hand & Power Tools", "hazard": "Flying particles from drilling, cutting, or grinding", "controls": "Use guards and dust control, secure the work, create an exclusion area, inspect bits or blades, and wear required eye and face protection.", "tags": ["power-tools", "drilling", "cutting", "grinding"]}, {"id": 33, "category": "Hand & Power Tools", "hazard": "Kickback or binding of a drill or saw", "controls": "Use the correct bit or blade, support the work, use auxiliary handles, keep a balanced stance, avoid forcing the tool, and stop if binding occurs.", "tags": ["power-tools", "drilling", "cutting"]}, {"id": 34, "category": "Hand & Power Tools", "hazard": "Entanglement with rotating equipment", "controls": "Keep hands, gloves, clothing, hair, jewelry, and cords away from rotating parts. Disconnect energy before clearing jams or changing accessories.", "tags": ["power-tools", "drilling", "rotating"]}, {"id": 35, "category": "Hand & Power Tools", "hazard": "Unexpected startup while changing a blade, bit, or accessory", "controls": "Unplug the tool or remove the battery, verify it cannot start, follow manufacturer instructions, and reinstall guards before use.", "tags": ["power-tools", "drilling", "cutting", "loto"]}, {"id": 36, "category": "Hand & Power Tools", "hazard": "Damaged or overheated battery and charger", "controls": "Use manufacturer-approved components, inspect batteries and chargers, protect terminals, charge in a suitable area, and remove swollen, wet, cracked, or overheated batteries from service.", "tags": ["power-tools", "battery", "fire"]}, {"id": 37, "category": "Hand & Power Tools", "hazard": "Damaged extension cord, plug, or portable tool", "controls": "Inspect plugs, insulation, grounding features, and strain relief. Remove damaged items from service and protect cords from traffic, water, and sharp edges.", "tags": ["power-tools", "electrical", "extension-cords"]}, {"id": 38, "category": "Hand & Power Tools", "hazard": "Tool used overhead from an unstable position", "controls": "Reposition the work, use an approved ladder or platform, maintain control of the tool, and prevent dropped objects.", "tags": ["power-tools", "overhead", "ladder", "mewp"]}, {"id": 39, "category": "Drilling & Penetrations", "hazard": "Drilling strikes hidden electrical conductors", "controls": "Obtain penetration approval, review drawings, scan the area, verify both sides when possible, control drill depth, and stop when conditions are uncertain.", "tags": ["drilling", "anchors", "core-drilling", "electrical"]}, {"id": 40, "category": "Drilling & Penetrations", "hazard": "Drilling strikes water, gas, fire-protection, data, or process lines", "controls": "Review current drawings, coordinate with facility personnel, scan and inspect both sides, mark known utilities, and control drill depth.", "tags": ["drilling", "anchors", "core-drilling", "utilities"]}, {"id": 41, "category": "Drilling & Penetrations", "hazard": "Concrete, masonry, drywall, or ceiling dust exposure", "controls": "Identify the material, use approved dust collection or wet methods, isolate the area, clean with HEPA methods, and use respiratory protection only under the company program.", "tags": ["drilling", "core-drilling", "dust", "anchors"]}, {"id": 42, "category": "Drilling & Penetrations", "hazard": "Debris falls or exits the opposite side of a penetration", "controls": "Inspect and control both sides, barricade below, use containment, communicate with affected areas, and stop if the opposite side cannot be protected.", "tags": ["drilling", "core-drilling", "dropped-objects", "overhead"]}, {"id": 43, "category": "Drilling & Penetrations", "hazard": "Anchor is installed in unsuitable material or location", "controls": "Verify the substrate, edge distance, embedment, load, approved anchor type, and manufacturer instructions before drilling and loading.", "tags": ["anchors", "drilling", "cable-tray", "supports"]}, {"id": 44, "category": "Drilling & Penetrations", "hazard": "Core drill or magnetic drill shifts or releases", "controls": "Use the manufacturer anchoring or restraint method, inspect the mounting surface, control reaction force, manage water and cords, and keep workers out of the movement path.", "tags": ["core-drilling", "drilling", "power-tools"]}, {"id": 45, "category": "Drilling & Penetrations", "hazard": "Water from drilling creates slip or electrical hazards", "controls": "Contain and collect water, protect nearby electrical equipment, route hoses safely, use suitable electrical protection, and clean continuously.", "tags": ["core-drilling", "drilling", "slips", "electrical"]}, {"id": 46, "category": "Drilling & Penetrations", "hazard": "Penetration damages a rated wall or floor", "controls": "Confirm penetration and firestop requirements, use an approved system, protect the opening, and complete required labeling, inspection, and documentation.", "tags": ["drilling", "firestop", "data-center"]}, {"id": 47, "category": "Drilling & Penetrations", "hazard": "Noise and vibration from drilling or coring", "controls": "Notify affected people, use maintained equipment, limit exposure, rotate tasks, and wear required hearing protection.", "tags": ["drilling", "core-drilling", "noise", "vibration"]}, {"id": 48, "category": "Low-Voltage & Fiber", "hazard": "Cable reel, spool, or payout stand tips or moves", "controls": "Use equipment rated for the reel, inspect stands and axles, chock or secure the setup, place it on a stable surface, and control payout.", "tags": ["cable-pulling", "low-voltage", "fiber", "spool"]}, {"id": 49, "category": "Low-Voltage & Fiber", "hazard": "Cable pull creates snapback or stored energy", "controls": "Create a line-of-fire exclusion zone, keep workers out of bends and inside angles, use rated pulling equipment, monitor tension, and stop when communication is lost.", "tags": ["cable-pulling", "low-voltage", "fiber", "stored-energy"]}, {"id": 50, "category": "Low-Voltage & Fiber", "hazard": "Hands are pinched at rollers, conduit, tray, or sheaves", "controls": "Use designated hand positions and tools, keep hands away from moving cable and rollers, communicate starts and stops, and never guide cable through a pinch point by hand.", "tags": ["cable-pulling", "low-voltage", "fiber", "pinch"]}, {"id": 51, "category": "Low-Voltage & Fiber", "hazard": "Pulling rope, mule tape, sock, swivel, or connector fails", "controls": "Inspect all components, verify ratings and compatibility, protect them from sharp edges, use approved connections, and keep people out of the line of fire.", "tags": ["cable-pulling", "low-voltage", "fiber", "stored-energy"]}, {"id": 52, "category": "Low-Voltage & Fiber", "hazard": "Excessive pulling tension damages cable or equipment", "controls": "Follow cable limits, use proper rollers and bend radius, monitor the pull, use approved lubricant only, and stop when abnormal resistance occurs.", "tags": ["cable-pulling", "low-voltage", "fiber"]}, {"id": 53, "category": "Low-Voltage & Fiber", "hazard": "Cable loops create trip, entanglement, or sudden movement hazards", "controls": "Control slack, keep coils organized and out of walkways, assign workers to manage slack, and never stand inside a cable or rope loop.", "tags": ["cable-pulling", "low-voltage", "fiber", "housekeeping"]}, {"id": 54, "category": "Low-Voltage & Fiber", "hazard": "Sharp cable tray, strut, threaded rod, or conduit edges", "controls": "Deburr or cap edges, install bushings, wear suitable gloves, control cutoffs, and do not leave sharp ends exposed.", "tags": ["cable-tray", "conduit", "low-voltage", "cuts"]}, {"id": 55, "category": "Low-Voltage & Fiber", "hazard": "Overhead cable or tray work causes dropped objects", "controls": "Barricade below, tether tools where required, secure hardware, use containers for small parts, and remove loose material from ladders, lifts, and tray.", "tags": ["cable-tray", "low-voltage", "overhead", "dropped-objects"]}, {"id": 56, "category": "Low-Voltage & Fiber", "hazard": "Fiber shard punctures skin or enters eyes", "controls": "Wear eye protection, work over a dark mat, collect scraps in a labeled puncture-resistant container, never use fingers to find shards, and wash hands before eating.", "tags": ["fiber", "low-voltage", "cuts"]}, {"id": 57, "category": "Low-Voltage & Fiber", "hazard": "Worker looks into an active fiber or connector", "controls": "Treat fiber as active until verified otherwise. Disable or disconnect the source using approved procedures, use suitable test equipment, and never look into a fiber end.", "tags": ["fiber", "testing", "low-voltage"]}, {"id": 58, "category": "Low-Voltage & Fiber", "hazard": "Cleaning solvent or adhesive exposure", "controls": "Review the safety data sheet, use the minimum amount, provide ventilation, keep containers closed, control ignition sources, and wear specified PPE.", "tags": ["fiber", "chemicals", "low-voltage"]}, {"id": 59, "category": "Low-Voltage & Fiber", "hazard": "Wrong communications cable is cut or disconnected", "controls": "Verify identity at both ends, follow labeling and change-control procedures, obtain approval, and test or trace before cutting or disconnecting.", "tags": ["low-voltage", "fiber", "testing", "data-center"]}, {"id": 60, "category": "Low-Voltage & Fiber", "hazard": "Cable routing blocks airflow, access, or service space", "controls": "Use approved pathways, maintain access and airflow, follow fill limits, support cable correctly, and obtain approval for route changes.", "tags": ["low-voltage", "data-center", "cable-tray"]}, {"id": 61, "category": "Low-Voltage & Fiber", "hazard": "Improper bend radius or support damages cable", "controls": "Follow manufacturer bend radius and support spacing, use approved supports, avoid over-tightening ties, and inspect the completed route.", "tags": ["low-voltage", "fiber", "cable-tray"]}, {"id": 62, "category": "Low-Voltage & Fiber", "hazard": "Cable or test lead contacts energized equipment", "controls": "Plan routing away from energized parts, maintain required boundaries, use barriers, coordinate with electrical personnel, and stop if separation cannot be maintained.", "tags": ["low-voltage", "testing", "electrical", "data-center"]}, {"id": 63, "category": "Electrical & LOTO", "hazard": "Contact with exposed energized parts", "controls": "De-energize whenever possible. Identify sources, restrict access, use qualified personnel, establish required boundaries, and use task-specific electrical PPE and insulated equipment.", "tags": ["electrical", "loto", "testing", "data-center"]}, {"id": 64, "category": "Electrical & LOTO", "hazard": "Equipment is assumed de-energized without testing", "controls": "Follow the approved energy-control procedure: identify, isolate, lock and tag, release stored energy, and verify absence of voltage with properly rated test equipment.", "tags": ["electrical", "loto", "testing"]}, {"id": 65, "category": "Electrical & LOTO", "hazard": "Unexpected energization or restart", "controls": "Apply personal locks and tags according to the program, control keys, verify isolation, communicate with affected employees, and use the authorized removal procedure.", "tags": ["electrical", "loto", "stored-energy"]}, {"id": 66, "category": "Electrical & LOTO", "hazard": "Backfeed, UPS, generator, battery, or alternate source remains energized", "controls": "Identify all normal and alternate sources from drawings and field verification, isolate each source, address stored energy, and test at the point of work.", "tags": ["electrical", "loto", "battery", "data-center"]}, {"id": 67, "category": "Electrical & LOTO", "hazard": "Arc-flash or arc-blast exposure", "controls": "Use qualified personnel and an approved electrical work plan, de-energize when feasible, review labels and study information, establish boundaries, and wear required arc-rated PPE.", "tags": ["electrical", "arc-flash", "testing", "data-center"]}, {"id": 68, "category": "Electrical & LOTO", "hazard": "Test meter or leads are damaged or incorrectly rated", "controls": "Inspect the meter and leads, verify ratings, use the correct test method, confirm meter operation before and after testing, and follow manufacturer instructions.", "tags": ["electrical", "testing", "loto"]}, {"id": 69, "category": "Electrical & LOTO", "hazard": "Metal tool, jewelry, or hardware bridges energized parts", "controls": "Remove conductive jewelry, control loose hardware, use insulated tools where required, cover adjacent exposed parts, and keep conductive material outside the work boundary.", "tags": ["electrical", "testing", "data-center"]}, {"id": 70, "category": "Electrical & LOTO", "hazard": "Stored mechanical, hydraulic, pneumatic, thermal, or gravitational energy", "controls": "Identify all energy types, block movement, bleed pressure, discharge energy, allow hot parts to cool, and verify a zero-energy state.", "tags": ["loto", "stored-energy", "general"]}, {"id": 71, "category": "Electrical & LOTO", "hazard": "Wrong breaker, circuit, device, or cable is identified", "controls": "Use drawings, labels, tracing, and point-to-point verification. Obtain a second qualified check when required and stop if identification is uncertain.", "tags": ["electrical", "testing", "low-voltage", "data-center"]}, {"id": 72, "category": "Electrical & LOTO", "hazard": "Work is near overhead or concealed electrical lines", "controls": "Identify the line location and voltage, maintain required clearance, control long conductive material, use a spotter or barriers, and coordinate shutdown when needed.", "tags": ["electrical", "mewp", "ladder", "drilling", "overhead"]}, {"id": 73, "category": "Ladders", "hazard": "Ladder is damaged, contaminated, or not rated", "controls": "Inspect before use, verify duty rating and material, clean feet and rungs, tag defective ladders, and remove them from service.", "tags": ["ladder", "overhead", "low-voltage"]}, {"id": 74, "category": "Ladders", "hazard": "Wrong ladder type or length is selected", "controls": "Choose a ladder that allows the task without standing on prohibited steps or overreaching. Use nonconductive equipment where electrical exposure exists.", "tags": ["ladder", "overhead", "electrical"]}, {"id": 75, "category": "Ladders", "hazard": "Ladder base slips or ladder shifts", "controls": "Place it on a firm, level, non-slippery surface, fully open and lock spreaders, secure it when required, and protect it from traffic.", "tags": ["ladder", "overhead", "general"]}, {"id": 76, "category": "Ladders", "hazard": "Worker loses balance while climbing", "controls": "Face the ladder, maintain three points of contact, keep belt buckle between the side rails, and do not carry items that prevent a secure grip.", "tags": ["ladder", "overhead"]}, {"id": 77, "category": "Ladders", "hazard": "Worker overreaches from ladder", "controls": "Climb down and reposition the ladder. Do not lean, twist, or work with the body outside the side rails.", "tags": ["ladder", "overhead"]}, {"id": 78, "category": "Ladders", "hazard": "Worker stands on prohibited top step or cap", "controls": "Follow ladder labels and manufacturer limits. Select a taller ladder or another approved access method.", "tags": ["ladder", "overhead"]}, {"id": 79, "category": "Ladders", "hazard": "Ladder is placed in a doorway or traffic area", "controls": "Lock or guard doors, barricade the area, use a spotter when needed, and relocate the ladder away from vehicle or pedestrian traffic when possible.", "tags": ["ladder", "housekeeping"]}, {"id": 80, "category": "Ladders", "hazard": "Tools or material fall from ladder", "controls": "Use tool belts or hoisting methods, keep hands free while climbing, do not store material on steps, and barricade below.", "tags": ["ladder", "dropped-objects", "overhead"]}, {"id": 81, "category": "Ladders", "hazard": "Metal ladder or material contacts electrical source", "controls": "Use nonconductive access equipment, maintain required clearance, control long material, and coordinate de-energization when necessary.", "tags": ["ladder", "electrical", "overhead"]}, {"id": 82, "category": "MEWP / Aerial Lift", "hazard": "Untrained or unauthorized person operates the lift", "controls": "Only trained, authorized operators may use the MEWP. Review the specific model, site rules, emergency lowering, and rescue plan.", "tags": ["mewp", "overhead"]}, {"id": 83, "category": "MEWP / Aerial Lift", "hazard": "Lift has a defect or failed pre-use inspection", "controls": "Complete the pre-use inspection and function test. Tag and remove defective equipment from service until repaired by an authorized person.", "tags": ["mewp"]}, {"id": 84, "category": "MEWP / Aerial Lift", "hazard": "Tip-over from slope, hole, soft ground, or obstruction", "controls": "Inspect the travel and setup area, follow slope and surface limits, maintain distance from holes and edges, and use outriggers or supports only as designed.", "tags": ["mewp", "outdoor"]}, {"id": 85, "category": "MEWP / Aerial Lift", "hazard": "Collision with structure, piping, racks, or equipment", "controls": "Inspect overhead and side clearances, travel slowly, use a spotter in tight areas, and keep body parts inside the platform.", "tags": ["mewp", "data-center", "overhead"]}, {"id": 86, "category": "MEWP / Aerial Lift", "hazard": "Worker is crushed between platform and overhead object", "controls": "Identify overhead pinch and crush points, use a spotter, approach slowly, keep hands on controls, and stop before entering restricted clearance.", "tags": ["mewp", "pinch", "overhead"]}, {"id": 87, "category": "MEWP / Aerial Lift", "hazard": "Fall from platform", "controls": "Keep gates closed, stand on the platform floor, do not climb rails, use the required harness and connecting device, and attach only to the approved anchor point.", "tags": ["mewp", "fall-protection", "overhead"]}, {"id": 88, "category": "MEWP / Aerial Lift", "hazard": "Dropped tools or material from platform", "controls": "Barricade below, secure material, tether tools where required, use containers for small parts, and do not overload the platform.", "tags": ["mewp", "dropped-objects", "overhead"]}, {"id": 89, "category": "MEWP / Aerial Lift", "hazard": "Lift contacts electrical conductors", "controls": "Identify electrical sources, maintain required clearance, use a spotter and barriers, and coordinate de-energization where safe clearance cannot be maintained.", "tags": ["mewp", "electrical", "overhead"]}, {"id": 90, "category": "MEWP / Aerial Lift", "hazard": "Pedestrian or vehicle is struck during travel", "controls": "Use a spotter, horn, lights, barricades, and controlled travel routes. Maintain clear visibility and stop if the route is not clear.", "tags": ["mewp", "struck-by", "traffic"]}, {"id": 91, "category": "MEWP / Aerial Lift", "hazard": "Improper tie-off or incompatible connecting device", "controls": "Inspect the harness and connector, use the company-approved system for that lift, connect to the designated anchor, and follow manufacturer and site requirements.", "tags": ["mewp", "fall-protection"]}, {"id": 92, "category": "Overhead Work", "hazard": "Person below is struck by a dropped object", "controls": "Barricade the drop zone, restrict access, secure material, tether tools where required, and do not work above unprotected people.", "tags": ["overhead", "dropped-objects", "general"]}, {"id": 93, "category": "Overhead Work", "hazard": "Small hardware falls through grating or openings", "controls": "Use parts bags, trays, covers, or netting; secure small components; and inspect below before removing the barricade.", "tags": ["overhead", "dropped-objects", "cable-tray"]}, {"id": 94, "category": "Overhead Work", "hazard": "Ceiling tile, grid, or concealed material falls", "controls": "Inspect the ceiling area, support tiles and grid, remove tiles carefully, control insulation or debris, and barricade below.", "tags": ["overhead", "ceiling", "low-voltage"]}, {"id": 95, "category": "Overhead Work", "hazard": "Worker contacts hidden sharp edges above ceiling", "controls": "Inspect with lighting before reaching, use tools rather than blind hand placement, wear suitable gloves and sleeves, and control exposed edges.", "tags": ["overhead", "ceiling", "cuts", "low-voltage"]}, {"id": 96, "category": "Overhead Work", "hazard": "Unsupported conduit, tray, cable, or component falls", "controls": "Support material during installation, use approved hangers and hardware, verify anchor capacity, and inspect before removing temporary support.", "tags": ["overhead", "cable-tray", "conduit", "supports"]}, {"id": 97, "category": "Cabinets, Racks & Equipment", "hazard": "Cabinet or rack tips during placement", "controls": "Use proper handling equipment, keep the unit stabilized, follow the manufacturer's sequence, and secure it to the approved structure before releasing support.", "tags": ["cabinet", "rack", "material-handling"]}, {"id": 98, "category": "Cabinets, Racks & Equipment", "hazard": "Hands are pinched between cabinet and wall or floor", "controls": "Use handles, pry tools, blocks, and a spotter. Keep hands and feet out of the set-down area and communicate every movement.", "tags": ["cabinet", "rack", "pinch"]}, {"id": 99, "category": "Cabinets, Racks & Equipment", "hazard": "Incorrect anchor or support fails", "controls": "Verify substrate, anchor type, embedment, spacing, load, and installation torque. Follow approved drawings and manufacturer instructions.", "tags": ["cabinet", "rack", "anchors"]}, {"id": 100, "category": "Cabinets, Racks & Equipment", "hazard": "Equipment is mounted unevenly or creates an unstable load", "controls": "Level and secure the cabinet or rack, install heavy components low, follow loading limits, and verify stability after installation.", "tags": ["cabinet", "rack"]}, {"id": 101, "category": "Cabinets, Racks & Equipment", "hazard": "Sharp sheet metal edges cause cuts", "controls": "Wear cut-resistant gloves, deburr or cover edges, use tools for alignment, and do not slide hands along unfinished metal.", "tags": ["cabinet", "rack", "cuts"]}, {"id": 102, "category": "Cabinets, Racks & Equipment", "hazard": "Door, panel, or removable component falls", "controls": "Support the component during removal, use two people when bulky, store it flat or secured, and reinstall fasteners correctly.", "tags": ["cabinet", "rack", "dropped-objects"]}, {"id": 103, "category": "Testing & Closeout", "hazard": "Testing causes unexpected equipment operation", "controls": "Notify affected personnel, establish a controlled area, stand clear of moving parts, follow the approved test plan, and stop if results are abnormal.", "tags": ["testing", "electrical", "low-voltage"]}, {"id": 104, "category": "Testing & Closeout", "hazard": "Wrong port, cable, circuit, or device is tested", "controls": "Verify labels and drawings, trace point-to-point, obtain required approval, and confirm the test point before connecting equipment.", "tags": ["testing", "electrical", "low-voltage", "data-center"]}, {"id": 105, "category": "Testing & Closeout", "hazard": "Temporary test leads create trip or electrical hazards", "controls": "Inspect leads, route and protect them, maintain required ratings and clearances, barricade when needed, and remove them immediately after testing.", "tags": ["testing", "electrical", "housekeeping"]}, {"id": 106, "category": "Testing & Closeout", "hazard": "Labels are missing, incorrect, or obstruct safety information", "controls": "Use the approved naming standard, verify labels at both ends, do not cover warnings or ventilation, and correct errors before turnover.", "tags": ["testing", "labeling", "low-voltage", "data-center"]}, {"id": 107, "category": "Testing & Closeout", "hazard": "Debris, sharp scrap, or unused material remains after work", "controls": "Perform a final cleanup, remove cable scraps and fasteners, close openings, restore guards and ceiling tiles, and inspect the area before releasing it.", "tags": ["closeout", "housekeeping", "general"]}, {"id": 108, "category": "Testing & Closeout", "hazard": "Barricade is removed before the area is safe", "controls": "Inspect the work, remove tools and temporary hazards, verify systems and openings are secure, then remove the barricade and notify affected personnel.", "tags": ["closeout", "barricade", "general"]}, {"id": 109, "category": "Vehicles, Warehouse & Mobile Equipment", "hazard": "Worker is struck by a vehicle or mobile equipment", "controls": "Use designated walkways, high-visibility clothing, eye contact with operators, barricades, and a spotter where routes cross or visibility is limited.", "tags": ["traffic", "warehouse", "struck-by", "mobilization"]}, {"id": 110, "category": "Vehicles, Warehouse & Mobile Equipment", "hazard": "Vehicle backs into person, structure, or equipment", "controls": "Inspect the route, use a spotter, maintain communication, back slowly, and stop immediately if the spotter is lost from view.", "tags": ["traffic", "warehouse", "struck-by"]}, {"id": 111, "category": "Vehicles, Warehouse & Mobile Equipment", "hazard": "Forklift or pallet jack load falls or tips", "controls": "Use trained operators, inspect equipment, center and secure the load, follow capacity limits, travel with the load low, and keep people clear.", "tags": ["warehouse", "forklift", "material-handling"]}, {"id": 112, "category": "Vehicles, Warehouse & Mobile Equipment", "hazard": "Worker rides on equipment not designed for passengers", "controls": "Do not carry passengers unless the equipment has an approved passenger position. Never ride on forks, pallets, carts, or loads.", "tags": ["warehouse", "forklift"]}, {"id": 113, "category": "Vehicles, Warehouse & Mobile Equipment", "hazard": "Hands or feet are caught by pallet jack or cart", "controls": "Keep feet clear of wheels, use handles correctly, control speed, avoid pulling heavy loads downhill, and use help for tight turns or ramps.", "tags": ["warehouse", "material-handling", "pinch"]}, {"id": 114, "category": "Vehicles, Warehouse & Mobile Equipment", "hazard": "Material is stored unsafely on racks or shelves", "controls": "Follow rack capacity, store heavy items low, secure round or tall material, inspect racks, and do not climb storage systems.", "tags": ["warehouse", "material-handling"]}, {"id": 115, "category": "Weather & Environment", "hazard": "Heat stress or heat illness", "controls": "Provide water, rest, and shade; acclimatize workers; schedule heavy work for cooler periods; use a buddy system; and respond immediately to symptoms.", "tags": ["heat", "outdoor", "general"]}, {"id": 116, "category": "Weather & Environment", "hazard": "Cold stress or reduced dexterity", "controls": "Use layered dry clothing, warm-up breaks, suitable gloves and footwear, and monitor workers for numbness, confusion, or shivering.", "tags": ["cold", "outdoor", "general"]}, {"id": 117, "category": "Weather & Environment", "hazard": "Lightning or severe weather", "controls": "Monitor conditions, stop outdoor and elevated work when required, move to an approved shelter, and restart only under site rules.", "tags": ["weather", "lightning", "outdoor", "mewp"]}, {"id": 118, "category": "Weather & Environment", "hazard": "High wind affects lifts, ladders, material, or overhead work", "controls": "Monitor wind, follow equipment limits, secure loose material, stop elevated work when control is reduced, and lower equipment when required.", "tags": ["weather", "wind", "outdoor", "mewp", "ladder"]}, {"id": 119, "category": "Weather & Environment", "hazard": "Rain or condensation creates slippery or electrical conditions", "controls": "Stop or modify work, protect electrical equipment, dry surfaces, route cords safely, and resume only when footing and equipment are safe.", "tags": ["weather", "rain", "outdoor", "electrical"]}, {"id": 120, "category": "Weather & Environment", "hazard": "Poor air quality, dust, smoke, or fumes", "controls": "Identify the source, improve ventilation or isolate the area, use engineering controls, relocate work when possible, and follow respiratory-protection requirements.", "tags": ["environment", "dust", "fumes", "general"]}, {"id": 121, "category": "Weather & Environment", "hazard": "Insects, snakes, or other animals", "controls": "Inspect the area before reaching or stepping, avoid disturbing wildlife, use suitable clothing, and report bites or stings immediately.", "tags": ["outdoor", "environment"]}];
+const tasks = [["All Hazards", "all"], ["General Work", "general"], ["Mobilization", "mobilization"], ["Material Handling", "material-handling"], ["Ladder Work", "ladder"], ["MEWP / Lift", "mewp"], ["Cable Pulling", "cable-pulling"], ["Fiber Optic", "fiber"], ["Cable Tray / Conduit", "cable-tray"], ["Drilling / Anchoring", "drilling"], ["Electrical / LOTO", "electrical"], ["Cabinet / Rack", "cabinet"], ["Testing / Labeling", "testing"], ["Warehouse", "warehouse"], ["Outdoor / Heat", "outdoor"], ["Closeout", "closeout"]];
+let activeTag = "all";
+function loadSaved(key, fallback){
+ try {
+  const value = localStorage.getItem(key);
+  return value ? JSON.parse(value) : fallback;
+ } catch (e) {
+  return fallback;
+ }
+}
+let selected = new Set(loadSaved("cdiJsaSelected", []));
+let customItems = loadSaved("cdiJsaCustom", []);
+
+const taskButtons = document.getElementById("taskButtons");
+const cards = document.getElementById("cards");
+const search = document.getElementById("search");
+
+function save(){
+ try {
+  localStorage.setItem("cdiJsaSelected", JSON.stringify([...selected]));
+  localStorage.setItem("cdiJsaCustom", JSON.stringify(customItems));
+ } catch (e) {
+  // The tool still works when a browser blocks local storage.
+ }
+}
+
+function renderTasks(){
+ taskButtons.innerHTML = "";
+ tasks.forEach(([label,tag])=>{
+  const b=document.createElement("button");
+  b.className="task-btn"+(tag===activeTag?" active":"");
+  b.textContent=label;
+  b.onclick=()=>{activeTag=tag;renderTasks();renderCards();};
+  taskButtons.appendChild(b);
+ });
+}
+
+function matches(h){
+ const q=search.value.trim().toLowerCase();
+ const tagMatch = activeTag==="all" || h.tags.includes(activeTag) || h.tags.includes("all");
+ const text=(h.category+" "+h.hazard+" "+h.controls+" "+h.tags.join(" ")).toLowerCase();
+ return tagMatch && (!q || text.includes(q));
+}
+
+function renderCards(){
+ const visible=hazards.filter(matches);
+ document.getElementById("count").textContent=`Showing ${visible.length} of ${hazards.length} hazards`;
+ cards.innerHTML="";
+ if(!visible.length) cards.innerHTML='<div class="empty">No match. Try a simpler word or choose All Hazards.</div>';
+ visible.forEach(h=>{
+  const card=document.createElement("div");
+  const isSel=selected.has(h.id);
+  card.className="card"+(isSel?" selected":"");
+  card.innerHTML=`<div class="card-top">
+   <input aria-label="Select hazard" type="checkbox" ${isSel?"checked":""}>
+   <div><div class="category">${escapeHtml(h.category)}</div><div class="hazard">${escapeHtml(h.hazard)}</div></div>
+  </div><div class="controls"><strong>Control:</strong> ${escapeHtml(h.controls)}</div>`;
+  const cb=card.querySelector("input");
+  cb.onchange=()=>{
+   if(cb.checked) selected.add(h.id); else selected.delete(h.id);
+   save(); renderCards(); renderSelected();
+  };
+  card.onclick=(e)=>{if(e.target.tagName!=="INPUT"){cb.checked=!cb.checked;cb.onchange();}};
+  cards.appendChild(card);
+ });
+}
+
+function getSelectedItems(){
+ const standard=hazards.filter(h=>selected.has(h.id)).map(h=>({hazard:h.hazard,controls:h.controls,category:h.category}));
+ return [...standard,...customItems];
+}
+
+function renderSelected(){
+ const list=document.getElementById("selectedList");
+ const items=getSelectedItems();
+ document.getElementById("selectedCount").textContent=`${items.length} selected`;
+ if(!items.length){list.innerHTML='<div class="empty">Nothing selected yet.</div>';return;}
+ list.innerHTML="";
+ items.forEach((it,idx)=>{
+  const d=document.createElement("div");
+  d.className="selected-item";
+  d.innerHTML=`<strong>${idx+1}. ${escapeHtml(it.hazard)}</strong><br>${escapeHtml(it.controls)}`;
+  list.appendChild(d);
+ });
+}
+
+function addCustom(){
+ const h=document.getElementById("customHazard").value.trim();
+ const c=document.getElementById("customControl").value.trim();
+ if(!h||!c){toast("Enter both a hazard and a control measure.");return;}
+ customItems.push({hazard:h,controls:c,category:"Custom"});
+ document.getElementById("customHazard").value="";
+ document.getElementById("customControl").value="";
+ save();renderSelected();toast("Custom hazard added.");
+}
+
+function copyText(text){
+ if(!text){toast("Select at least one hazard first.");return;}
+ const fallbackCopy=()=>{
+  const ta=document.createElement("textarea");
+  ta.value=text;
+  ta.style.position="fixed";
+  ta.style.opacity="0";
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand("copy"); toast("Copied. Paste it into your JSA."); }
+  catch(e) { toast("Copy was blocked. Select the text from the printed list."); }
+  ta.remove();
+ };
+ if(navigator.clipboard && window.isSecureContext){
+  navigator.clipboard.writeText(text).then(()=>toast("Copied. Paste it into your JSA.")).catch(fallbackCopy);
+ } else {
+  fallbackCopy();
+ }
+}
+function copyRows(){
+ const text=getSelectedItems().map((x,i)=>`${i+1}. HAZARD: ${x.hazard}\n   CONTROL: ${x.controls}`).join("\n\n");
+ copyText(text);
+}
+function copyHazards(){copyText(getSelectedItems().map((x,i)=>`${i+1}. ${x.hazard}`).join("\n"));}
+function copyControls(){copyText(getSelectedItems().map((x,i)=>`${i+1}. ${x.controls}`).join("\n"));}
+function clearAll(){
+ if(!confirm("Clear every selected and custom item?")) return;
+ selected.clear();customItems=[];save();renderCards();renderSelected();toast("Selections cleared.");
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+function toast(msg){
+ const t=document.getElementById("toast");t.textContent=msg;t.style.display="block";
+ clearTimeout(window._toast);window._toast=setTimeout(()=>t.style.display="none",2200);
+}
+search.addEventListener("input",renderCards);
+renderTasks();renderCards();renderSelected();
+</script>
+</body>
+</html>
