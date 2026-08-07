@@ -288,6 +288,20 @@ function wrap(text,maxChars,maxLines=2){
 }
 function textEl(x,y,text,size=14,bold=false,anchor="start"){return `<text x="${x}" y="${y}" font-family="Arial,Helvetica,sans-serif" font-size="${size}" font-weight="${bold?700:400}" fill="#111" text-anchor="${anchor}">${xml(text)}</text>`}
 function blockEl(x,y,w,text,size=13,maxLines=3,lineH=17){let chars=Math.max(8,Math.floor(w/(size*.56))),lines=wrap(text,chars,maxLines);return lines.map((l,i)=>textEl(x,y+i*lineH,l,size,false)).join("")}
+function wrapFull(text,maxChars){
+  const words=String(text||"").trim().split(/\s+/).filter(Boolean);
+  if(!words.length)return [];
+  const lines=[]; let line="";
+  for(const w of words){
+    const test=line?line+" "+w:w;
+    if(test.length>maxChars && line){lines.push(line);line=w}else{line=test}
+  }
+  if(line)lines.push(line);
+  return lines;
+}
+function linedText(x,baselineY,lines,size=11,rowGap=32){
+  return lines.map((line,i)=>textEl(x,baselineY+i*rowGap,line,size,false)).join("");
+}
 function xmark(x,y){return `<text x="${x}" y="${y}" font-family="Arial" font-size="18" font-weight="900" fill="#111" text-anchor="middle" dominant-baseline="middle">X</text>`}
 function markAnswer(id,xY,xN,xA,y){let v=answers[id];if(v==="Y")return xmark(xY,y);if(v==="N")return xmark(xN,y);if(v==="A")return xmark(xA,y);return ""}
 function hasAny(text,arr){let t=text.toLowerCase();return arr.some(w=>t.includes(w))}
@@ -348,14 +362,14 @@ function svgStart(bg){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0
 function svgEnd(){return "</svg>"}
 function renderPage1(d){
  let s=svgStart(BG1);
- // right panel fields
- s+=textEl(1170,210,E("jobNo").value,15)+textEl(1188,240,E("jobLeader").value,15)+textEl(1174,270,E("company").value,15);
- s+=textEl(1195,300,E("dateStarted").value,14)+textEl(1410,300,E("timeStarted").value,14)+textEl(1220,330,E("dateCompleted").value,14)+textEl(1410,330,E("timeCompleted").value,14);
- s+=blockEl(1110,542,400,E("taskName").value,16,3,23);
- s+=blockEl(1110,680,400,E("goal").value,15,2,24);
- s+=blockEl(1110,800,400,E("foreman").value,15,1,22);
- const crewY=[925,956,987,1018,1049,1080,1111,1142],crewX=[1110,1320];
- crew.forEach((n,i)=>{let col=i>=8?1:0,row=i%8;s+=textEl(crewX[col],crewY[row],n,13)});
+ // Place entries just above the actual writing lines on the original CDI form.
+ s+=textEl(1170,198,E("jobNo").value,13)+textEl(1188,228,E("jobLeader").value,13)+textEl(1174,258,E("company").value,13);
+ s+=textEl(1195,288,E("dateStarted").value,12)+textEl(1410,288,E("timeStarted").value,12)+textEl(1220,318,E("dateCompleted").value,12)+textEl(1410,318,E("timeCompleted").value,12);
+ s+=linedText(1110,533,wrapFull(E("taskName").value,44).slice(0,3),13,25);
+ s+=linedText(1110,668,wrapFull(E("goal").value,44).slice(0,2),13,26);
+ s+=linedText(1110,852,wrapFull(E("foreman").value,44).slice(0,1),13,24);
+ const crewY=[915,945,975,1005,1035,1065,1095,1125],crewX=[1110,1320];
+ crew.slice(0,16).forEach((n,i)=>{let col=i>=8?1:0,row=i%8;s+=textEl(crewX[col],crewY[row],n,12)});
  // permit checkboxes
  const permitCoords={"Confined space":[228,134],"Hot work":[228,160],"Energized elec. Work":[228,188],"Elevator":[228,216],"Electrical room work":[432,134],"Crane – critical lift":[432,160],"Ladder":[432,188],"Ground & Wall Penetration":[432,216]};
  d.permits.forEach(p=>{if(permitCoords[p])s+=xmark(...permitCoords[p])});
@@ -383,28 +397,73 @@ function highRisk(d){
 }
 function renderPage2(d){
  let s=svgStart(BG2);
- // aligned job step/hazard/control rows. up to 8 steps; multiple hazards summarized per step.
- const ys=[155,219,283,347,411,475,539,603];
- d.steps.slice(0,8).forEach((st,i)=>{
-   let hz=st.pairs.map(p=>p.haz).join("; "),ct=st.pairs.map(p=>p.ctl).join("; ");
-   s+=blockEl(64,ys[i],385,st.step,13,2,16);
-   s+=blockEl(584,ys[i],375,hz,12,3,15);
-   s+=blockEl(1110,ys[i],390,ct,11,3,14);
+
+ // Actual writing-line positions from the official CDI page 2.
+ // Print text just above each line and advance all 3 columns together.
+ const formLines=[146,179,211,243,275,307,339,371,403,435,467,499,531,563,595,627,659];
+ const baselineOffset=7;
+ const stepChars=48, hazardChars=48, controlChars=52;
+ const stepFont=11.5, hazardFont=10.5, controlFont=10.2;
+ let row=0;
+ let overflow=false;
+
+ d.steps.forEach((st)=>{
+   const stepLines=wrapFull(st.step,stepChars);
+   const hazardText=st.pairs.map(p=>p.haz.trim()).filter(Boolean).join("; ");
+   const controlText=st.pairs.map(p=>p.ctl.trim()).filter(Boolean).join("; ");
+   const hazardLines=wrapFull(hazardText,hazardChars);
+   const controlLines=wrapFull(controlText,controlChars);
+   const needed=Math.max(1,stepLines.length,hazardLines.length,controlLines.length);
+
+   if(row+needed>formLines.length){overflow=true;return}
+
+   for(let j=0;j<needed;j++){
+     const y=formLines[row+j]-baselineOffset;
+     if(j<stepLines.length)s+=textEl(64,y,stepLines[j],stepFont,false);
+     if(j<hazardLines.length)s+=textEl(584,y,hazardLines[j],hazardFont,false);
+     if(j<controlLines.length)s+=textEl(1110,y,controlLines[j],controlFont,false);
+   }
+   row+=needed;
  });
- // change checkboxes
- const chgy=[754,779,804,830],chgids=["chg_person","chg_task","chg_weather","chg_access"];chgids.forEach((id,i)=>s+=markAnswer(id,387,424,458,chgy[i]));
+
+ if(overflow){
+   s+=`<rect x="52" y="668" width="970" height="28" fill="#fff4e5" stroke="#b76a00"/>
+       <text x="65" y="687" font-family="Arial" font-size="12" font-weight="700" fill="#8a4d00">
+       PTP text exceeds available form lines. Shorten/combine wording before final print.
+       </text>`;
+ }
+
+ const chgy=[754,779,804,830],chgids=["chg_person","chg_task","chg_weather","chg_access"];
+ chgids.forEach((id,i)=>s+=markAnswer(id,387,424,458,chgy[i]));
  s+=answerYN("crewaware",263,344,914);
- s+=blockEl(64,1006,380,E("changedText")?.value||"",12,2,18);
+ s+=linedText(64,998,wrapFull(E("changedText")?.value||"",48).slice(0,2),11,32);
  s+=answerYN("accident",154,233,1094);
- // high risk
- const hr=highRisk(d),names=["Material Handling","Hazardous Materials","Driving","Working from Heights","Lifting Operations","Confined Spaces","Energy Isolation","Electrical","Ground Disturbance","Mobile Equipment","Extreme Heat","Extreme Cold","Silica"],hry=[720,752,788,820,857,888,924,958,992,1024,1059,1092,1126];
+
+ const hr=highRisk(d),
+ names=["Material Handling","Hazardous Materials","Driving","Working from Heights","Lifting Operations","Confined Spaces","Energy Isolation","Electrical","Ground Disturbance","Mobile Equipment","Extreme Heat","Extreme Cold","Silica"],
+ hry=[720,752,788,820,857,888,924,958,992,1024,1059,1092,1126];
  names.forEach((n,i)=>s+=hr[n]?xmark(814,hry[i]):xmark(910,hry[i]));
- s+=answerYN("materials",1283,1367,758);s+=answerYN("covid",1284,1367,857);
+ s+=answerYN("materials",1283,1367,758);
+ s+=answerYN("covid",1284,1367,857);
  return s+svgEnd()
+}
+function linesNeededForOfficialPage(d){
+ let total=0;
+ d.steps.forEach(st=>{
+   const a=wrapFull(st.step,48).length;
+   const b=wrapFull(st.pairs.map(p=>p.haz.trim()).filter(Boolean).join("; "),48).length;
+   const c=wrapFull(st.pairs.map(p=>p.ctl.trim()).filter(Boolean).join("; "),52).length;
+   total+=Math.max(1,a,b,c);
+ });
+ return total;
 }
 function generateOfficial(){
  const d=allData(),issues=safetyIssues();
- if(d.steps.length>8){alert("The official CDI page has room for 8 readable step rows in this digital layout. Combine similar steps before generating the final PTP.");return}
+ const needed=linesNeededForOfficialPage(d);
+ if(needed>17){
+   alert(`The wording needs ${needed} writing lines, but the official CDI PTP has 17 usable lines for Steps / Hazards / Controls. Shorten or combine wording so nothing is cut off.`);
+   return;
+ }
  E("preview").innerHTML=`<div class="sheet">${renderPage1(d)}</div><div class="sheet">${renderPage2(d)}</div>`;
  E("s5").classList.add("hidden");E("output").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"});
 }
