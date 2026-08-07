@@ -1,334 +1,372 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>CDI Safety Assistant</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CDI PTP Builder</title>
 <style>
-:root{
-  --bg:#07111f;--panel:#0d1b2a;--panel2:#11253a;--text:#eef6ff;--muted:#9fb4c9;
-  --accent:#38bdf8;--accent2:#22c55e;--warn:#f59e0b;--danger:#ef4444;--line:#23405d;
-  --shadow:0 18px 45px rgba(0,0,0,.25);
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(160deg,#06101c,#0b1727 50%,#07111f);color:var(--text);min-height:100vh}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-.shell{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
-.sidebar{padding:24px 18px;border-right:1px solid var(--line);background:rgba(6,16,28,.94);position:sticky;top:0;height:100vh}
-.brand{display:flex;gap:12px;align-items:center;margin-bottom:28px}
-.logo{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#38bdf8,#22c55e);font-weight:900;color:#02121d}
-.brand h1{font-size:16px;margin:0}.brand p{font-size:12px;color:var(--muted);margin:2px 0 0}
-.nav button{width:100%;text-align:left;padding:12px 14px;margin:5px 0;border:0;border-radius:10px;background:transparent;color:var(--muted)}
-.nav button.active,.nav button:hover{background:var(--panel2);color:#fff}
-.badge{font-size:11px;padding:3px 7px;border-radius:999px;background:#16344e;color:#bfe7ff;margin-left:6px}
-.main{padding:28px;max-width:1440px;width:100%;margin:0 auto}
-.topbar{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:24px}
-.topbar h2{margin:0;font-size:28px}.topbar p{margin:4px 0 0;color:var(--muted)}
-.project-pill{padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:#d8ecff}
-.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
-.card{background:linear-gradient(180deg,rgba(17,37,58,.95),rgba(11,26,41,.95));border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
-.card h3{margin:0 0 8px}.muted{color:var(--muted)}
-.stat{grid-column:span 3}.quick{grid-column:span 4}.wide{grid-column:span 8}.full{grid-column:1/-1}
-.stat .num{font-size:32px;font-weight:800;margin-top:8px}
-.action{border:1px solid var(--line);background:#0a1a2b;color:white;border-radius:12px;padding:14px;width:100%;text-align:left;margin-top:10px}
-.action strong{display:block}.action small{color:var(--muted)}
-.primary{background:linear-gradient(135deg,#0ea5e9,#22c55e);border:0;color:#04121d;font-weight:800;padding:12px 16px;border-radius:11px}
-.secondary{background:#122a41;border:1px solid var(--line);color:#e9f5ff;padding:11px 14px;border-radius:10px}
-.danger{background:#3b1519;border:1px solid #67272f;color:#fecaca}
-.view{display:none}.view.active{display:block}
-.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-label{font-size:13px;color:#c7dded;display:block;margin-bottom:6px}
-input,select,textarea{width:100%;border:1px solid #2a4b69;background:#071727;color:#eff8ff;padding:11px 12px;border-radius:10px;outline:none}
-textarea{min-height:90px;resize:vertical}
-.section-title{margin:22px 0 10px;font-size:18px}
-.checkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.check{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);padding:11px;border-radius:10px;background:#0a1b2d}
-.check input{width:auto;margin-top:3px}
-.result{margin-top:12px;border-left:4px solid var(--accent);background:#081827;padding:13px 14px;border-radius:8px}
-.result h4{margin:0 0 6px}.result p{margin:4px 0;color:#cae1f2}
-.score{display:flex;align-items:center;gap:18px}
-.score-ring{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent2) 0deg 300deg,#21394f 300deg);position:relative}
-.score-ring:after{content:"";position:absolute;width:72px;height:72px;border-radius:50%;background:#0b1c2c}
-.score-ring span{z-index:1;font-weight:900;font-size:23px}
-.notice{padding:12px 14px;border-radius:10px;background:#34260c;border:1px solid #6b4c12;color:#fde7aa;margin-bottom:14px}
-.green{background:#0b2b20;border-color:#165b42;color:#baf7d7}
-.red{background:#35171a;border-color:#6e2b31;color:#ffd0d4}
-table{width:100%;border-collapse:collapse;margin-top:12px}
-th,td{text-align:left;border-bottom:1px solid var(--line);padding:10px;vertical-align:top}
-th{color:#9fd9fb;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
-.searchbox{display:flex;gap:10px;margin:12px 0}
-.searchbox input{flex:1}
-.tag{display:inline-block;padding:3px 8px;border-radius:999px;background:#16314a;color:#bfe7ff;font-size:11px;margin:2px}
-.policy{padding:13px;border:1px solid var(--line);border-radius:12px;margin:9px 0;background:#091a2b}
-.policy strong{display:block}.policy small{color:var(--muted)}
-.footer-note{margin-top:22px;color:#7890a6;font-size:12px}
-@media(max-width:900px){
- .shell{display:block}.sidebar{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
- .nav{display:flex;overflow:auto;gap:6px}.nav button{min-width:max-content}
- .main{padding:18px}.stat,.quick,.wide{grid-column:1/-1}.form-grid{grid-template-columns:1fr}.checkgrid{grid-template-columns:1fr}
-}
+  :root{
+    --blue:#0a5ea8;--blue2:#0b73c7;--ink:#122033;--muted:#64748b;
+    --bg:#f3f6f9;--card:#fff;--line:#d7e0e8;--green:#1f8f4e;--red:#b42318;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
+  .top{background:#fff;border-bottom:1px solid var(--line);padding:14px 18px;position:sticky;top:0;z-index:20}
+  .topin{max-width:980px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{display:flex;align-items:center;gap:10px}.mark{background:var(--blue);color:#fff;border-radius:8px;padding:8px 10px;font-weight:800}
+  .brand b{font-size:18px}.brand small{display:block;color:var(--muted)}
+  .wrap{max-width:980px;margin:22px auto;padding:0 14px 40px}
+  .steps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .stepdot{padding:8px 11px;border-radius:999px;background:#e8eef4;color:#526272;font-size:13px;font-weight:700}
+  .stepdot.active{background:var(--blue);color:#fff}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 4px 18px rgba(30,55,80,.06);margin-bottom:14px}
+  h1{font-size:24px;margin:0 0 5px} h2{font-size:19px;margin:0 0 12px} h3{font-size:16px;margin:16px 0 9px}
+  p.help{color:var(--muted);margin:0 0 14px;line-height:1.45}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  label{font-weight:700;font-size:13px;display:block;margin-bottom:5px}
+  input,textarea,select{width:100%;padding:12px;border:1px solid #bac8d5;border-radius:9px;background:#fff;font-size:16px}
+  textarea{min-height:86px;resize:vertical}
+  input:focus,textarea:focus,select:focus{outline:3px solid #d6ebff;border-color:var(--blue2)}
+  .btn{border:0;border-radius:9px;padding:12px 15px;font-weight:800;font-size:15px;cursor:pointer}
+  .primary{background:var(--blue);color:#fff}.secondary{background:#e9f1f7;color:#0d4f83}.ghost{background:#fff;border:1px solid var(--line);color:#334155}.danger{background:#fff1f1;color:var(--red);border:1px solid #efc3c0}
+  .rowbtns{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px;justify-content:flex-end}
+  .crewbox{display:flex;gap:8px}.crewbox input{flex:1}.crewlist{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px}
+  .chip{background:#eaf3fb;border:1px solid #c4dcef;border-radius:999px;padding:7px 10px;font-size:14px;display:flex;gap:8px;align-items:center}
+  .chip button{border:0;background:transparent;color:#8a1c1c;font-weight:bold;cursor:pointer}
+  .taskrow{border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0;background:#fbfdff}
+  .taskhead{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px}.tasknum{font-weight:800;color:var(--blue)}
+  .taskgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+  .quicktags{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
+  .quicktags button{border:1px solid #bdd3e5;background:#f5faff;color:#175d91;border-radius:999px;padding:7px 10px;cursor:pointer;font-weight:700}
+  .checks{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+  .check{display:flex;gap:9px;align-items:flex-start;padding:11px;border:1px solid var(--line);border-radius:10px;background:#fbfdff}
+  .check input{width:20px;height:20px;margin:0}.check span{font-weight:700}.check small{display:block;color:var(--muted);font-weight:400;margin-top:2px}
+  .hidden{display:none!important}
+  .notice{background:#eef7ff;border-left:4px solid var(--blue);padding:11px 12px;border-radius:8px;color:#234}
+  .warn{background:#fff6e8;border-left-color:#d97706}
+  .summary{display:grid;grid-template-columns:1fr 1fr;gap:12px}.sumblock{border:1px solid var(--line);border-radius:10px;padding:12px}
+  .sumblock h3{margin:0 0 7px}.sumblock ul{margin:0;padding-left:20px}.sumblock li{margin:5px 0}
+  .docwrap{background:#dfe6ed;padding:18px;border-radius:12px;overflow:auto}
+  .ptp-page{width:8.5in;min-height:11in;background:#fff;margin:0 auto 18px;padding:.38in;box-shadow:0 2px 12px rgba(0,0,0,.12);color:#111}
+  .dochead{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #1b4f80;padding-bottom:8px;margin-bottom:10px}
+  .doclogo{font-size:25px;font-weight:900;color:#0a5ea8}.doclogo small{font-size:11px;color:#444;display:block}
+  .doctitle{text-align:right;font-size:20px;font-weight:900}
+  .docgrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.docgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .field{border-bottom:1px solid #333;min-height:24px;padding:3px 2px;font-size:12px}.lab{font-size:10px;font-weight:bold;color:#333}
+  .docsection{border:1px solid #888;margin-top:10px}.docsection h4{margin:0;padding:6px 8px;background:#eaf1f7;font-size:12px}.docbody{padding:7px}
+  .doclist{columns:2;column-gap:18px;font-size:10px}.docline{margin:3px 0}
+  .doccheck{font-size:10px;margin:3px 0}.box{display:inline-block;width:10px;height:10px;border:1px solid #111;margin-right:4px;vertical-align:-1px}.box.on{background:#111}
+  .doc-table{width:100%;border-collapse:collapse;font-size:10px}.doc-table th,.doc-table td{border:1px solid #777;padding:5px;vertical-align:top}.doc-table th{background:#edf3f8}
+  .sigline{height:34px;border-bottom:1px solid #333;margin-bottom:4px}
+  .no-print{}
+  @media(max-width:760px){
+    .grid2,.taskgrid,.checks,.summary{grid-template-columns:1fr}.topin{align-items:flex-start}.brand small{display:none}
+    .ptp-page{width:100%;min-height:auto;padding:16px}.docgrid3{grid-template-columns:1fr}.doclist{columns:1}
+  }
+  @media print{
+    body{background:#fff}.top,.steps,.no-print,.card:not(.print-card){display:none!important}.wrap{max-width:none;margin:0;padding:0}.print-card{border:0;box-shadow:none;padding:0;margin:0}
+    .docwrap{background:#fff;padding:0}.ptp-page{width:100%;min-height:10.5in;box-shadow:none;margin:0;page-break-after:always;padding:.3in}.ptp-page:last-child{page-break-after:auto}
+  }
 </style>
 </head>
 <body>
-<div class="shell">
-  <aside class="sidebar">
-    <div class="brand"><div class="logo">CDI</div><div><h1>Safety Assistant</h1><p>PTP • JSA • Policy Support</p></div></div>
-    <div class="nav">
-      <button class="active" data-view="dashboard">🏠 Dashboard</button>
-      <button data-view="builder">📝 New PTP / JSA</button>
-      <button data-view="library">⚠️ Hazard Library</button>
-      <button data-view="manual">📘 CDI Manual</button>
-      <button data-view="projects">🏗️ Project Policies <span class="badge">NEW</span></button>
+<div class="top">
+  <div class="topin">
+    <div class="brand"><div class="mark">CDI</div><div><b>PTP Builder</b><small>Simple field tool for crews</small></div></div>
+    <button class="btn ghost" onclick="resetAll()">Start Over</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="steps">
+    <div class="stepdot active" id="d1">1. Job Info</div>
+    <div class="stepdot" id="d2">2. Work Steps</div>
+    <div class="stepdot" id="d3">3. Safety Questions</div>
+    <div class="stepdot" id="d4">4. Review & PTP</div>
+  </div>
+
+  <section id="s1" class="card">
+    <h1>Create a PTP</h1>
+    <p class="help">Fill in the basic job information. Use the blue button at the bottom when finished.</p>
+    <div class="grid2">
+      <div><label>Job / Project Number</label><input id="jobNo" placeholder="Example: SAT14-001"></div>
+      <div><label>Company</label><input id="company" value="CDI Technology Services"></div>
+      <div><label>Job Leader / Foreman</label><input id="leader" placeholder="Enter name"></div>
+      <div><label>Date Started</label><input id="dateStart" type="date"></div>
+      <div><label>Time Started</label><input id="timeStart" type="time"></div>
+      <div><label>Production Goal / Finish Date</label><input id="finishGoal" placeholder="Example: Complete camera rough-in by Friday"></div>
+      <div style="grid-column:1/-1"><label>Task Name</label><input id="taskName" placeholder="Example: Install cameras above ceiling from scissor lift"></div>
     </div>
-  </aside>
 
-  <main class="main">
-    <section class="view active" id="dashboard">
-      <div class="topbar">
-        <div><h2>CDI Safety Assistant</h2><p>Build better pre-task plans using company rules and task-specific hazard prompts.</p></div>
-        <div class="project-pill">Policy mode: <strong id="modeLabel">CDI Company Standard</strong></div>
-      </div>
+    <h3>Crew Members</h3>
+    <p class="help">Type one person's name and tap <b>Add Crew Member</b>. Repeat for each person.</p>
+    <div class="crewbox"><input id="crewInput" placeholder="Crew member name"><button class="btn secondary" id="addCrew">Add Crew Member</button></div>
+    <div id="crewList" class="crewlist"></div>
+    <div class="rowbtns"><button class="btn primary" onclick="go(2)">Next: Work Steps</button></div>
+  </section>
 
-      <div class="notice green"><strong>Version 1 is working.</strong> This first build uses rules from the CDI Safety Manual and the company PTP structure. Project-specific manuals can be added next without rebuilding the app.</div>
+  <section id="s2" class="card hidden">
+    <h2>What are you doing?</h2>
+    <p class="help">Break the job into simple steps. Each row becomes a line on the completed PTP.</p>
+    <div class="quicktags">
+      <button onclick="preset('camera')">Camera Install</button>
+      <button onclick="preset('cable')">Pull Cable / Fiber</button>
+      <button onclick="preset('ladder')">Ladder Work</button>
+      <button onclick="preset('lift')">Scissor Lift Work</button>
+      <button onclick="preset('drill')">Drilling / Anchoring</button>
+    </div>
+    <div id="taskRows"></div>
+    <button class="btn secondary" onclick="addTaskRow()">+ Add Another Step</button>
+    <div class="rowbtns"><button class="btn ghost" onclick="go(1)">Back</button><button class="btn primary" onclick="go(3)">Next: Safety Questions</button></div>
+  </section>
 
-      <div class="grid">
-        <div class="card stat"><div class="muted">Company rule sets</div><div class="num">1</div><div class="muted">CDI manual loaded</div></div>
-        <div class="card stat"><div class="muted">Project rule sets</div><div class="num" id="projectCount">0</div><div class="muted">Ready to add</div></div>
-        <div class="card stat"><div class="muted">Starter hazards</div><div class="num" id="hazardCount">0</div><div class="muted">Expandable library</div></div>
-        <div class="card stat"><div class="muted">PTP review</div><div class="num">Live</div><div class="muted">Rule-based completeness check</div></div>
+  <section id="s3" class="card hidden">
+    <h2>Safety Questions</h2>
+    <p class="help">Tap every item that applies. The PTP will automatically add related hazards and controls.</p>
+    <div class="checks" id="checks">
+      <label class="check"><input type="checkbox" value="ladder"><div><span>Ladder</span><small>Any ladder or step ladder use</small></div></label>
+      <label class="check"><input type="checkbox" value="lift"><div><span>Scissor / Boom / Aerial Lift</span><small>MEWP or elevated platform</small></div></label>
+      <label class="check"><input type="checkbox" value="height"><div><span>Working Above 6 Feet</span><small>Fall exposure</small></div></label>
+      <label class="check"><input type="checkbox" value="overhead"><div><span>Overhead Work</span><small>People or property below</small></div></label>
+      <label class="check"><input type="checkbox" value="electrical"><div><span>Electrical Exposure</span><small>Panels, circuits, power, energized equipment</small></div></label>
+      <label class="check"><input type="checkbox" value="loto"><div><span>LOTO / Energy Isolation</span><small>Equipment or circuit must be isolated</small></div></label>
+      <label class="check"><input type="checkbox" value="tools"><div><span>Hand / Power Tools</span><small>Cutting, drilling, snips, grinders, etc.</small></div></label>
+      <label class="check"><input type="checkbox" value="material"><div><span>Material Handling</span><small>Lifting, carrying, carts, wire reels</small></div></label>
+      <label class="check"><input type="checkbox" value="heat"><div><span>Heat / Outdoor Work</span><small>Hot environment or weather exposure</small></div></label>
+      <label class="check"><input type="checkbox" value="chemical"><div><span>Chemicals / SDS</span><small>Adhesives, cleaners, coatings, silica, etc.</small></div></label>
+      <label class="check"><input type="checkbox" value="traffic"><div><span>Traffic / Pedestrians</span><small>People, vehicles, active areas</small></div></label>
+      <label class="check"><input type="checkbox" value="housekeeping"><div><span>Cords / Housekeeping / Access</span><small>Trips, debris, access routes</small></div></label>
+    </div>
+    <h3>Permit / Special Work</h3>
+    <div class="checks" id="permits">
+      <label class="check"><input type="checkbox" value="Confined Space"><span>Confined Space</span></label>
+      <label class="check"><input type="checkbox" value="Electrical Room Work"><span>Electrical Room Work</span></label>
+      <label class="check"><input type="checkbox" value="Hot Work"><span>Hot Work</span></label>
+      <label class="check"><input type="checkbox" value="Crane - Critical Lift"><span>Crane / Critical Lift</span></label>
+      <label class="check"><input type="checkbox" value="Energized Electrical Work"><span>Energized Electrical Work</span></label>
+      <label class="check"><input type="checkbox" value="Ground / Wall Penetration"><span>Ground / Wall Penetration</span></label>
+    </div>
+    <div class="rowbtns"><button class="btn ghost" onclick="go(2)">Back</button><button class="btn primary" onclick="buildReview()">Review My PTP</button></div>
+  </section>
 
-        <div class="card quick">
-          <h3>Create a PTP / JSA</h3><p class="muted">Answer simple questions. The tool suggests hazards, controls, and company requirements.</p>
-          <button class="action go-builder"><strong>Start New PTP</strong><small>Uses CDI policy rules</small></button>
-        </div>
-        <div class="card quick">
-          <h3>Search Hazards</h3><p class="muted">Find hazards and matching control measures quickly.</p>
-          <button class="action go-library"><strong>Open Hazard Library</strong><small>Search ladder, lift, electrical, heat, tools...</small></button>
-        </div>
-        <div class="card quick">
-          <h3>Apply Project Oversight</h3><p class="muted">Choose which project policy layer should apply to the PTP.</p>
-          <button class="action go-projects"><strong>Project Policies</strong><small>Add customer / GC manuals later</small></button>
-        </div>
+  <section id="s4" class="card hidden">
+    <h2>Review Before Generating</h2>
+    <div id="reviewBox"></div>
+    <div class="rowbtns"><button class="btn ghost" onclick="go(3)">Back</button><button class="btn primary" onclick="generatePTP()">Generate Filled PTP</button></div>
+  </section>
 
-        <div class="card full">
-          <h3>How the policy engine works</h3>
-          <p class="muted">The app uses layers. CDI company requirements always apply. A project-specific rule set can be added on top. If a project has a special form, the same PTP answers can later be mapped into that project's template.</p>
-          <div class="result"><h4>Layer 1 — CDI Company Standard</h4><p>Safety manual, PTP/JSA/JHA process, PPE, fall protection, ladders, aerial lifts, electrical safety, LOTO, hazard communication, material handling and more.</p></div>
-          <div class="result"><h4>Layer 2 — Project / GC Oversight</h4><p>Placeholder in Version 1. Upload a project manual and template, then its requirements can be added here.</p></div>
-          <div class="result"><h4>Layer 3 — Task Conditions</h4><p>The worker's answers determine which hazards and controls are suggested.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="view" id="builder">
-      <div class="topbar"><div><h2>New PTP / JSA</h2><p>Complete the work information, then select the conditions that apply.</p></div><button class="secondary" id="clearForm">Clear Form</button></div>
-      <div class="card">
-        <div class="form-grid">
-          <div><label>Project / Policy Oversight</label><select id="project"><option value="CDI Company Standard">CDI Company Standard</option></select></div>
-          <div><label>Company</label><input id="company" value="CDI Technology Services"/></div>
-          <div><label>Job / Project Name</label><input id="job" placeholder="Example: SAT 14"/></div>
-          <div><label>Job Leader / Foreman</label><input id="leader" placeholder="Name"/></div>
-          <div><label>Date</label><input id="date" type="date"/></div>
-          <div><label>Crew Members</label><input id="crew" placeholder="Names or crew name"/></div>
-          <div style="grid-column:1/-1"><label>Task Name / Scope</label><input id="task" placeholder="Example: Install cameras above ceiling using a scissor lift"/></div>
-        </div>
-
-        <h3 class="section-title">What applies to this work?</h3>
-        <div class="checkgrid" id="conditions">
-          <label class="check"><input type="checkbox" value="ladder"/> Ladder use</label>
-          <label class="check"><input type="checkbox" value="aerial"/> Scissor / boom / aerial lift</label>
-          <label class="check"><input type="checkbox" value="height"/> Working above 6 ft</label>
-          <label class="check"><input type="checkbox" value="overhead"/> Overhead work / falling objects</label>
-          <label class="check"><input type="checkbox" value="electrical"/> Electrical exposure</label>
-          <label class="check"><input type="checkbox" value="loto"/> Lockout / Tagout</label>
-          <label class="check"><input type="checkbox" value="tools"/> Hand / power tools</label>
-          <label class="check"><input type="checkbox" value="material"/> Material handling / lifting</label>
-          <label class="check"><input type="checkbox" value="heat"/> Heat / outdoor work</label>
-          <label class="check"><input type="checkbox" value="chemical"/> Chemicals / SDS</label>
-          <label class="check"><input type="checkbox" value="traffic"/> Pedestrian / vehicle traffic</label>
-          <label class="check"><input type="checkbox" value="housekeeping"/> Cords / housekeeping / access</label>
-        </div>
-
-        <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
-          <button class="primary" id="generate">Generate Safety Review</button>
-          <button class="secondary" id="copyResults">Copy Results</button>
-        </div>
-      </div>
-
-      <div class="grid" style="margin-top:16px">
-        <div class="card wide">
-          <h3>Suggested Hazards & Controls</h3>
-          <div id="results"><p class="muted">Select work conditions and click “Generate Safety Review.”</p></div>
-        </div>
-        <div class="card quick">
-          <h3>Safety Completeness</h3>
-          <div class="score"><div class="score-ring" id="scoreRing"><span id="score">0%</span></div><div><strong id="scoreText">Not reviewed</strong><p class="muted" id="scoreNote">Complete the form first.</p></div></div>
-          <div id="reviewNotes"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="view" id="library">
-      <div class="topbar"><div><h2>Hazard Library</h2><p>Starter library based on common CDI manual topics. We will expand this into the large master library next.</p></div></div>
-      <div class="card">
-        <div class="searchbox"><input id="hazardSearch" placeholder="Search: ladder, electrical, heat, lifting, housekeeping..."/><button class="secondary" id="resetSearch">Reset</button></div>
-        <div id="hazardTable"></div>
-      </div>
-    </section>
-
-    <section class="view" id="manual">
-      <div class="topbar"><div><h2>CDI Safety Manual</h2><p>Quick-reference topics included in this starter build.</p></div></div>
-      <div class="notice">This is a quick-reference layer, not a replacement for the complete manual. The full 148-page manual remains the governing company source.</div>
-      <div id="manualPolicies"></div>
-    </section>
-
-    <section class="view" id="projects">
-      <div class="topbar"><div><h2>Project Policies</h2><p>Add project-specific oversight without changing the CDI company rules.</p></div></div>
-      <div class="card">
-        <h3>Current policy layers</h3>
-        <div class="policy"><strong>CDI Company Standard</strong><small>Always active. Based on the CDI Coordinated Safety Plan.</small></div>
-        <div id="projectList"></div>
-        <div class="notice" style="margin-top:16px"><strong>Next step:</strong> upload one project safety manual and its JSA/PTP template. We will build the first real project policy layer from those documents.</div>
-      </div>
-    </section>
-  </main>
+  <section id="output" class="card print-card hidden">
+    <div class="no-print">
+      <h2>Your Filled PTP</h2>
+      <div class="notice"><b>This is the completed PTP view.</b> Tap <b>Print / Save PDF</b>. On iPhone/iPad/Mac, choose Print and then save/share as a PDF.</div>
+      <div class="rowbtns" style="justify-content:flex-start"><button class="btn primary" onclick="window.print()">Print / Save PDF</button><button class="btn secondary" onclick="go(1)">Edit Information</button></div>
+    </div>
+    <div id="doc" class="docwrap"></div>
+  </section>
 </div>
 
 <script>
-const hazards = [
- {cat:"Ladders",hazard:"Damaged or improper ladder",control:"Use OSHA/ANSI-approved fiberglass Type IA or IAA ladders; inspect before each use; tag defective ladders Do Not Use.",keys:["ladder"]},
- {cat:"Ladders",hazard:"Fall while climbing or working from ladder",control:"Maintain three points of contact, face ladder, do not carry items in hands while climbing, do not use top two rungs.",keys:["ladder","height"]},
- {cat:"Ladders",hazard:"Ladder placed in pedestrian path",control:"Use warning signs/cones, detour pedestrian traffic, and control blocked doorways/work areas.",keys:["ladder","traffic"]},
- {cat:"Fall Protection",hazard:"Fall exposure greater than 6 ft",control:"Use required fall protection system; CDI requires 100% fall protection when exposed to heights greater than 6 ft.",keys:["height"]},
- {cat:"Aerial Lifts",hazard:"Fall from aerial lift",control:"Use required fall protection, inspect equipment and fall protection before use, maintain safe positioning and follow lift requirements.",keys:["aerial","height"]},
- {cat:"Overhead Work",hazard:"Dropped tools or materials",control:"Establish controlled/barricaded area, secure materials/tools as appropriate, prevent personnel from entering below overhead work.",keys:["overhead"]},
- {cat:"Electrical",hazard:"Shock or arc exposure",control:"De-energize whenever possible and follow CDI lockout/tagout requirements. Energized work requires specific authorization and planning.",keys:["electrical"]},
- {cat:"LOTO",hazard:"Unexpected energization or movement",control:"Notify affected employees, isolate all energy sources, apply locks, dissipate stored energy, verify isolation before work.",keys:["loto"]},
- {cat:"Tools",hazard:"Cuts, pinches, flying particles",control:"Inspect tools before use; use appropriate gloves and eye/face protection; maintain safe hand placement and use the correct tool.",keys:["tools"]},
- {cat:"Material Handling",hazard:"Overexertion / strain",control:"Plan the lift; single-person lifting up to 40 lb, team lift 40–80 lb, mechanical means above 80 lb; use mechanical aids for bulky loads.",keys:["material"]},
- {cat:"Material Handling",hazard:"Long material striking people or objects",control:"Material longer than 10 ft requires a team lift or mechanical means; coordinate movement and maintain a clear travel path.",keys:["material","traffic"]},
- {cat:"Heat",hazard:"Heat illness",control:"Plan hydration, rest and heat controls appropriate to conditions; monitor employees and respond promptly to symptoms.",keys:["heat"]},
- {cat:"HazCom",hazard:"Chemical contact / inhalation",control:"Review label and SDS; use chemical-specific PPE and controls; keep spill response materials available when applicable.",keys:["chemical"]},
- {cat:"Traffic",hazard:"Worker struck by vehicle / mobile equipment",control:"Separate workers from traffic, use barricades/signage/spotters as needed, maintain awareness and defined access routes.",keys:["traffic"]},
- {cat:"Housekeeping",hazard:"Trips from cords, tools, scrap or debris",control:"Keep walkways and access clear, remove waste, return tools after use, clean spills promptly, and manage cords/leads.",keys:["housekeeping"]},
- {cat:"Housekeeping",hazard:"Blocked emergency equipment or exit",control:"Do not obstruct stairs, exits, fire extinguishers, alarms or other emergency equipment.",keys:["housekeeping"]},
- {cat:"General",hazard:"Untrained or unauthorized equipment operation",control:"Only trained and authorized employees may operate equipment; stop and ask supervision if unsure how to perform a task safely.",keys:["aerial","tools","electrical"]},
- {cat:"General",hazard:"Scope or personnel changes after PTP",control:"Update the PTP when the job description changes or personnel are added/removed; review the PTP during the daily morning huddle.",keys:["general"]}
-];
+const crew=[];
+let taskId=0;
+const auto = {
+  ladder:{hazard:"Fall from ladder / unstable setup",control:"Inspect ladder before use; use fiberglass Type IA or IAA; set on stable surface; maintain three points of contact; do not stand on top two rungs; control pedestrian traffic."},
+  lift:{hazard:"Fall from aerial lift / struck-by or pinch exposure",control:"Inspect lift before use; only trained/authorized operators; use required fall protection; maintain clearances; barricade below as needed; use spotter when conditions require."},
+  height:{hazard:"Fall exposure greater than 6 ft",control:"Use 100% fall protection when exposed above 6 ft; inspect fall protection before use; use approved anchorage/restraint/arrest system as applicable."},
+  overhead:{hazard:"Dropped tools or materials / persons below",control:"Barricade or control area below; secure materials and tools; maintain communication; keep unauthorized personnel out of drop zone."},
+  electrical:{hazard:"Electrical shock / arc / contact with energized equipment",control:"De-energize whenever possible; maintain required clearances; only qualified/authorized employees perform electrical work; follow CDI electrical safety requirements."},
+  loto:{hazard:"Unexpected energization or release of stored energy",control:"Notify affected personnel; shut down; isolate energy; apply locks/tags; release stored energy; test/verify zero energy before work."},
+  tools:{hazard:"Cuts, pinches, flying particles, tool kickback",control:"Inspect tools before use; use correct tool; maintain guards; wear appropriate gloves and eye/face protection; keep hands out of line of fire."},
+  material:{hazard:"Overexertion / strains / dropped material",control:"Plan lift and clear path; up to 40 lb single-person, 40–80 lb team lift, over 80 lb mechanical means; use team lift/mechanical means for material over 10 ft."},
+  heat:{hazard:"Heat stress / dehydration",control:"Provide water, rest, shade/cooling as conditions require; monitor employees; communicate symptoms; stop work and respond promptly if symptoms appear."},
+  chemical:{hazard:"Chemical exposure / inhalation / splash",control:"Review label and SDS before use; use required chemical PPE; maintain ventilation and spill controls; store and handle chemicals per SDS."},
+  traffic:{hazard:"Struck-by vehicle / pedestrian interaction",control:"Use barricades, signs, cones or spotters; define work zone; maintain clear travel routes; communicate with others in the area."},
+  housekeeping:{hazard:"Trips, blocked access, cords or debris",control:"Keep walkways/exits clear; route cords to reduce trip hazards; clean spills; remove scrap/debris; keep access to emergency equipment clear."}
+};
 
-const manualTopics = [
- ["PTP / JSA / JHA","List job steps in sequential order, identify the hazard for each step, and state how the hazard will be eliminated or controlled. CDI's PTP is used before each job; it is valid up to five workdays only if the job description does not change. Update it when scope or personnel change and review it during the morning huddle."],
- ["Ladders","Use OSHA/ANSI-approved fiberglass Type IA (300 lb) or Type IAA (375 lb). Inspect before each use. Maintain three points of contact. Do not stand on the top two rungs. CDI requires fall protection when working at heights greater than 6 ft."],
- ["Fall Protection","CDI states 100% fall protection is required while working at heights greater than 6 ft and also identifies aerial lifts and ladders greater than 6 ft as situations requiring fall protection."],
- ["Electrical Safety","CDI's policy is to remove shock hazards by de-energizing circuits and using its written lockout/tagout procedure. Energized electrical work requires specific authorization and a written planning process."],
- ["LOTO","Notify affected employees, shut equipment down, isolate energy, dissipate or restrain stored energy, apply locks, and verify the equipment cannot operate before beginning work."],
- ["Material Handling","Plan the move and clear the path. CDI states one employee may carry up to 40 lb, team lift 40–80 lb, and use mechanical means above 80 lb. Material longer than 10 ft requires a team lift or mechanical transport."],
- ["Housekeeping","Keep passageways, exits and access to emergency equipment clear; clean spills promptly; return tools to storage; use cones/signs for slippery areas."],
- ["Employee Responsibility","Employees must follow the Safety Manual, wear required PPE, report incidents and hazards, and not operate equipment they have not been trained and authorized to use."]
-];
-
-function showView(id){
- document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
- document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- document.querySelector(`.nav button[data-view="${id}"]`)?.classList.add("active");
- window.scrollTo({top:0,behavior:"smooth"});
+function e(id){return document.getElementById(id)}
+function go(n){
+ [1,2,3,4].forEach(i=>{e("s"+i).classList.toggle("hidden",i!==n);e("d"+i).classList.toggle("active",i===n)});
+ e("output").classList.add("hidden"); window.scrollTo({top:0,behavior:"smooth"});
 }
-document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>showView(b.dataset.view));
-document.querySelector(".go-builder").onclick=()=>showView("builder");
-document.querySelector(".go-library").onclick=()=>showView("library");
-document.querySelector(".go-projects").onclick=()=>showView("projects");
-
-document.getElementById("date").valueAsDate = new Date();
-document.getElementById("hazardCount").textContent = hazards.length;
-
-function renderLibrary(filter=""){
- const q=filter.trim().toLowerCase();
- const list=hazards.filter(h=>!q || (h.cat+" "+h.hazard+" "+h.control).toLowerCase().includes(q));
- document.getElementById("hazardTable").innerHTML = `<table><thead><tr><th>Category</th><th>Hazard</th><th>Control / Mitigation</th></tr></thead><tbody>`+
- list.map(h=>`<tr><td><span class="tag">${h.cat}</span></td><td>${h.hazard}</td><td>${h.control}</td></tr>`).join("")+
- `</tbody></table>${list.length===0?'<p class="muted">No matches found.</p>':""}`;
+e("dateStart").valueAsDate=new Date();
+e("addCrew").onclick=()=>{
+ const v=e("crewInput").value.trim(); if(!v) return;
+ crew.push(v); e("crewInput").value=""; renderCrew(); e("crewInput").focus();
+};
+e("crewInput").addEventListener("keydown",ev=>{if(ev.key==="Enter"){ev.preventDefault();e("addCrew").click()}});
+function renderCrew(){
+ e("crewList").innerHTML=crew.map((n,i)=>`<div class="chip">${esc(n)} <button onclick="removeCrew(${i})">×</button></div>`).join("");
 }
-renderLibrary();
-document.getElementById("hazardSearch").oninput=e=>renderLibrary(e.target.value);
-document.getElementById("resetSearch").onclick=()=>{document.getElementById("hazardSearch").value="";renderLibrary()};
+function removeCrew(i){crew.splice(i,1);renderCrew()}
+function esc(s){return (s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
 
-document.getElementById("manualPolicies").innerHTML=manualTopics.map(([t,d])=>`<div class="policy"><strong>${t}</strong><small>${d}</small></div>`).join("");
-
-function selectedKeys(){return [...document.querySelectorAll("#conditions input:checked")].map(x=>x.value)}
-function computeScore(keys){
- let s=0;
- if(document.getElementById("job").value.trim()) s+=10;
- if(document.getElementById("leader").value.trim()) s+=10;
- if(document.getElementById("crew").value.trim()) s+=10;
- if(document.getElementById("task").value.trim().length>=8) s+=20;
- if(keys.length>=1) s+=15;
- if(keys.length>=3) s+=15;
- if(keys.includes("height") && (keys.includes("ladder")||keys.includes("aerial"))) s+=10;
- if(keys.includes("electrical") && keys.includes("loto")) s+=10;
- return Math.min(100,s);
+function addTaskRow(step="",hazard="",control=""){
+ taskId++;
+ const d=document.createElement("div");d.className="taskrow";d.dataset.id=taskId;
+ d.innerHTML=`<div class="taskhead"><span class="tasknum">Step ${document.querySelectorAll(".taskrow").length+1}</span><button class="btn danger" style="padding:7px 9px" onclick="this.closest('.taskrow').remove();renumber()">Remove</button></div>
+ <div class="taskgrid">
+ <div><label>Work Step</label><textarea class="step" placeholder="Example: Set up scissor lift">${esc(step)}</textarea></div>
+ <div><label>Hazard(s)</label><textarea class="haz" placeholder="Example: Fall, pinch points">${esc(hazard)}</textarea></div>
+ <div><label>Control(s)</label><textarea class="ctl" placeholder="Example: Inspect lift, barricade area">${esc(control)}</textarea></div>
+ </div>`;
+ e("taskRows").appendChild(d);
 }
-function generate(){
- const keys=selectedKeys();
- let list=hazards.filter(h=>h.keys.some(k=>keys.includes(k)));
- if(keys.length) list=[...list,...hazards.filter(h=>h.keys.includes("general"))];
- const uniq=[]; const seen=new Set();
- list.forEach(h=>{if(!seen.has(h.hazard)){seen.add(h.hazard);uniq.push(h)}});
- const task=document.getElementById("task").value.trim();
+function renumber(){[...document.querySelectorAll(".taskrow")].forEach((r,i)=>r.querySelector(".tasknum").textContent="Step "+(i+1))}
+addTaskRow();
+addTaskRow();
+
+function preset(type){
+ e("taskRows").innerHTML=""; taskId=0;
+ const p={
+  camera:[
+   ["Review work area and stage materials","Trips, access restrictions, interaction with occupants","Inspect area; keep access and emergency equipment clear; establish work zone."],
+   ["Set up access equipment","Fall, unstable setup, struck-by","Inspect ladder/lift; set on stable surface; control area; use required fall protection."],
+   ["Install camera and cabling","Overhead work, dropped objects, cuts, electrical exposure","Barricade below; secure tools/material; use gloves/eye protection; verify electrical conditions before work."],
+   ["Clean up and inspect completed area","Debris, cords, leftover materials","Remove scrap; return tools; restore clear walkways; final area inspection."]
+  ],
+  cable:[
+   ["Inspect route and stage reel/material","Trips, access, manual handling","Clear route; inspect equipment; use proper lifting method and reel stands."],
+   ["Set up pulling equipment and work zone","Pinch points, stored energy, pedestrian exposure","Inspect equipment; barricade/tape area; establish communication and line-of-fire controls."],
+   ["Pull cable/fiber","Overexertion, pinch points, cuts, sudden movement","Use enough personnel; coordinate pull; wear gloves/eye protection; stay out of line of fire."],
+   ["Dress cable and clean area","Cuts, overhead work, housekeeping","Use proper tools; maintain access control; remove scrap and restore walkways."]
+  ],
+  ladder:[
+   ["Inspect ladder and work area","Damaged ladder, unstable ground, pedestrian traffic","Use approved fiberglass ladder; inspect before use; stable setup; barricade/detour traffic."],
+   ["Climb and perform work","Fall, overreaching, dropped objects","Three points of contact; do not carry items while climbing; do not overreach; control area below."],
+   ["Remove ladder and clean area","Trips, struck-by, blocked access","Climb down before moving; store ladder properly; remove barricades only after work is complete."]
+  ],
+  lift:[
+   ["Inspect lift and work area","Equipment defect, collision, overhead obstruction","Perform pre-use inspection; check travel path/overhead hazards; trained operator only."],
+   ["Set up and barricade work zone","Pedestrian exposure, struck-by","Use cones/barricades/signage; coordinate with others; spotter where needed."],
+   ["Elevate and perform work","Fall, pinch/crush, dropped objects","Use required fall protection; keep body within platform; maintain clearances; secure tools/material."],
+   ["Lower, park and clean area","Collision, trip hazards","Lower platform before travel as required; park safely; remove debris and restore area."]
+  ],
+  drill:[
+   ["Inspect work area and locate services","Hidden utilities, electrical, silica/dust","Verify penetration location and utility clearance; identify required permit; set dust control."],
+   ["Set up drill and work zone","Flying particles, noise, cords, pedestrians","Inspect tool; eye/face/hearing protection; manage cords; barricade area."],
+   ["Drill / anchor","Dust, kickback, hand injury, falling debris","Use approved dust control; stable body position; two-hand control if applicable; keep others clear."],
+   ["Clean work area","Dust/debris, sharp waste","HEPA/wet cleanup as applicable; remove debris; inspect finished area."]
+  ]
+ }[type];
+ p.forEach(x=>addTaskRow(...x));
+ const map={camera:["tools","overhead","traffic","housekeeping"],cable:["material","tools","traffic","housekeeping"],ladder:["ladder","height","traffic","overhead"],lift:["lift","height","overhead","traffic"],drill:["tools","chemical","traffic","housekeeping"]}[type]||[];
+ document.querySelectorAll("#checks input").forEach(c=>c.checked=map.includes(c.value));
+}
+
+function getTasks(){return [...document.querySelectorAll(".taskrow")].map(r=>({step:r.querySelector(".step").value.trim(),haz:r.querySelector(".haz").value.trim(),ctl:r.querySelector(".ctl").value.trim()})).filter(x=>x.step||x.haz||x.ctl)}
+function selected(scope){return [...document.querySelectorAll(scope+" input:checked")].map(x=>x.value)}
+function buildReview(){
+ const conditions=selected("#checks"), tasks=getTasks(), missing=[];
+ if(!e("jobNo").value.trim()) missing.push("Job / Project Number");
+ if(!e("leader").value.trim()) missing.push("Job Leader / Foreman");
+ if(!e("taskName").value.trim()) missing.push("Task Name");
+ if(crew.length===0) missing.push("At least one crew member");
+ if(tasks.length===0 || tasks.every(t=>!t.step)) missing.push("At least one work step");
+ const suggestions=conditions.map(k=>auto[k]).filter(Boolean);
  let html="";
- if(!task) html+=`<div class="notice red">Enter a task/scope before relying on this review.</div>`;
- if(keys.length===0) html+=`<div class="notice">No work conditions selected. Select everything that applies to the task.</div>`;
- html += uniq.length?uniq.map((h,i)=>`<div class="result"><h4>${i+1}. ${h.hazard}</h4><p><strong>Control:</strong> ${h.control}</p><p><span class="tag">${h.cat}</span></p></div>`).join(""):`<p class="muted">No hazards generated yet.</p>`;
- document.getElementById("results").innerHTML=html;
-
- const score=computeScore(keys);
- document.getElementById("score").textContent=score+"%";
- document.getElementById("scoreRing").style.background=`conic-gradient(var(--accent2) 0deg ${score*3.6}deg,#21394f ${score*3.6}deg)`;
- document.getElementById("scoreText").textContent=score>=90?"Strong first review":score>=70?"Needs a little more detail":"Needs more information";
- document.getElementById("scoreNote").textContent="This score measures completeness of this starter form, not approval or compliance.";
-
- const notes=[];
- if(!document.getElementById("crew").value.trim()) notes.push("Add crew members.");
- if(!document.getElementById("task").value.trim()) notes.push("Describe the task/scope.");
- if(keys.includes("height")&&!keys.includes("ladder")&&!keys.includes("aerial")) notes.push("Identify how elevated work will be accessed.");
- if(keys.includes("electrical")&&!keys.includes("loto")) notes.push("Confirm whether LOTO applies. CDI policy favors de-energized work.");
- if(keys.includes("ladder")&&!keys.includes("height")) notes.push("Confirm the actual ladder/work height.");
- if(keys.includes("overhead")&&!keys.includes("traffic")) notes.push("Consider access control/barricades below overhead work.");
- document.getElementById("reviewNotes").innerHTML=notes.map(n=>`<div class="policy"><small>⚠ ${n}</small></div>`).join("") || `<div class="policy"><small>✓ No obvious form-completeness flags from the selected conditions.</small></div>`;
+ if(missing.length) html+=`<div class="notice warn"><b>Before generating, add:</b> ${missing.join(", ")}</div>`;
+ html+=`<div class="summary">
+ <div class="sumblock"><h3>Job</h3><b>${esc(e("taskName").value||"Task not entered")}</b><p>${esc(e("jobNo").value||"No job number")} • ${esc(e("leader").value||"No leader")}</p><p>${crew.length} crew member(s)</p></div>
+ <div class="sumblock"><h3>Automatic Safety Additions</h3><ul>${suggestions.map(x=>`<li>${esc(x.hazard)}</li>`).join("")||"<li>No safety conditions selected.</li>"}</ul></div>
+ </div>
+ <h3>Work Steps</h3>
+ <div class="sumblock"><ul>${tasks.map((t,i)=>`<li><b>${i+1}. ${esc(t.step||"Step")}</b><br>${esc(t.haz||"Hazard not entered")}<br><span style="color:#526272">${esc(t.ctl||"Control not entered")}</span></li>`).join("")}</ul></div>`;
+ e("reviewBox").innerHTML=html;go(4);
 }
-document.getElementById("generate").onclick=generate;
 
-document.getElementById("copyResults").onclick=async()=>{
- const task=document.getElementById("task").value;
- const keys=selectedKeys();
- const list=hazards.filter(h=>h.keys.some(k=>keys.includes(k)));
- const text=`CDI PTP / JSA SAFETY REVIEW\nTask: ${task}\nProject: ${document.getElementById("job").value}\nLeader: ${document.getElementById("leader").value}\nCrew: ${document.getElementById("crew").value}\n\n`+
- list.map((h,i)=>`${i+1}. HAZARD: ${h.hazard}\nCONTROL: ${h.control}`).join("\n\n");
- try{await navigator.clipboard.writeText(text);alert("Results copied.");}catch(e){alert("Copy was blocked by the browser. Select the results manually.");}
-};
-document.getElementById("clearForm").onclick=()=>{
- ["job","leader","crew","task"].forEach(id=>document.getElementById(id).value="");
- document.querySelectorAll("#conditions input").forEach(x=>x.checked=false);
- document.getElementById("results").innerHTML='<p class="muted">Select work conditions and click “Generate Safety Review.”</p>';
- document.getElementById("score").textContent="0%";
- document.getElementById("scoreText").textContent="Not reviewed";
- document.getElementById("scoreNote").textContent="Complete the form first.";
- document.getElementById("reviewNotes").innerHTML="";
-};
+function mark(v,arr){return `<span class="box ${arr.includes(v)?"on":""}"></span>`}
+function yn(flag){return `${flag?'<span class="box on"></span> Yes <span class="box"></span> No':'<span class="box"></span> Yes <span class="box on"></span> No'}`}
+function generatePTP(){
+ const conditions=selected("#checks"), permits=selected("#permits"), tasks=getTasks();
+ const additions=conditions.map(k=>auto[k]).filter(Boolean);
+ const rows=[...tasks];
+ additions.forEach(a=>{
+   if(!rows.some(r=>(r.haz+" "+r.ctl).toLowerCase().includes(a.hazard.toLowerCase().split(" ")[0]))) rows.push({step:"Applicable safety condition",haz:a.hazard,ctl:a.control});
+ });
+ const hazards=[...new Set(rows.map(x=>x.haz).filter(Boolean))];
+ const controls=[...new Set(rows.map(x=>x.ctl).filter(Boolean))];
 
-document.getElementById("project").onchange=e=>{
- document.getElementById("modeLabel").textContent=e.target.value;
-};
+ const hazardChecks=[
+ ["Chemical burn","chemical"],["Thermal burn","tools"],["Particles in eye","tools"],["Overexertion","material"],
+ ["Elevated work","height"],["Overhead work","overhead"],["Dropping materials","overhead"],["Inhalation of hazardous substances","chemical"],
+ ["Vehicle collisions","traffic"],["Cuts","tools"],["Fire","tools"],["Spills","chemical"],["Abrasions","tools"],["Loud noises","tools"],
+ ["Heat stress","heat"],["Traffic Controls","traffic"],["Access to Work Area","traffic"],["Silica Exposure","chemical"]
+ ];
+ const controlChecks=[
+ ["Fall protection plan","height"],["Appropriate gloves","tools"],["Eye/face protection","tools"],["Enough people to complete task","material"],
+ ["Housekeeping","housekeeping"],["Electrical cords/leads off floor","housekeeping"],["Barricades with signs in place","traffic"],
+ ["Get additional training for task","lift"],["Correct body position for task","material"],["Stretch and flex","material"],
+ ["Use scaffold / man-lift checklist","lift"],["Communicate with our team – huddle up","traffic"]
+ ];
+ const high=[
+ ["Material Handling","material"],["Hazardous Materials","chemical"],["Driving","traffic"],["Working from Heights","height"],
+ ["Lifting Operations","material"],["Confined Spaces","confined"],["Energy Isolation","loto"],["Electrical","electrical"],
+ ["Ground Disturbance","ground"],["Mobile Equipment","lift"],["Extreme Heat","heat"],["Extreme Cold","cold"],["Silica","chemical"]
+ ];
+ const cset=[...conditions];
+ if(permits.includes("Confined Space"))cset.push("confined");
+ if(permits.includes("Ground / Wall Penetration"))cset.push("ground");
 
-const projects=JSON.parse(localStorage.getItem("cdiProjects")||"[]");
-function renderProjects(){
- document.getElementById("projectCount").textContent=projects.length;
- document.getElementById("projectList").innerHTML=projects.length?projects.map(p=>`<div class="policy"><strong>${p}</strong><small>Custom project layer</small></div>`).join(""):"<p class='muted'>No project-specific manuals loaded yet.</p>";
- const sel=document.getElementById("project");
- sel.innerHTML='<option value="CDI Company Standard">CDI Company Standard</option>'+projects.map(p=>`<option>${p}</option>`).join("");
+ const crewLines=crew.map(n=>`<div class="field">${esc(n)}</div>`).join("") || '<div class="field"></div>';
+ const p1=`
+ <div class="ptp-page">
+  <div class="dochead"><div class="doclogo">CDI<small>Technology Services</small></div><div class="doctitle">PRE-TASK PLAN (PTP)</div></div>
+  <div class="docgrid2">
+   <div><div class="lab">Job No.</div><div class="field">${esc(e("jobNo").value)}</div></div>
+   <div><div class="lab">Company</div><div class="field">${esc(e("company").value)}</div></div>
+   <div><div class="lab">Job Leader / Foreman</div><div class="field">${esc(e("leader").value)}</div></div>
+   <div><div class="lab">Date / Time Started</div><div class="field">${esc(e("dateStart").value)} ${esc(e("timeStart").value)}</div></div>
+  </div>
+  <div class="docsection"><h4>Task Name</h4><div class="docbody"><div class="field">${esc(e("taskName").value)}</div></div></div>
+  <div class="docsection"><h4>Production Goal / Finish Date</h4><div class="docbody"><div class="field">${esc(e("finishGoal").value)}</div></div></div>
+  <div class="docsection"><h4>Crew Members</h4><div class="docbody docgrid2">${crewLines}</div></div>
+  <div class="docgrid2">
+   <div class="docsection"><h4>Possible Hazards</h4><div class="docbody doclist">${hazardChecks.map(([n,k])=>`<div class="doccheck">${mark(k,cset)}${n}</div>`).join("")}</div></div>
+   <div class="docsection"><h4>Ways to Eliminate Hazards</h4><div class="docbody doclist">${controlChecks.map(([n,k])=>`<div class="doccheck">${mark(k,cset)}${n}</div>`).join("")}</div></div>
+  </div>
+  <div class="docsection"><h4>Permit Required / Type Issued</h4><div class="docbody doclist">${["Confined Space","Electrical Room Work","Hot Work","Crane - Critical Lift","Energized Electrical Work","Ground / Wall Penetration"].map(n=>`<div class="doccheck">${mark(n,permits)}${n}</div>`).join("")}</div></div>
+  <div class="docgrid2">
+   <div class="docsection"><h4>General Checklist</h4><div class="docbody">
+    <div class="doccheck">SDS reviewed for task? ${yn(conditions.includes("chemical"))}</div>
+    <div class="doccheck">All extension cords inspected? ${yn(conditions.includes("tools"))}</div>
+    <div class="doccheck">All fall protection equipment inspected? ${yn(conditions.includes("height")||conditions.includes("lift"))}</div>
+    <div class="doccheck">Emergency procedure and contacts reviewed? ${yn(true)}</div>
+    <div class="doccheck">Work communicated with others in area? ${yn(true)}</div>
+   </div></div>
+   <div class="docsection"><h4>High Risk Activities</h4><div class="docbody">${high.map(([n,k])=>`<div class="doccheck">${n}: ${yn(cset.includes(k))}</div>`).join("")}</div></div>
+  </div>
+ </div>`;
+ const p2=`
+ <div class="ptp-page">
+  <div class="dochead"><div class="doclogo">CDI<small>Technology Services</small></div><div class="doctitle">PTP — WORK STEPS</div></div>
+  <table class="doc-table"><thead><tr><th style="width:28%">Steps to Complete Task</th><th style="width:30%">Hazards Associated With Each Step</th><th>Ways to Eliminate / Control Hazards</th></tr></thead>
+  <tbody>${rows.map((r,i)=>`<tr><td><b>${i+1}.</b> ${esc(r.step)}</td><td>${esc(r.haz)}</td><td>${esc(r.ctl)}</td></tr>`).join("")}</tbody></table>
+  <div class="docgrid2">
+   <div class="docsection"><h4>Has Anything Changed From the Original Plan?</h4><div class="docbody">
+    <div class="doccheck">Personnel: <span class="box"></span> Yes <span class="box on"></span> No <span class="box"></span> N/A</div>
+    <div class="doccheck">Task: <span class="box"></span> Yes <span class="box on"></span> No <span class="box"></span> N/A</div>
+    <div class="doccheck">Job Site / Weather: <span class="box"></span> Yes <span class="box on"></span> No <span class="box"></span> N/A</div>
+    <div class="doccheck">Access: <span class="box"></span> Yes <span class="box on"></span> No <span class="box"></span> N/A</div>
+    <div class="lab" style="margin-top:8px">What changed? Include date and time:</div><div class="sigline"></div><div class="sigline"></div>
+   </div></div>
+   <div class="docsection"><h4>Daily Crew Confirmation</h4><div class="docbody">
+    <div class="doccheck">Crew aware of plan and changes: <span class="box on"></span> Yes <span class="box"></span> No</div>
+    <div class="doccheck">Materials and safety equipment available: <span class="box on"></span> Yes <span class="box"></span> No</div>
+    <div class="doccheck">Accident / injury today: <span class="box"></span> Yes <span class="box on"></span> No</div>
+    <div class="lab" style="margin-top:10px">Foreman / Lead Signature</div><div class="sigline"></div>
+    <div class="lab">Crew Review / Signatures</div>${crew.map(()=>'<div class="sigline"></div>').join("")}
+   </div></div>
+  </div>
+  <div class="docsection"><h4>PTP Safety Notes</h4><div class="docbody">
+   <div class="docline">• PTP must be reviewed during the daily morning huddle.</div>
+   <div class="docline">• Update the PTP if the job description changes or personnel are added or removed.</div>
+   <div class="docline">• Stop and contact supervision/safety when conditions differ from the plan or a new hazard is identified.</div>
+  </div></div>
+ </div>`;
+ e("doc").innerHTML=p1+p2;
+ e("s4").classList.add("hidden");e("output").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"});
 }
-renderProjects();
+function resetAll(){location.reload()}
 </script>
 </body>
 </html>
