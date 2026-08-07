@@ -51,6 +51,8 @@ label.lbl{display:block;font-weight:700;font-size:13px;margin-bottom:5px}input,t
 
 
 .enginebox{background:#f7fbff;border:1px solid #bfd9ec;border-radius:12px;padding:12px;margin:10px 0}.enginebadge{display:inline-flex;background:#e8f6ee;color:#17633d;border:1px solid #b8dfc8;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:800}.sourcepill{display:inline-block;border-radius:999px;padding:3px 7px;font-size:10px;font-weight:800;background:#edf2f7;color:#506174}.sourcepill.cdi{background:#e7f6eb;color:#17643b}.engine-result{border:1px solid #d4e0ea;background:#fff;border-radius:10px;padding:10px;margin:8px 0}.engine-result h4{margin:0 0 5px;font-size:14px}.engine-result p{margin:4px 0;color:#4b6073;font-size:13px;line-height:1.4}.libfilters{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.libfilters input,.libfilters select{max-width:320px}.libstats{font-size:12px;color:var(--muted);margin:6px 0 12px}
+
+.selection-note{background:#eef7ff;border-left:4px solid var(--blue);border-radius:8px;padding:10px 12px;margin:10px 0;font-size:13px;line-height:1.4;color:#38536a}
 </style>
 </head>
 <body>
@@ -166,6 +168,7 @@ label.lbl{display:block;font-weight:700;font-size:13px;margin-bottom:5px}input,t
 <label class="condition"><input type="checkbox" value="housekeeping"><div><b>Cords / housekeeping / access</b><small>Trips, debris, blocked access</small></div></label>
 </div>
 <div class="navrow" style="justify-content:flex-start"><button class="btn secondary" onclick="suggestAll()">Analyze All Steps</button></div>
+<div class="selection-note"><b>How Safety Hub chooses hazards:</b> it now places only the strongest, most relevant hazards on each job step. It will not automatically dump the entire library into the PTP. If the actual jobsite has another hazard, add it manually.</div>
 <div id="hazardSteps"></div>
 <div class="navrow"><button class="btn ghost" onclick="go(2)">Back</button><button class="btn primary" onclick="go(4);refreshChecklist()">Next: PTP Checklist</button></div>
 </section>
@@ -260,12 +263,74 @@ function normalizeConcepts(text){const t=String(text||"").toLowerCase();const c=
 function contextConcepts(step){const selected=selectedConditions().map(x=>x==="lift"?"mewp":x);return normalizeConcepts([step,E("taskName")?.value||"",...selected].join(" "))}
 function scoreEntry(e,concepts,raw){let s=0;const blob=(e.hazard+" "+e.control+" "+e.category).toLowerCase();e.tags.forEach(tag=>{if(concepts.has(tag))s+=5;if(raw.includes(tag))s+=2});concepts.forEach(c=>{if(blob.includes(c))s+=1});if(e.source==="CDI Manual"&&e.tags.some(t=>concepts.has(t)))s+=2.5;return s}
 function interactionSuggestions(concepts){return INTERACTION_RULES.filter(r=>r.when.every(w=>concepts.has(w))).map((r,i)=>({id:"I"+i,category:r.category,hazard:r.hazard,control:r.control,source:"Interaction Rule",score:15}))}
-function suggestionsFor(step){const raw=String(step||"").toLowerCase(),concepts=contextConcepts(step);const scored=HAZARD_LIBRARY.map(e=>({...e,score:scoreEntry(e,concepts,raw)})).filter(e=>e.score>=3.2).sort((a,b)=>b.score-a.score);const merged=[...interactionSuggestions(concepts),...scored],seen=new Set(),out=[];for(const e of merged){const root=e.hazard.split(" — ")[0].toLowerCase().replace(/[^a-z0-9]+/g," ");if(seen.has(root))continue;seen.add(root);out.push(e);if(out.length>=20)break}return out}
+function suggestionsFor(step){
+ const raw=String(step||"").toLowerCase();
+ const concepts=contextConcepts(step);
+
+ // Base records are the clean master hazards. Context-expanded "— ..." variants are
+ // deliberately excluded from automatic PTP suggestions because they create repetitive,
+ // awkward wording. Interaction rules handle combined exposures more cleanly.
+ const scored=HAZARD_LIBRARY
+   .filter(e=>!String(e.hazard).includes(" — "))
+   .map(e=>({...e,score:scoreEntry(e,concepts,raw)}))
+   .filter(e=>e.score>=5.2)
+   .sort((a,b)=>b.score-a.score);
+
+ const merged=[...interactionSuggestions(concepts),...scored];
+ const seen=new Set(),families=new Set(),out=[];
+
+ function relevant(e){
+   const cat=String(e.category||"").toLowerCase();
+   const text=(raw+" "+[...concepts].join(" ")).toLowerCase();
+   const has=(...xs)=>xs.some(x=>text.includes(x));
+   if(cat.includes("ladder")&&!has("ladder"))return false;
+   if((cat.includes("mewp")||cat.includes("aerial lift"))&&!has("lift","mewp","scissor","boom"))return false;
+   if(cat.includes("forklift")&&!has("forklift"))return false;
+   if(cat.includes("scaffold")&&!has("scaffold"))return false;
+   if(cat.includes("confined")&&!has("confined"))return false;
+   if(cat.includes("rigging")&&!has("rigging","hoist","crane","sling"))return false;
+   if(cat.includes("hot work")&&!has("hot work","weld","grind","torch","spark"))return false;
+   if(cat.includes("driving")&&!has("drive","vehicle","road","parking","travel"))return false;
+   return true;
+ }
+
+ for(const e of merged){
+   if(!relevant(e))continue;
+   const root=String(e.hazard).toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+   if(seen.has(root))continue;
+
+   // Limit similar hazard families so one step does not get five versions of the same risk.
+   const family=(e.category||"General")+"|"+(e.tags||[]).slice(0,2).sort().join("-");
+   if(families.has(family) && e.source!=="Interaction Rule" && e.source!=="CDI Manual")continue;
+
+   seen.add(root);
+   families.add(family);
+   out.push(e);
+
+   // A field PTP needs the strongest hazards, not every theoretical possibility.
+   if(out.length>=4)break;
+ }
+ return out
+}
 
 function suggestStep(id){
  const step=getSteps().find(x=>String(x.id)===String(id));if(!step)return;
- const existing=window.stepPairs[id]||[];const keys=new Set(existing.map(p=>p.libId).filter(Boolean));
- suggestionsFor(step.step).forEach(h=>{if(!keys.has(h.id))existing.push({libId:h.id,haz:h.hazard,ctl:h.control,source:h.source,score:h.score})});window.stepPairs[id]=existing;renderPairs(id);
+
+ // Preserve anything the employee entered manually.
+ const manual=(window.stepPairs[id]||[]).filter(p=>!p.engineSuggested);
+ const suggested=suggestionsFor(step.step).map(h=>({
+   libId:h.id,
+   haz:h.hazard,
+   ctl:h.control,
+   source:h.source,
+   score:h.score,
+   engineSuggested:true
+ }));
+
+ // Automatic suggestions are intentionally capped. Employees can still add a real
+ // jobsite-specific hazard manually.
+ window.stepPairs[id]=[...manual,...suggested];
+ renderPairs(id);
 }
 function suggestAll(){getSteps().forEach(s=>suggestStep(s.id))}
 function addPair(id,haz="",ctl=""){window.stepPairs[id]=window.stepPairs[id]||[];window.stepPairs[id].push({haz,ctl,libId:null});renderPairs(id)}
@@ -516,6 +581,29 @@ function renderPage2(d){
  s+=answerYN("covid",1284,1367,857);
  return s+svgEnd()
 }
+function compactForPTP(text,maxChars){
+ text=String(text||"").replace(/\s+/g," ").trim();
+ if(text.length<=maxChars)return text;
+ const sentences=text.split(/(?<=[.!?])\s+/);
+ let out="";
+ for(const s of sentences){
+   if((out+" "+s).trim().length<=maxChars)out=(out+" "+s).trim();
+   else break;
+ }
+ if(out.length>=35)return out;
+ const cut=text.slice(0,maxChars),p=cut.lastIndexOf(" ");
+ return (p>30?cut.slice(0,p):cut).trim();
+}
+function compactPTPData(d){
+ return {...d,steps:d.steps.map(st=>({
+   ...st,
+   pairs:st.pairs.slice(0,4).map(p=>({
+     ...p,
+     haz:compactForPTP(p.haz,72),
+     ctl:compactForPTP(p.ctl,125)
+   }))
+ }))};
+}
 function linesNeededForOfficialPage(d){
  let total=0;
  d.steps.forEach(st=>{
@@ -527,12 +615,15 @@ function linesNeededForOfficialPage(d){
  return total;
 }
 function generateOfficial(){
- const d=allData(),issues=safetyIssues();
+ const raw=allData(),issues=safetyIssues();
+ const d=compactPTPData(raw);
  const needed=linesNeededForOfficialPage(d);
+
  if(needed>17){
-   alert(`The wording needs ${needed} writing lines, but the official CDI PTP has 17 usable lines for Steps / Hazards / Controls. Shorten or combine wording so nothing is cut off.`);
+   alert(`The selected hazards still need ${needed} writing lines, but the official CDI PTP has 17 usable lines.\n\nGo back to the hazard review and remove any suggestion that does not actually apply. Safety Hub will not shrink the form until it becomes unreadable.`);
    return;
  }
+
  E("preview").innerHTML=`<div class="sheet">${renderPage1(d)}</div><div class="sheet">${renderPage2(d)}</div>`;
  E("s5").classList.add("hidden");E("output").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"});
 }
