@@ -34,6 +34,17 @@ h1,h2,h3{letter-spacing:-.2px}h1{font-size:28px;margin:0 0 7px}h2{font-size:21px
 @media(max-width:700px){main{padding:16px 12px 40px}.brand img{width:92px;height:42px}.brandtext small{display:none}.grid2{grid-template-columns:1fr}.progress{grid-template-columns:1fr 1fr}.conditions{grid-template-columns:1fr 1fr}.checkrow{grid-template-columns:1fr}.stephead{align-items:flex-start;flex-direction:column}}
 @page{size:letter landscape;margin:0}
 @media print{header,.nav,.progress,.no-print,.card:not(#output){display:none!important}main{max-width:none;margin:0;padding:0}#output{display:block!important;border:0;box-shadow:none;padding:0;margin:0}.formpreview{background:#fff;padding:0}.sheet{width:11in;height:8.5in;max-width:none;margin:0;box-shadow:none;page-break-after:always}.sheet:last-child{page-break-after:auto}.sheet svg{width:11in;height:8.5in}}
+
+.formpage{position:relative;width:100%;aspect-ratio:1584/1224;background:#fff;margin:0 auto 15px;box-shadow:0 5px 18px rgba(0,0,0,.16);overflow:hidden}
+.formpage>img{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;pointer-events:none}
+.ovtext{position:absolute;border:0;background:transparent;color:#111;font-family:Arial,Helvetica,sans-serif;padding:0 2px;margin:0;outline:none;line-height:1.05;resize:none;overflow:hidden}
+.ovtext:focus{background:rgba(229,244,255,.75);box-shadow:0 0 0 1px rgba(8,103,173,.35);border-radius:2px}
+.ovcheck{position:absolute;width:1.1%;aspect-ratio:1/1;border:1px solid transparent;display:grid;place-items:center;cursor:pointer;font-family:Arial,sans-serif;font-weight:900;font-size:clamp(9px,1.15vw,16px);line-height:1;color:#111;background:transparent}
+.ovcheck:hover{background:rgba(208,235,252,.7);border-color:rgba(8,103,173,.35)}
+.ovcheck.on::after{content:"X"}
+.previewhint{background:#eef7ff;border:1px solid #c9dfef;border-left:4px solid var(--blue);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:13px;color:#39556b}
+@media print{.formpage{width:11in;height:8.5in;aspect-ratio:auto;margin:0;box-shadow:none;page-break-after:always}.formpage:last-child{page-break-after:auto}.ovtext:focus{background:transparent;box-shadow:none}.previewhint{display:none!important}}
+
 </style>
 </head>
 <body>
@@ -96,7 +107,7 @@ h1,h2,h3{letter-spacing:-.2px}h1{font-size:28px;margin:0 0 7px}h2{font-size:21px
 
 <section id="s5" class="card hidden"><h2>Review PTP</h2><div id="review"></div><div class="navrow"><button class="btn ghost" onclick="go(4)">Back</button><button class="btn primary" onclick="generatePTP()">Generate Official CDI PTP</button></div></section>
 
-<section id="output" class="card hidden"><div class="no-print"><h2>Filled CDI PTP</h2><div class="notice good"><b>Official CDI template only.</b> Safety Hub will not create a continuation or addendum page.</div><div class="navrow" style="justify-content:flex-start"><button class="btn primary" onclick="window.print()">Print / Save PDF</button><button class="btn secondary" onclick="go(5)">Edit</button></div></div><div id="preview" class="formpreview"></div></section>
+<section id="output" class="card hidden"><div class="no-print"><h2>Filled CDI PTP</h2><div class="notice good"><b>Official CDI template only.</b> Click any text field on the preview to edit it. Click a checkbox on the form to check or uncheck it before printing.</div><div class="previewhint">The preview below is editable. Changes made directly on the form are what will print.</div><div class="navrow" style="justify-content:flex-start"><button class="btn primary" onclick="window.print()">Print / Save PDF</button><button class="btn secondary" onclick="go(5)">Edit</button></div></div><div id="preview" class="formpreview"></div></section>
 </section>
 </main>
 <script>
@@ -135,7 +146,135 @@ const QUESTIONS=[
 function seg(id){return `<div class="seg"><label><input type="radio" name="${id}" value="Y" onchange="answers['${id}']='Y'"><span>Yes</span></label><label><input type="radio" name="${id}" value="N" onchange="answers['${id}']='N'"><span>No</span></label><label><input type="radio" name="${id}" value="A" onchange="answers['${id}']='A'"><span>N/A</span></label></div>`}
 function renderChecklist(){E("checklist").innerHTML=QUESTIONS.map(([title,qs])=>`<div class="checksection"><h3>${title}</h3><div class="checkbody">${title==="Ladder Safety Checklist"?'<div class="grid2" style="margin:8px 0 4px"><div><label class="lbl">Height of work</label><input id="workHeight"></div><div><label class="lbl">Height of ladder</label><input id="ladderHeight"></div></div>':""}${qs.map(([id,q])=>`<div class="checkrow"><b>${q}</b>${seg(id)}</div>`).join("")}</div></div>`).join("");Object.entries(answers).forEach(([id,v])=>{const r=document.querySelector(`input[name="${id}"][value="${v}"]`);if(r){r.checked=true}})}
 function permits(){return [...document.querySelectorAll("#permits input:checked")].map(x=>x.value)}
-function reviewPTP(){try{const steps=getSteps(),issues=[];if(!E("jobNo").value.trim())issues.push("Enter Job No.");if(!E("jobLeader").value.trim())issues.push("Enter Job Leader.");if(!E("foreman").value.trim())issues.push("Enter Job Lead or Foreman.");if(!E("taskName").value.trim())issues.push("Enter Task Name.");if(!crew.length)issues.push("Add at least one crew member.");if(!steps.length)issues.push("Add at least one work step.");steps.forEach((s,i)=>{if(!selected(s.id).length)issues.push(`Step ${i+1} needs at least one selected hazard.`)});let out=issues.length?`<div class="notice warn"><b>${issues.length} item${issues.length===1?"":"s"} need attention:</b><ul>${issues.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:'<div class="notice good"><b>PTP content check passed.</b> Review the sequence below.</div>';out+=steps.map((s,i)=>`<div class="reviewstep"><b class="title">Step ${i+1} — ${esc(s.text)}</b><ul>${selected(s.id).map(h=>`<li><b>${esc(h.hazard)}</b><br>${esc(h.control)}</li>`).join("")||"<li>No selected hazards</li>"}</ul></div>`).join("");E("review").innerHTML=out;go(5)}catch(err){console.error(err);alert("Review could not open: "+err.message)}}
+
+function ensureHazard(stepId,hazard,control,source="Checklist"){
+ selections[stepId]=selections[stepId]||[];
+ const exists=selections[stepId].some(x=>String(x.hazard).toLowerCase()===String(hazard).toLowerCase());
+ if(!exists)selections[stepId].push({hazard,control,source,selected:true,custom:false,checklistAdded:true});
+}
+function findBestStep(wordsNeeded){
+ const steps=getSteps();
+ if(!steps.length)return null;
+ const scored=steps.map(s=>{
+   const t=s.text.toLowerCase();
+   let score=0;
+   wordsNeeded.forEach(w=>{if(t.includes(w))score+=3});
+   return {s,score};
+ }).sort((a,b)=>b.score-a.score);
+ return scored[0]?.s||steps[0];
+}
+function applyChecklistHazards(){
+ const steps=getSteps();
+ if(!steps.length)return;
+
+ // Cable / wire pulling
+ if(answers.pullinspect==="N" || answers.pullzone==="N"){
+   const s=findBestStep(["pull","cable","wire","fiber"]);
+   if(s)ensureHazard(s.id,
+     "Cable pull equipment / work zone not adequately controlled",
+     "Stop and inspect pulling equipment; establish a controlled pull zone; keep personnel out of pinch points, bights, and the line of pull.");
+ }
+ // Manual handling
+ if(answers.heavy==="Y" || answers.lifting==="N"){
+   const s=findBestStep(["stage","move","lift","rack","reel","material"]);
+   if(s)ensureHazard(s.id,
+     "Manual handling load may exceed safe capability",
+     "Use team lift or mechanical assistance; plan the route; keep fingers clear of pinch points and maintain clear communication.");
+ }
+ // Gloves / hand protection
+ if(answers.gloves==="N"){
+   const s=findBestStep(["cut","terminate","install","drill","mount","cable"]);
+   if(s)ensureHazard(s.id,
+     "Hand exposure without suitable task-specific gloves",
+     "Select task-appropriate gloves before work and keep hands out of cut, pinch, and line-of-fire zones.");
+ }
+ // Ladder conditions
+ if(answers.ladinspect==="N" || answers.ladstable==="N" || answers.ladclear==="N"){
+   const s=findBestStep(["ladder","access","mount","ceiling"]);
+   if(s)ensureHazard(s.id,
+     "Unsafe ladder condition or setup",
+     "Stop ladder use until it is inspected, placed on firm level footing, and the surrounding work area is controlled and clear.");
+ }
+ // Fall protection
+ if(answers.fall==="N"){
+   const s=findBestStep(["lift","ladder","elevate","overhead","mount"]);
+   if(s)ensureHazard(s.id,
+     "Fall-protection equipment not confirmed inspected",
+     "Do not begin fall-exposure work until required fall-protection equipment is inspected and defective components are removed from service.");
+ }
+ // LOTO
+ if(answers.lotoreq==="Y"){
+   const s=findBestStep(["electrical","panel","terminate","connect","power","controller"]);
+   if(s)ensureHazard(s.id,
+     "Unexpected energization / stored energy",
+     "Identify all energy sources; isolate and lock/tag; dissipate stored energy; verify zero energy before beginning the affected work.");
+ }
+ if(answers.zero==="N" && answers.lotoreq==="Y"){
+   const s=findBestStep(["electrical","panel","terminate","connect"]);
+   if(s)ensureHazard(s.id,
+     "Zero-energy condition not verified",
+     "Stop work and verify the isolation by testing/attempting normal controls as required before contact with the equipment.");
+ }
+ // Extension cords
+ if(answers.cords==="N"){
+   const s=findBestStep(["drill","tool","setup","install"]);
+   if(s)ensureHazard(s.id,
+     "Extension cord condition not verified",
+     "Inspect cords and plugs before use; remove damaged cords from service and route cords to prevent damage and trip hazards.");
+ }
+ // SDS / chemical
+ if(answers.sds==="N"){
+   const s=findBestStep(["firestop","adhesive","chemical","clean","seal"]);
+   if(s)ensureHazard(s.id,
+     "Chemical product used without SDS review",
+     "Stop and review the product label/SDS; identify required ventilation, PPE, handling, and spill controls before use.");
+ }
+ // Utility location / penetration
+ if(answers.utilities==="N" || permits().includes("Ground & Wall Penetration")){
+   const s=findBestStep(["drill","penetrat","core","anchor","wall"]);
+   if(s)ensureHazard(s.id,
+     "Penetration may contact concealed utility or energized service",
+     "Verify the penetration location and concealed utilities before drilling or coring; stop if site conditions differ from the approved plan.");
+ }
+ // Electrical room / energized work
+ if(permits().includes("Electrical room work") || permits().includes("Energized elec. Work")){
+   const s=findBestStep(["electrical","panel","controller","terminate","connect"]);
+   if(s)ensureHazard(s.id,
+     "Electrical exposure in or near energized equipment",
+     "Maintain required electrical clearances and working space; limit work to qualified/authorized personnel and de-energize/isolate whenever possible.");
+ }
+ // Hot work
+ if(permits().includes("Hot work")){
+   const s=findBestStep(["cut","grind","hot","weld"]);
+   if(s)ensureHazard(s.id,
+     "Fire / burn exposure from hot work",
+     "Remove or protect combustibles; contain sparks; provide required fire protection/fire watch and control hot surfaces and fumes.");
+ }
+ // Confined space
+ if(permits().includes("Confined space") || answers.confined==="N"){
+   const s=findBestStep(["manhole","confined","space","entry"]);
+   if(s)ensureHazard(s.id,
+     "Confined-space atmospheric / entry hazard",
+     "Determine permit-space requirements; control entry, atmosphere, ventilation, communication, and rescue provisions before entry.");
+ }
+ // Work communication
+ if(answers.communicated==="N"){
+   const s=steps[0];
+   ensureHazard(s.id,
+     "Work not communicated with nearby personnel / trades",
+     "Conduct a pre-task huddle and coordinate the work area, sequence, barricades, and interaction with other trades or occupants before starting.");
+ }
+ // Emergency procedure
+ if(answers.emergency==="N"){
+   const s=steps[0];
+   ensureHazard(s.id,
+     "Crew not prepared for site emergency response",
+     "Review emergency contacts, alarm/evacuation procedure, muster location, and how to summon medical assistance before starting work.");
+ }
+ steps.forEach(s=>renderHazards(s.id));
+}
+
+function reviewPTP(){try{applyChecklistHazards();const steps=getSteps(),issues=[];if(!E("jobNo").value.trim())issues.push("Enter Job No.");if(!E("jobLeader").value.trim())issues.push("Enter Job Leader.");if(!E("foreman").value.trim())issues.push("Enter Job Lead or Foreman.");if(!E("taskName").value.trim())issues.push("Enter Task Name.");if(!crew.length)issues.push("Add at least one crew member.");if(!steps.length)issues.push("Add at least one work step.");steps.forEach((s,i)=>{if(!selected(s.id).length)issues.push(`Step ${i+1} needs at least one selected hazard.`)});let out=issues.length?`<div class="notice warn"><b>${issues.length} item${issues.length===1?"":"s"} need attention:</b><ul>${issues.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:'<div class="notice good"><b>PTP content check passed.</b> Review the sequence below.</div>';out+=steps.map((s,i)=>`<div class="reviewstep"><b class="title">Step ${i+1} — ${esc(s.text)}</b><ul>${selected(s.id).map(h=>`<li><b>${esc(h.hazard)}</b><br>${esc(h.control)}</li>`).join("")||"<li>No selected hazards</li>"}</ul></div>`).join("");E("review").innerHTML=out;go(5)}catch(err){console.error(err);alert("Review could not open: "+err.message)}}
 
 function wrap(text,max){const w=String(text||"").trim().split(/\s+/).filter(Boolean),a=[];let l="";for(const x of w){const t=l?l+" "+x:x;if(t.length>max&&l){a.push(l);l=x}else l=t}if(l)a.push(l);return a}function compact(text,max){text=String(text||"").replace(/\s+/g," ").trim();if(text.length<=max)return text;const p=text.slice(0,max).lastIndexOf(" ");return text.slice(0,p>30?p:max).trim()}
 function textEl(x,y,t,size=12,bold=false,anchor="start"){return `<text x="${x}" y="${y}" font-family="Arial,Helvetica,sans-serif" font-size="${size}" font-weight="${bold?700:400}" fill="#111" text-anchor="${anchor}">${xml(t)}</text>`}function xmark(x,y){return `<text x="${x}" y="${y}" font-family="Arial" font-size="18" font-weight="900" fill="#111" text-anchor="middle" dominant-baseline="middle">X</text>`}function answerMark(id,xY,xN,xA,y){const v=answers[id];return v==="Y"?xmark(xY,y):v==="N"?xmark(xN,y):v==="A"?xmark(xA,y):""}function svg(bg){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1584 1224"><image href="${bg}" x="0" y="0" width="1584" height="1224"/>`}
@@ -199,6 +338,78 @@ function page1ControlFlags(){
   communicate:hasAny(b,["communicate","coordinate","huddle","clear commands"]),
   wetmethod:hasAny(b,["wet method"])
  };
+}
+
+function pctX(x){return (x/1584*100).toFixed(4)+"%"}function pctY(y){return (y/1224*100).toFixed(4)+"%"}function pctW(w){return (w/1584*100).toFixed(4)+"%"}function pctH(h){return (h/1224*100).toFixed(4)+"%"}
+function editableField(x,y,w,h,value,size=12,opts={}){
+ const id=opts.id||"";
+ const align=opts.align||"left";
+ return `<textarea class="ovtext" ${id?`data-field="${id}"`:""} style="left:${pctX(x)};top:${pctY(y)};width:${pctW(w)};height:${pctH(h)};font-size:${(size/1584*100).toFixed(4)}vw;text-align:${align};">${esc(value||"")}</textarea>`;
+}
+function checkBox(x,y,on=false,key=""){
+ return `<button type="button" class="ovcheck ${on?"on":""}" ${key?`data-check="${key}"`:""} style="left:${pctX(x-9)};top:${pctY(y-9)}" onclick="this.classList.toggle('on')"></button>`;
+}
+function answerState(id){return answers[id]||""}
+function editablePage1(){
+ let h=`<div class="formpage"><img src="${BG1}" alt="Official CDI PTP page 1">`;
+ h+=editableField(1167,184,260,23,E("jobNo").value,12,{id:"jobNo"});
+ h+=editableField(1182,214,250,23,E("jobLeader").value,12,{id:"jobLeader"});
+ h+=editableField(1168,244,265,23,E("company").value,12,{id:"company"});
+ h+=editableField(1190,274,180,23,E("dateStarted").value,11,{id:"dateStarted"});
+ h+=editableField(1400,274,120,23,E("timeStarted").value,11,{id:"timeStarted"});
+ h+=editableField(1210,304,160,23,E("dateCompleted").value,11,{id:"dateCompleted"});
+ h+=editableField(1400,304,120,23,E("timeCompleted").value,11,{id:"timeCompleted"});
+ h+=editableField(1105,510,405,78,E("taskName").value,12,{id:"taskName"});
+ h+=editableField(1105,642,405,53,E("goal").value,12,{id:"goal"});
+ h+=editableField(1105,834,405,25,E("foreman").value,12,{id:"foreman"});
+ const crewY=[898,928,958,988,1018,1048,1078,1108],crewX=[1105,1318];
+ crew.slice(0,16).forEach((n,i)=>h+=editableField(crewX[i>=8?1:0],crewY[i%8],185,24,n,11,{id:"crew"+i}));
+
+ // permits
+ const pc={"Confined space":[228,134],"Hot work":[228,160],"Energized elec. Work":[228,188],"Elevator":[228,216],"Electrical room work":[432,134],"Crane – critical lift":[432,160],"Ladder":[432,188],"Ground & Wall Penetration":[432,216]};
+ Object.entries(pc).forEach(([k,[x,y]])=>h+=checkBox(x,y,permits().includes(k),"permit:"+k));
+
+ // checklist
+ const groups=[
+ [["sds","cords","hotgear","confined","utilities","fall","emergency","communicated"],[296,322,346,372,398,422,448,474]],
+ [["heavy","stretch","lifting","gloves","pullinspect","pullzone"],[532,558,584,608,634,660]],
+ [["ladinspect","ladstable","ladclear"],[770,796,821]],
+ [["lotoreq","walkdown","ownerlock","yourlock","teststart","zero"],[877,902,928,952,978,1004]]
+ ];
+ groups.forEach(([ids,ys])=>ids.forEach((id,i)=>{const v=answerState(id);h+=checkBox(388,ys[i],v==="Y",id+":Y")+checkBox(425,ys[i],v==="N",id+":N")+checkBox(458,ys[i],v==="A",id+":A")}));
+ h+=editableField(300,690,110,22,E("workHeight")?.value||"",10,{id:"workHeight"});
+ h+=editableField(300,720,110,22,E("ladderHeight")?.value||"",10,{id:"ladderHeight"});
+
+ // possible hazards / controls
+ const hf=page1HazardFlags(),hvals=[hf.chemical,hf.thermal,hf.particles,hf.overexertion,hf.elevated,hf.overhead,hf.dropping,hf.inhalation,hf.vehicle,hf.cuts,hf.fire,hf.spills,hf.abrasions,hf.cavein,hf.noise,hf.heat,hf.traffic,hf.rodents,hf.crane,hf.access,hf.silica],hy=[120,143,170,188,209,231,251,276,298,318,341,364,384,407,428,449,473,493,517,541,562];
+ hvals.forEach((v,i)=>h+=checkBox(608,hy[i],v,"haz"+i));
+ const cf=page1ControlFlags(),cvals=[cf.rubber,cf.chemical,cf.confined,cf.fall,cf.energized,cf.gloves,cf.eye,cf.people,cf.respirator,cf.hearing,cf.housekeeping,cf.cords,cf.barricades,cf.sparks,cf.extinguisher,cf.training,cf.body,cf.shoring,cf.stretch,cf.scaffold,cf.spillkit,cf.liftcheck,cf.communicate,cf.wetmethod],cys=[625,649,671,693,714,736,760,779,801,826,846,868,890,910,935,957,979,1000,1023,1044,1068,1087,1111,1132];
+ cvals.forEach((v,i)=>h+=checkBox(609,cys[i],v,"ctl"+i));
+
+ h+=checkBox(93,1062,answers.cleanPPE==="Y","cleanPPE");
+ h+=checkBox(93,1088,answers.cleanTools==="Y","cleanTools");
+ h+=checkBox(92,1113,answers.cleanVehicle==="Y","cleanVehicle");
+ h+=checkBox(92,1140,answers.cleanSurface==="Y","cleanSurface");
+ return h+"</div>";
+}
+function editablePage2(rows){
+ let h=`<div class="formpage"><img src="${BG2}" alt="Official CDI PTP page 2">`;
+ const ys=[132,165,197,229,261,293,325,357,389,421,453,485,517,549,581,613,645];
+ rows.slice(0,17).forEach((r,i)=>{
+   h+=editableField(60,ys[i],440,26,r.step,10,{id:"rowStep"+i});
+   h+=editableField(575,ys[i],430,26,r.haz,9.5,{id:"rowHaz"+i});
+   h+=editableField(1102,ys[i],415,26,r.ctl,9.2,{id:"rowCtl"+i});
+ });
+ const chgy=[754,779,804,830],ids=["chgPersonnel","chgTask","chgWeather","chgAccess"];
+ ids.forEach((id,i)=>{const v=answerState(id);h+=checkBox(387,chgy[i],v==="Y",id+":Y")+checkBox(424,chgy[i],v==="N",id+":N")+checkBox(458,chgy[i],v==="A",id+":A")});
+ h+=checkBox(263,914,answers.crewAware==="Y","crewAware:Y")+checkBox(344,914,answers.crewAware==="N","crewAware:N");
+ h+=editableField(60,970,440,60,E("changeText")?.value||"",10,{id:"changeText"});
+ h+=checkBox(154,1094,answers.accident==="Y","accident:Y")+checkBox(233,1094,answers.accident==="N","accident:N");
+ h+=checkBox(1283,758,answers.materialsReady==="Y","materialsReady:Y")+checkBox(1367,758,answers.materialsReady==="N","materialsReady:N");
+
+ const hr=highRiskFlags(),vals=[hr.material,hr.hazardous,hr.driving,hr.heights,hr.lifting,hr.confined,hr.isolation,hr.electrical,hr.ground,hr.mobile,hr.heat,hr.cold,hr.silica],hry=[720,752,788,820,857,888,924,958,992,1024,1059,1092,1126];
+ vals.forEach((v,i)=>{h+=checkBox(814,hry[i],v,"hr"+i+":Y")+checkBox(910,hry[i],!v,"hr"+i+":N")});
+ return h+"</div>";
 }
 function page1(){let s=svg(BG1);s+=textEl(1170,198,E("jobNo").value,13)+textEl(1188,228,E("jobLeader").value,13)+textEl(1174,258,E("company").value,13)+textEl(1195,288,E("dateStarted").value,12)+textEl(1410,288,E("timeStarted").value,12)+textEl(1220,318,E("dateCompleted").value,12)+textEl(1410,318,E("timeCompleted").value,12);wrap(E("taskName").value,44).slice(0,3).forEach((l,i)=>s+=textEl(1110,533+i*25,l,13));wrap(E("goal").value,44).slice(0,2).forEach((l,i)=>s+=textEl(1110,668+i*26,l,13));s+=textEl(1110,852,compact(E("foreman").value,44),13);const cy=[915,945,975,1005,1035,1065,1095,1125],cx=[1110,1320];crew.slice(0,16).forEach((n,i)=>s+=textEl(cx[i>=8?1:0],cy[i%8],compact(n,24),12));
 const gy=[296,322,346,372,398,422,448,474],gids=["sds","cords","hotgear","confined","utilities","fall","emergency","communicated"];gids.forEach((id,i)=>s+=answerMark(id,388,425,458,gy[i]));
@@ -282,7 +493,18 @@ function page2(rows){
  vals.forEach((v,i)=>s+=v?xmark(814,hry[i]):xmark(910,hry[i]));
  return s+"</svg>"
 }
-function generatePTP(){try{const steps=getSteps();if(!steps.length){alert("Add at least one work step.");go(3);return}if(steps.some(s=>!selected(s.id).length)){alert("Every work step needs at least one selected hazard.");go(3);return}if(steps.length>17){alert("The CDI form has 17 work-step lines. Combine the work into 17 or fewer steps.");go(3);return}let rows=fitRows(ptpRows());E("preview").innerHTML=`<div class="sheet">${page1()}</div><div class="sheet">${page2(rows)}</div>`;E("s5").classList.add("hidden");E("output").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"})}catch(err){console.error(err);alert("PTP could not be generated: "+err.message)}}
+function generatePTP(){
+ try{
+   applyChecklistHazards();
+   const steps=getSteps();
+   if(!steps.length){alert("Add at least one work step.");go(3);return}
+   if(steps.some(s=>!selected(s.id).length)){alert("Every work step needs at least one selected hazard.");go(3);return}
+   if(steps.length>17){alert("The CDI form has 17 work-step lines. Combine the work into 17 or fewer steps.");go(3);return}
+   const rows=fitRows(ptpRows());
+   E("preview").innerHTML=editablePage1()+editablePage2(rows);
+   E("s5").classList.add("hidden");E("output").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"});
+ }catch(err){console.error(err);alert("PTP could not be generated: "+err.message)}
+}
 function renderLibrary(){const q=(E("libSearch").value||"").toLowerCase(),cat=E("libCategory").value,rows=LIBRARY.filter(e=>{const blob=(e.hazard+" "+e.control+" "+(e.task||"")+" "+(e.tags||[]).join(" ")+" "+e.category).toLowerCase();return(!q||blob.includes(q))&&(!cat||e.category===cat)});E("libStats").textContent=`Showing ${rows.length} of ${LIBRARY.length} records`;E("libResults").innerHTML=rows.slice(0,150).map(e=>`<div class="libitem"><h4>${esc(e.hazard)}<span class="badge">${esc(e.source)}</span></h4><p><b>Control:</b> ${esc(e.control)}</p>${e.task?`<p><b>Common task:</b> ${esc(e.task)}</p>`:""}</div>`).join("")}[...new Set(LIBRARY.map(x=>x.category))].sort().forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;E("libCategory").appendChild(o)});E("libSearch").addEventListener("input",renderLibrary);E("libCategory").addEventListener("change",renderLibrary);E("manualRules").innerHTML=LIBRARY.filter(x=>x.source==="CDI Manual").map(x=>`<div class="reviewstep"><b class="title">${esc(x.hazard)}</b><div>${esc(x.control)}</div></div>`).join("");
 function resetApp(){if(confirm("Clear this PTP and start over?"))location.reload()}
 createStep();
