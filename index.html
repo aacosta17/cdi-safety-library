@@ -378,6 +378,15 @@ function scoreEntry(e,c,raw){let s=0;(e.tags||[]).forEach(t=>{if(c.has(t))s+=5;i
 function relevant(e,c,raw){const cat=(e.category||"").toLowerCase(),all=raw+" "+[...c].join(" ");const has=(...x)=>x.some(v=>all.includes(v));const tags=new Set(e.tags||[]);if(cat.includes("ladder")&&!has("ladder"))return false;if((cat.includes("mewp")||cat.includes("aerial"))&&!has("lift","mewp","scissor","boom"))return false;if(cat.includes("forklift")&&!has("forklift"))return false;if(cat.includes("confined")&&!has("confined","manhole"))return false;if(tags.has("cable_pull")&&!has("pull","route","feed","reel"))return false;if(tags.has("security_test")&&!has("test","commission","troubleshoot"))return false;if(tags.has("termination")&&!has("terminate","termination","connect","splice","crimp","punch"))return false;if(tags.has("drill")&&!has("drill","anchor","penetrat","core","mount","hole"))return false;if(tags.has("silica")&&!has("concrete","masonry","silica","core"))return false;return true}
 function recommend(text){const raw=text.toLowerCase(),c=conceptSet(text),arr=LIBRARY.map(e=>({...e,_s:scoreEntry(e,c,raw)})).filter(e=>e._s>=5&&relevant(e,c,raw)).sort((a,b)=>b._s-a._s),out=[],seen=new Set();for(const e of arr){const k=e.hazard.toLowerCase().replace(/[^a-z0-9]+/g," ");if(seen.has(k))continue;seen.add(k);out.push(e);if(out.length>=5)break}return out}
 function findHazards(id){const c=document.querySelector(`.step[data-id="${id}"]`),text=c?.querySelector("textarea").value.trim();if(!text){alert("Enter the work step first.");return}const custom=(selections[id]||[]).filter(x=>x.custom);selections[id]=[...custom,...recommend(text).map((x,i)=>({...x,selected:i<3,custom:false}))];renderHazards(id)}
+function addCustom(id){
+ const hazard=prompt("Enter the hazard:");
+ if(!hazard)return;
+ const control=prompt("Enter the control / mitigation:");
+ if(!control)return;
+ selections[id]=selections[id]||[];
+ selections[id].push({hazard,control,source:"Crew Added",selected:true,custom:true,tags:[]});
+ renderHazards(id);
+}
 function findAll(){getSteps().forEach(s=>findHazards(s.id))}
 function renderHazards(id){
  const box=E("haz_"+id)||E("sugs_"+id),arr=selections[id]||[],status=E("status_"+id);
@@ -390,6 +399,13 @@ function renderHazards(id){
 function toggleHazards(id,open=false){
  const box=E("haz_"+id)||E("sugs_"+id);if(!box)return;
  if(open)box.classList.remove("collapsed");else box.classList.toggle("collapsed");
+}
+function ensureHazard(stepId,hazard,control,source="Checklist"){
+ selections[stepId]=selections[stepId]||[];
+ const key=String(hazard).toLowerCase().trim();
+ if(!selections[stepId].some(x=>String(x.hazard||"").toLowerCase().trim()===key)){
+   selections[stepId].push({hazard,control,source,selected:true,custom:false,checklistAdded:true,tags:[]});
+ }
 }
 function findBestStep(wordsNeeded){
  const steps=getSteps();
@@ -586,6 +602,66 @@ function plannerSupplementCandidates(){
  return out;
 }
 
+const QUESTIONS=[
+ ["General Checklist",[
+  ["sds","SDS reviewed for task?"],
+  ["cords","All extension cords inspected?"],
+  ["hotgear","Electrical hot work equipment up-to-date?"],
+  ["confined","Confined space procedure / rescue plan?"],
+  ["utilities","Utility lines located above / below ground?"],
+  ["fall","All fall protection equipment inspected?"],
+  ["emergency","Emergency procedure and contacts reviewed?"],
+  ["communicated","Work communicated with others in area?"]
+ ]],
+ ["Material Handling Checklist",[
+  ["heavy","Item(s) lifted more than you can handle?"],
+  ["stretch","Stretch and flex performed?"],
+  ["lifting","Following safe lifting procedures?"],
+  ["gloves","Proper gloves being used?"],
+  ["pullinspect","If pulling wire/cable, is equipment inspected?"],
+  ["pullzone","Is the wire/cable pull area taped or controlled?"]
+ ]],
+ ["Ladder Safety Checklist",[
+  ["ladinspect","Ladder inspected?"],
+  ["ladstable","Ladder set on stable ground?"],
+  ["ladclear","Work area clear around ladder?"]
+ ]],
+ ["Lock Out / Tag Out Checklist",[
+  ["lotoreq","Is LOTO required?"],
+  ["walkdown","System walked down?"],
+  ["ownerlock","Owner isolated system and placed lock?"],
+  ["yourlock","Your lock placed?"],
+  ["teststart","System test-start attempted?"],
+  ["zero","Zero energy verified?"]
+ ]]
+];
+function seg(id){
+ return `<div class="seg">
+   <label><input type="radio" name="${id}" value="Y" onchange="answers['${id}']='Y'"><span>Yes</span></label>
+   <label><input type="radio" name="${id}" value="N" onchange="answers['${id}']='N'"><span>No</span></label>
+   <label><input type="radio" name="${id}" value="A" onchange="answers['${id}']='A'"><span>N/A</span></label>
+ </div>`;
+}
+
+function renderChecklist(){
+ if(!E("checklist"))return;
+ E("checklist").innerHTML=QUESTIONS.map(([title,qs])=>`
+   <div class="checksection">
+     <h3>${title}</h3>
+     <div class="checkbody">
+       ${title==="Ladder Safety Checklist" ? `
+         <div class="grid2" style="margin:8px 0 4px">
+           <div><label class="lbl">Height of work</label><input id="workHeight"></div>
+           <div><label class="lbl">Height of ladder</label><input id="ladderHeight"></div>
+         </div>` : ""}
+       ${qs.map(([id,q])=>`<div class="checkrow"><b>${q}</b>${seg(id)}</div>`).join("")}
+     </div>
+   </div>`).join("");
+ Object.entries(answers).forEach(([id,v])=>{
+   const r=document.querySelector(`input[name="${id}"][value="${v}"]`);
+   if(r)r.checked=true;
+ });
+}
 function getSelectedPermits(){
  return [...document.querySelectorAll("#permits input:checked")].map(x=>x.value);
 }
@@ -615,7 +691,29 @@ function checklistCandidates(){
  return out;
 }
 
-function reviewPTP(){try{applyChecklistHazards();const steps=getSteps(),issues=[];if(!E("jobNo").value.trim())issues.push("Enter Job No.");if(!E("jobLeader").value.trim())issues.push("Enter Job Leader.");if(!E("foreman").value.trim())issues.push("Enter Job Lead or Foreman.");if(!E("taskName").value.trim())issues.push("Enter Task Name.");if(!crew.length)issues.push("Add at least one crew member.");if(!steps.length)issues.push("Add at least one work step.");steps.forEach((s,i)=>{if(!selected(s.id).length)issues.push(`Step ${i+1} needs at least one selected hazard.`)});let out=issues.length?`<div class="notice warn"><b>${issues.length} item${issues.length===1?"":"s"} need attention:</b><ul>${issues.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:'<div class="notice good"><b>PTP content check passed.</b> Review the sequence below.</div>';out+=steps.map((s,i)=>`<div class="reviewstep"><b class="title">Step ${i+1} — ${esc(s.text)}</b><ul>${selected(s.id).map(h=>`<li><b>${esc(h.hazard)}</b><br>${esc(h.control)}</li>`).join("")||"<li>No selected hazards</li>"}</ul></div>`).join("");E("review").innerHTML=out;go(5)}catch(err){console.error(err);alert("Review could not open: "+err.message)}}
+function appPreflight(){
+ const checks={
+   answerState:typeof answerState==="function",
+   selected:typeof selected==="function",
+   getSelectedPermits:typeof getSelectedPermits==="function",
+   ensureHazard:typeof ensureHazard==="function",
+   renderChecklist:typeof renderChecklist==="function",
+   addCustom:typeof addCustom==="function",
+   applyChecklistHazards:typeof applyChecklistHazards==="function",
+   checklistCandidates:typeof checklistCandidates==="function",
+   plannerSupplementCandidates:typeof plannerSupplementCandidates==="function",
+   finalHazardRows:typeof finalHazardRows==="function",
+   editablePage1:typeof editablePage1==="function",
+   editablePage2:typeof editablePage2==="function",
+   generatePTP:typeof generatePTP==="function",
+   reviewPTP:typeof reviewPTP==="function"
+ };
+ const missing=Object.entries(checks).filter(([,ok])=>!ok).map(([name])=>name);
+ if(missing.length)console.error("Safety Hub preflight failed:",missing);
+ return {ok:missing.length===0,missing};
+}
+
+function reviewPTP(){try{const pf=appPreflight();if(!pf.ok)throw new Error("Missing app function(s): "+pf.missing.join(", "));applyChecklistHazards();const steps=getSteps(),issues=[];if(!E("jobNo").value.trim())issues.push("Enter Job No.");if(!E("jobLeader").value.trim())issues.push("Enter Job Leader.");if(!E("foreman").value.trim())issues.push("Enter Job Lead or Foreman.");if(!E("taskName").value.trim())issues.push("Enter Task Name.");if(!crew.length)issues.push("Add at least one crew member.");if(!steps.length)issues.push("Add at least one work step.");steps.forEach((s,i)=>{if(!selected(s.id).length)issues.push(`Step ${i+1} needs at least one selected hazard.`)});let out=issues.length?`<div class="notice warn"><b>${issues.length} item${issues.length===1?"":"s"} need attention:</b><ul>${issues.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:'<div class="notice good"><b>PTP content check passed.</b> Review the sequence below.</div>';out+=steps.map((s,i)=>`<div class="reviewstep"><b class="title">Step ${i+1} — ${esc(s.text)}</b><ul>${selected(s.id).map(h=>`<li><b>${esc(h.hazard)}</b><br>${esc(h.control)}</li>`).join("")||"<li>No selected hazards</li>"}</ul></div>`).join("");E("review").innerHTML=out;go(5)}catch(err){console.error(err);alert("Review could not open: "+err.message)}}
 
 function wrap(text,max){const w=String(text||"").trim().split(/\s+/).filter(Boolean),a=[];let l="";for(const x of w){const t=l?l+" "+x:x;if(t.length>max&&l){a.push(l);l=x}else l=t}if(l)a.push(l);return a}function compact(text,max){text=String(text||"").replace(/\s+/g," ").trim();if(text.length<=max)return text;const p=text.slice(0,max).lastIndexOf(" ");return text.slice(0,p>30?p:max).trim()}
 function textEl(x,y,t,size=12,bold=false,anchor="start"){return `<text x="${x}" y="${y}" font-family="Arial,Helvetica,sans-serif" font-size="${size}" font-weight="${bold?700:400}" fill="#111" text-anchor="${anchor}">${xml(t)}</text>`}function xmark(x,y){return `<text x="${x}" y="${y}" font-family="Arial" font-size="18" font-weight="900" fill="#111" text-anchor="middle" dominant-baseline="middle">X</text>`}function answerMark(id,xY,xN,xA,y){const v=answers[id];return v==="Y"?xmark(xY,y):v==="N"?xmark(xN,y):v==="A"?xmark(xA,y):""}function svg(bg){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1584 1224"><image href="${bg}" x="0" y="0" width="1584" height="1224"/>`}
@@ -713,6 +811,9 @@ function scaleFormCanvases(){
  });
 }
 window.addEventListener("resize",scaleFormCanvases);
+function answerState(id){
+ return answers[id] || "";
+}
 function editablePage1(){
  let h=`<div class="formpage"><div class="formcanvas"><img src="${BG1}" alt="Official CDI PTP page 1">`;
  h+=editableLine(1167,213,260,E("jobNo").value,11,{id:"jobNo"});
@@ -929,6 +1030,7 @@ function page2(rows){
 }
 function generatePTP(){
  try{
+   const pf=appPreflight();if(!pf.ok)throw new Error("Missing app function(s): "+pf.missing.join(", "));
    applyChecklistHazards();
    const steps=getSteps();
    if(!steps.length){alert("Add at least one work step.");go(3);return}
