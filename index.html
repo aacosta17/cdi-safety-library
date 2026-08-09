@@ -469,28 +469,28 @@ function applyChecklistHazards(){
      "Stop and review the product label/SDS; identify required ventilation, PPE, handling, and spill controls before use.");
  }
  // Utility location / penetration
- if(answers.utilities==="N" || permits().includes("Ground & Wall Penetration")){
+ if(answers.utilities==="N" || getSelectedPermits().includes("Ground & Wall Penetration")){
    const s=findBestStep(["drill","penetrat","core","anchor","wall"]);
    if(s)ensureHazard(s.id,
      "Penetration may contact concealed utility or energized service",
      "Verify the penetration location and concealed utilities before drilling or coring; stop if site conditions differ from the approved plan.");
  }
  // Electrical room / energized work
- if(permits().includes("Electrical room work") || permits().includes("Energized elec. Work")){
+ if(getSelectedPermits().includes("Electrical room work") || getSelectedPermits().includes("Energized elec. Work")){
    const s=findBestStep(["electrical","panel","controller","terminate","connect"]);
    if(s)ensureHazard(s.id,
      "Electrical exposure in or near energized equipment",
      "Maintain required electrical clearances and working space; limit work to qualified/authorized personnel and de-energize/isolate whenever possible.");
  }
  // Hot work
- if(permits().includes("Hot work")){
+ if(getSelectedPermits().includes("Hot work")){
    const s=findBestStep(["cut","grind","hot","weld"]);
    if(s)ensureHazard(s.id,
      "Fire / burn exposure from hot work",
      "Remove or protect combustibles; contain sparks; provide required fire protection/fire watch and control hot surfaces and fumes.");
  }
  // Confined space
- if(permits().includes("Confined space") || answers.confined==="N"){
+ if(getSelectedPermits().includes("Confined space") || answers.confined==="N"){
    const s=findBestStep(["manhole","confined","space","entry"]);
    if(s)ensureHazard(s.id,
      "Confined-space atmospheric / entry hazard",
@@ -586,6 +586,9 @@ function plannerSupplementCandidates(){
  return out;
 }
 
+function getSelectedPermits(){
+ return [...document.querySelectorAll("#permits input:checked")].map(x=>x.value);
+}
 function checklistCandidates(){
  const out=[];
  const add=(hazard,control,tags=["checklist"])=>out.push({hazard,control,tags,source:"Checklist / PTP Review"});
@@ -597,14 +600,14 @@ function checklistCandidates(){
  if(applicable("pullinspect") || applicable("pullzone"))add("Cable pulling line-of-fire, pinch and stored-tension exposure","Inspect reels, stands, grips and pulling equipment; control the pull zone; keep workers out of bights and the direct line of pull.",["cable","pull"]);
  if(applicable("ladinspect") || applicable("ladstable") || applicable("ladclear"))add("Ladder fall / unstable setup / traffic exposure","Inspect ladder; use firm level footing; maintain three points of contact; control doors and pedestrian traffic; reposition instead of overreaching.",["ladder","fall"]);
  if(applicable("fall"))add("Fall from elevated work position","Inspect required fall-protection equipment; use approved anchorage/tie-off where required; keep gates/rails in place and maintain safe access.",["fall","height"]);
- if(applicable("lotoreq") || permits().includes("Electrical room work") || permits().includes("Energized elec. Work"))add("Electrical shock / unexpected energization","Identify electrical sources; de-energize and isolate when possible; use required LOTO and qualified personnel; verify safe condition before contact.",["electrical","loto"]);
- if(applicable("utilities") || permits().includes("Ground & Wall Penetration"))add("Drilling or penetration into concealed utility","Verify the penetration path and utilities before drilling/coring; stop if conditions differ from the plan; use suitable dust/debris controls.",["penetration","utility"]);
+ if(applicable("lotoreq") || getSelectedPermits().includes("Electrical room work") || getSelectedPermits().includes("Energized elec. Work"))add("Electrical shock / unexpected energization","Identify electrical sources; de-energize and isolate when possible; use required LOTO and qualified personnel; verify safe condition before contact.",["electrical","loto"]);
+ if(applicable("utilities") || getSelectedPermits().includes("Ground & Wall Penetration"))add("Drilling or penetration into concealed utility","Verify the penetration path and utilities before drilling/coring; stop if conditions differ from the plan; use suitable dust/debris controls.",["penetration","utility"]);
  if(applicable("sds"))add("Chemical / product exposure","Review label and SDS before use; apply required ventilation, handling, PPE and spill controls.",["chemical","sds"]);
  if(applicable("communicated"))add("Interaction with occupants or other trades","Coordinate sequence and work-zone controls; communicate barricades, overhead work, equipment movement and access restrictions.",["communication","occupied"]);
  if(applicable("emergency"))add("Delayed emergency response due to unclear site procedure","Review alarms, emergency contacts, evacuation/muster route and method for summoning medical assistance before work.",["emergency"]);
- if(permits().includes("Hot work"))add("Fire, sparks, burns and hot-surface exposure","Remove/protect combustibles; contain sparks; provide required extinguisher/fire watch; control hot surfaces and fumes.",["hot-work","fire"]);
- if(permits().includes("Confined space"))add("Confined-space atmospheric / access hazard","Verify entry classification and permit requirements; control atmosphere, ventilation, communication, access and rescue provisions.",["confined"]);
- if(permits().includes("Crane – critical lift"))add("Suspended-load / rigging line-of-fire exposure","Use approved lift plan and rated inspected rigging; establish exclusion zone; use designated signaling and keep personnel clear of suspended loads.",["rigging","crane"]);
+ if(getSelectedPermits().includes("Hot work"))add("Fire, sparks, burns and hot-surface exposure","Remove/protect combustibles; contain sparks; provide required extinguisher/fire watch; control hot surfaces and fumes.",["hot-work","fire"]);
+ if(getSelectedPermits().includes("Confined space"))add("Confined-space atmospheric / access hazard","Verify entry classification and permit requirements; control atmosphere, ventilation, communication, access and rescue provisions.",["confined"]);
+ if(getSelectedPermits().includes("Crane – critical lift"))add("Suspended-load / rigging line-of-fire exposure","Use approved lift plan and rated inspected rigging; establish exclusion zone; use designated signaling and keep personnel clear of suspended loads.",["rigging","crane"]);
  return out;
 }
 
@@ -723,7 +726,7 @@ function editablePage1(){
 
  // permits
  const pc={"Confined space":[228,134],"Hot work":[228,160],"Energized elec. Work":[228,188],"Elevator":[228,216],"Electrical room work":[432,134],"Crane – critical lift":[432,160],"Ladder":[432,188],"Ground & Wall Penetration":[432,216]};
- Object.entries(pc).forEach(([k,[x,y]])=>h+=checkBox(x,y,permits().includes(k),"permit:"+k));
+ Object.entries(pc).forEach(([k,[x,y]])=>h+=checkBox(x,y,getSelectedPermits().includes(k),"permit:"+k));
 
  // checklist
  const groups=[
@@ -774,7 +777,7 @@ const my=[532,558,584,608,634,660],mids=["heavy","stretch","lifting","gloves","p
 if(E("workHeight"))s+=textEl(357,704,compact(E("workHeight").value,12),12,false,"end");if(E("ladderHeight"))s+=textEl(357,734,compact(E("ladderHeight").value,12),12,false,"end");
 const ly=[770,796,821],lids=["ladinspect","ladstable","ladclear"];lids.forEach((id,i)=>s+=answerMark(id,388,425,458,ly[i]));
 const loy=[877,902,928,952,978,1004],loids=["lotoreq","walkdown","ownerlock","yourlock","teststart","zero"];loids.forEach((id,i)=>s+=answerMark(id,388,425,458,loy[i]));
-const pc={"Confined space":[228,134],"Hot work":[228,160],"Energized elec. Work":[228,188],"Elevator":[228,216],"Electrical room work":[432,134],"Crane – critical lift":[432,160],"Ladder":[432,188],"Ground & Wall Penetration":[432,216]};permits().forEach(p=>{if(pc[p])s+=xmark(pc[p][0],pc[p][1])});
+const pc={"Confined space":[228,134],"Hot work":[228,160],"Energized elec. Work":[228,188],"Elevator":[228,216],"Electrical room work":[432,134],"Crane – critical lift":[432,160],"Ladder":[432,188],"Ground & Wall Penetration":[432,216]};getSelectedPermits().forEach(p=>{if(pc[p])s+=xmark(pc[p][0],pc[p][1])});
 
 // Possible Hazards checkboxes on the official CDI form.
 const hf=page1HazardFlags();
@@ -933,6 +936,14 @@ function generatePTP(){
  }catch(err){console.error(err);alert("PTP could not be generated: "+err.message)}
 }
 function renderLibrary(){const q=(E("libSearch").value||"").toLowerCase(),cat=E("libCategory").value,rows=LIBRARY.filter(e=>{const blob=(e.hazard+" "+e.control+" "+(e.task||"")+" "+(e.tags||[]).join(" ")+" "+e.category).toLowerCase();return(!q||blob.includes(q))&&(!cat||e.category===cat)});E("libStats").textContent=`Showing ${rows.length} of ${LIBRARY.length} records`;E("libResults").innerHTML=rows.slice(0,150).map(e=>`<div class="libitem"><h4>${esc(e.hazard)}<span class="badge">${esc(e.source)}</span></h4><p><b>Control:</b> ${esc(e.control)}</p>${e.task?`<p><b>Common task:</b> ${esc(e.task)}</p>`:""}</div>`).join("")}[...new Set(LIBRARY.map(x=>x.category))].sort().forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;E("libCategory").appendChild(o)});E("libSearch").addEventListener("input",renderLibrary);E("libCategory").addEventListener("change",renderLibrary);E("manualRules").innerHTML=LIBRARY.filter(x=>x.source==="CDI Manual").map(x=>`<div class="reviewstep"><b class="title">${esc(x.hazard)}</b><div>${esc(x.control)}</div></div>`).join("");
+function safetyHubSelfCheck(){
+ const problems=[];
+ if(typeof getSelectedPermits!=="function")problems.push("Permit reader");
+ if(typeof reviewPTP!=="function")problems.push("PTP review");
+ if(typeof generatePTP!=="function")problems.push("PTP generator");
+ if(problems.length)console.error("Safety Hub startup check failed:",problems);
+ return problems.length===0;
+}
 function resetApp(){if(confirm("Clear this PTP and start over?"))location.reload()}
 
 </script>
