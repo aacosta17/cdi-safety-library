@@ -35,15 +35,130 @@ h1,h2,h3{letter-spacing:-.2px}h1{font-size:28px;margin:0 0 7px}h2{font-size:21px
 @page{size:letter landscape;margin:0}
 @media print{header,.nav,.progress,.no-print,.card:not(#output){display:none!important}main{max-width:none;margin:0;padding:0}#output{display:block!important;border:0;box-shadow:none;padding:0;margin:0}.formpreview{background:#fff;padding:0}.sheet{width:11in;height:8.5in;max-width:none;margin:0;box-shadow:none;page-break-after:always}.sheet:last-child{page-break-after:auto}.sheet svg{width:11in;height:8.5in}}
 
-.formpage{position:relative;width:100%;aspect-ratio:1584/1224;background:#fff;margin:0 auto 15px;box-shadow:0 5px 18px rgba(0,0,0,.16);overflow:hidden}
-.formpage>img{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;pointer-events:none}
-.ovtext{position:absolute;border:0;background:transparent;color:#111;font-family:Arial,Helvetica,sans-serif;padding:0 2px;margin:0;outline:none;line-height:1.05;resize:none;overflow:hidden}
-.ovtext:focus{background:rgba(229,244,255,.75);box-shadow:0 0 0 1px rgba(8,103,173,.35);border-radius:2px}
-.ovcheck{position:absolute;width:1.1%;aspect-ratio:1/1;border:1px solid transparent;display:grid;place-items:center;cursor:pointer;font-family:Arial,sans-serif;font-weight:900;font-size:clamp(9px,1.15vw,16px);line-height:1;color:#111;background:transparent}
-.ovcheck:hover{background:rgba(208,235,252,.7);border-color:rgba(8,103,173,.35)}
-.ovcheck.on::after{content:"X"}
-.previewhint{background:#eef7ff;border:1px solid #c9dfef;border-left:4px solid var(--blue);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:13px;color:#39556b}
-@media print{.formpage{width:11in;height:8.5in;aspect-ratio:auto;margin:0;box-shadow:none;page-break-after:always}.formpage:last-child{page-break-after:auto}.ovtext:focus{background:transparent;box-shadow:none}.previewhint{display:none!important}}
+
+.formpage{
+  position:relative;
+  width:100%;
+  aspect-ratio:1584/1224;
+  background:#fff;
+  margin:0 auto 15px;
+  box-shadow:0 5px 18px rgba(0,0,0,.16);
+  overflow:hidden
+}
+.formcanvas{
+  position:absolute;
+  left:0;
+  top:0;
+  width:1584px;
+  height:1224px;
+  transform-origin:0 0
+}
+.formcanvas>img{
+  position:absolute;
+  left:0;
+  top:0;
+  width:1584px;
+  height:1224px;
+  display:block;
+  user-select:none;
+  pointer-events:none
+}
+.ovtext{
+  position:absolute;
+  border:0;
+  background:transparent;
+  color:#111;
+  font-family:Arial,Helvetica,sans-serif;
+  padding:0 2px;
+  margin:0;
+  outline:none;
+  line-height:1.02;
+  resize:none;
+  overflow:hidden;
+  white-space:pre-wrap
+}
+.ovtext:focus{
+  background:rgba(229,244,255,.72);
+  box-shadow:0 0 0 1px rgba(8,103,173,.38);
+  border-radius:2px
+}
+.ovcheck{
+  position:absolute;
+  width:18px;
+  height:18px;
+  border:0;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  font-family:Arial,sans-serif;
+  font-weight:900;
+  font-size:15px;
+  line-height:15px;
+  color:#111;
+  background:transparent;
+  padding:0;
+  margin:0
+}
+.ovcheck:hover{background:rgba(208,235,252,.55)}
+.ovcheck.on::before,.ovcheck.on::after{content:"";position:absolute;left:2px;top:8px;width:14px;height:2px;background:#111;border-radius:1px;transform-origin:center}
+.ovcheck.on::before{transform:rotate(45deg)}
+.ovcheck.on::after{transform:rotate(-45deg)}
+.previewhint{
+  background:#eef7ff;
+  border:1px solid #c9dfef;
+  border-left:4px solid var(--blue);
+  border-radius:10px;
+  padding:10px 12px;
+  margin:10px 0;
+  font-size:13px;
+  color:#39556b
+}
+@media print{
+ .formpage{
+   width:11in;
+   height:8.5in;
+   aspect-ratio:auto;
+   margin:0;
+   box-shadow:none;
+   page-break-after:always;
+   overflow:hidden
+ }
+ .formpage:last-child{page-break-after:auto}
+ .formcanvas{transform:scale(.5)!important}
+ .ovtext:focus{background:transparent;box-shadow:none}
+ .previewhint{display:none!important}
+}
+
+
+.planner-block{border:1px solid #d8e3eb;border-radius:14px;background:#fbfdfe;padding:14px;margin:12px 0}
+.planner-title{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.planner-title>span{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;display:grid;place-items:center;font-size:13px;font-weight:900;flex:0 0 auto}
+.planner-title b{display:block;font-size:15px;color:#203d54}.planner-title small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.pickgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.pick{position:relative;display:block;cursor:pointer}
+.pick input{position:absolute;opacity:0;pointer-events:none}
+.pick span{display:flex;align-items:center;justify-content:center;min-height:46px;text-align:center;padding:8px 7px;border:1px solid #d2dee7;background:#fff;border-radius:9px;color:#425a6d;font-size:12px;font-weight:750;line-height:1.25;transition:.12s}
+.pick input:checked+span{border-color:#1683c4;background:#e8f5fc;color:#075a91;box-shadow:inset 0 0 0 1px #1683c4}
+.planner-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:15px 0}.planner-help{font-size:12px;color:var(--muted)}
+.hazards.collapsed .hazard{display:none}.haztoggle{font-size:12px;color:#075f9f;font-weight:800;cursor:pointer;background:none;border:0;padding:0}
+@media(max-width:900px){.pickgrid{grid-template-columns:repeat(3,1fr)}}@media(max-width:650px){.pickgrid{grid-template-columns:repeat(2,1fr)}}
+
+
+.ovline{
+  position:absolute;
+  border:0;
+  background:transparent;
+  color:#111;
+  font-family:Arial,Helvetica,sans-serif;
+  padding:0 2px 1px 2px;
+  margin:0;
+  outline:none;
+  height:14px;
+  line-height:14px;
+  overflow:hidden
+}
+.ovline:focus{background:rgba(229,244,255,.72);box-shadow:0 0 0 1px rgba(8,103,173,.38);border-radius:2px}
+@media print{.ovline:focus{background:transparent;box-shadow:none}}
 
 </style>
 </head>
@@ -75,12 +190,100 @@ h1,h2,h3{letter-spacing:-.2px}h1{font-size:28px;margin:0 0 7px}h2{font-size:21px
 
 <section id="s2" class="card hidden"><h2>Crew</h2><p class="help">Add one person at a time.</p><div class="crewrow"><input id="crewInput" placeholder="Crew member name"><button class="btn secondary" id="addCrew">Add</button></div><div id="crewChips" class="chips"></div><div class="navrow"><button class="btn ghost" onclick="go(1)">Back</button><button class="btn primary" onclick="go(3)">Continue</button></div></section>
 
-<section id="s3" class="card hidden"><h2>Work Steps</h2><p class="help">Choose a common task to get started, or build the sequence yourself. Each step only shows a few relevant hazards.</p>
-<div class="grid2"><div><label class="lbl">Common task (optional)</label><select id="taskPreset"><option value="">Choose a task...</option><option value="Install surveillance camera">Install surveillance camera</option><option value="Install camera from scissor lift">Install camera from scissor lift</option><option value="Install camera from ladder">Install camera from ladder</option><option value="Install Cat6/Cat6A cable above ceiling">Install Cat6/Cat6A cable above ceiling</option><option value="Pull Cat6 through conduit">Pull Cat6 through conduit</option><option value="Pull fiber through conduit">Pull fiber through conduit</option><option value="Terminate copper data cable">Terminate copper data cable</option><option value="Terminate fiber optic cable">Terminate fiber optic cable</option><option value="Install access-control reader">Install access-control reader</option><option value="Install electric strike">Install electric strike</option><option value="Install magnetic lock">Install magnetic lock</option><option value="Install fire-alarm device">Install fire-alarm device</option><option value="Install ceiling speaker">Install ceiling speaker</option><option value="Install cable tray">Install cable tray</option><option value="Install J-hooks">Install J-hooks</option><option value="Core drill / wall penetration for low-voltage pathway">Core drill / wall penetration for low-voltage pathway</option><option value="Install network rack / cabinet">Install network rack / cabinet</option><option value="Install network cabling in data center">Install network cabling in data center</option><option value="Install fiber in data center">Install fiber in data center</option><option value="Install grounding / bonding in data center">Install grounding / bonding in data center</option><option value="Install outside-plant fiber">Install outside-plant fiber</option></select></div><button class="btn secondary" style="align-self:end" onclick="loadPreset()">Load Steps</button></div>
-<h3>Job Conditions</h3><div class="conditions" id="conditions"><label class="condition"><input type="checkbox" value="occupied">Active / occupied area</label><label class="condition"><input type="checkbox" value="ceiling">Above ceiling</label><label class="condition"><input type="checkbox" value="ladder">Ladder</label><label class="condition"><input type="checkbox" value="lift">Scissor / boom lift</label><label class="condition"><input type="checkbox" value="electrical">Near electrical equipment</label><label class="condition"><input type="checkbox" value="data-center">Data center</label><label class="condition"><input type="checkbox" value="outside">Outdoor / OSP</label><label class="condition"><input type="checkbox" value="heat">Heat exposure</label></div>
-<div class="notice">You can insert a step anywhere. Example: <b>Label cables</b> before <b>Test cable</b>, or add <b>Housekeeping</b> at the end.</div>
-<div id="steps" class="step-list"></div><div class="navrow" style="justify-content:flex-start"><button class="btn primary" onclick="addStep()">+ Add Step</button><button class="btn secondary" onclick="findAll()">Find Hazards for All Steps</button></div>
-<div class="navrow"><button class="btn ghost" onclick="go(2)">Back</button><button class="btn primary" onclick="go(4)">Continue</button></div></section>
+<section id="s3" class="card hidden">
+<h2>Build the Work Plan</h2>
+<p class="help">Tell Safety Hub what the crew is doing, what work is involved, what equipment will be used, and where the work is happening. Select everything that applies.</p>
+
+<div class="planner-block">
+  <div class="planner-title"><span>1</span><div><b>What are you doing?</b><small>Select the main scope. You can choose more than one.</small></div></div>
+  <div class="pickgrid" id="scopePicks">
+    <label class="pick"><input type="checkbox" value="camera"><span>Surveillance / Cameras</span></label>
+    <label class="pick"><input type="checkbox" value="access-control"><span>Access Control / Door Hardware</span></label>
+    <label class="pick"><input type="checkbox" value="intrusion"><span>Intrusion / Security Devices</span></label>
+    <label class="pick"><input type="checkbox" value="fire-alarm"><span>Fire Alarm</span></label>
+    <label class="pick"><input type="checkbox" value="copper-cabling"><span>CAT6 / CAT6A Cabling</span></label>
+    <label class="pick"><input type="checkbox" value="fiber"><span>Fiber Optic Cabling</span></label>
+    <label class="pick"><input type="checkbox" value="rack"><span>Racks / Cabinets / Patch Panels</span></label>
+    <label class="pick"><input type="checkbox" value="pathway"><span>Cable Tray / J-Hooks / Pathway</span></label>
+    <label class="pick"><input type="checkbox" value="av"><span>AV / Speakers / Intercom</span></label>
+    <label class="pick"><input type="checkbox" value="grounding"><span>Grounding / Bonding</span></label>
+    <label class="pick"><input type="checkbox" value="electrical"><span>Electrical / Power</span></label>
+    <label class="pick"><input type="checkbox" value="osp"><span>Outside Plant / Underground</span></label>
+    <label class="pick"><input type="checkbox" value="troubleshoot"><span>Troubleshooting / Repair</span></label>
+    <label class="pick"><input type="checkbox" value="other"><span>Other / Custom Work</span></label>
+  </div>
+</div>
+
+<div class="planner-block">
+  <div class="planner-title"><span>2</span><div><b>What work activities are involved?</b><small>Staging and housekeeping are included automatically.</small></div></div>
+  <div class="pickgrid" id="activityPicks">
+    <label class="pick"><input type="checkbox" value="material-move"><span>Move / Stage Material</span></label>
+    <label class="pick"><input type="checkbox" value="cable-pull"><span>Pull / Route Cable</span></label>
+    <label class="pick"><input type="checkbox" value="above-ceiling"><span>Open / Work Above Ceiling</span></label>
+    <label class="pick"><input type="checkbox" value="drill"><span>Drill / Anchor / Penetrate</span></label>
+    <label class="pick"><input type="checkbox" value="mount"><span>Mount Equipment / Devices</span></label>
+    <label class="pick"><input type="checkbox" value="terminate"><span>Terminate / Connect</span></label>
+    <label class="pick"><input type="checkbox" value="splice"><span>Fiber Splice / Termination</span></label>
+    <label class="pick"><input type="checkbox" value="label"><span>Label / Dress Cable</span></label>
+    <label class="pick"><input type="checkbox" value="test"><span>Test / Commission</span></label>
+    <label class="pick"><input type="checkbox" value="firestop"><span>Firestop Penetrations</span></label>
+    <label class="pick"><input type="checkbox" value="hot-work"><span>Cut / Grind / Hot Work</span></label>
+    <label class="pick"><input type="checkbox" value="excavation"><span>Excavation / Handhole / Manhole</span></label>
+  </div>
+</div>
+
+<div class="planner-block">
+  <div class="planner-title"><span>3</span><div><b>What are you using?</b><small>Select every access method, tool, and piece of equipment that may be used.</small></div></div>
+  <div class="pickgrid" id="equipmentPicks">
+    <label class="pick"><input type="checkbox" value="step-ladder"><span>Step Ladder</span></label>
+    <label class="pick"><input type="checkbox" value="extension-ladder"><span>Extension Ladder</span></label>
+    <label class="pick"><input type="checkbox" value="scissor-lift"><span>Scissor Lift</span></label>
+    <label class="pick"><input type="checkbox" value="boom-lift"><span>Boom Lift</span></label>
+    <label class="pick"><input type="checkbox" value="hand-tools"><span>Hand Tools</span></label>
+    <label class="pick"><input type="checkbox" value="drill-tool"><span>Drill / Hammer Drill</span></label>
+    <label class="pick"><input type="checkbox" value="core-drill"><span>Core Drill</span></label>
+    <label class="pick"><input type="checkbox" value="cable-reel"><span>Cable Reel / Reel Stand</span></label>
+    <label class="pick"><input type="checkbox" value="cable-puller"><span>Tugger / Cable Puller</span></label>
+    <label class="pick"><input type="checkbox" value="cart"><span>Cart / Dolly</span></label>
+    <label class="pick"><input type="checkbox" value="forklift"><span>Forklift / Material Equipment</span></label>
+    <label class="pick"><input type="checkbox" value="fiber-tools"><span>Fiber Tools / Fusion Splicer</span></label>
+    <label class="pick"><input type="checkbox" value="tester"><span>Cable Tester / Certifier</span></label>
+    <label class="pick"><input type="checkbox" value="hepa"><span>HEPA Vacuum / Dust Control</span></label>
+    <label class="pick"><input type="checkbox" value="rigging"><span>Rigging / Hoist</span></label>
+  </div>
+</div>
+
+<div class="planner-block">
+  <div class="planner-title"><span>4</span><div><b>Where / what conditions apply?</b><small>Select everything that describes the work area.</small></div></div>
+  <div class="pickgrid" id="conditionPicks">
+    <label class="pick"><input type="checkbox" value="occupied"><span>Occupied / Active Area</span></label>
+    <label class="pick"><input type="checkbox" value="ceiling"><span>Above Ceiling</span></label>
+    <label class="pick"><input type="checkbox" value="data-center"><span>Data Center / Critical Facility</span></label>
+    <label class="pick"><input type="checkbox" value="electrical-room"><span>Electrical Room</span></label>
+    <label class="pick"><input type="checkbox" value="corridor"><span>Hallway / Corridor</span></label>
+    <label class="pick"><input type="checkbox" value="warehouse"><span>Warehouse / Loading Area</span></label>
+    <label class="pick"><input type="checkbox" value="outdoor"><span>Outdoor / OSP</span></label>
+    <label class="pick"><input type="checkbox" value="parking"><span>Parking / Vehicle Area</span></label>
+    <label class="pick"><input type="checkbox" value="heat"><span>Heat Exposure</span></label>
+    <label class="pick"><input type="checkbox" value="wind-weather"><span>Wind / Rain / Weather</span></label>
+    <label class="pick"><input type="checkbox" value="tight-space"><span>Tight / Restricted Access</span></label>
+    <label class="pick"><input type="checkbox" value="other-trades"><span>Other Trades Working Nearby</span></label>
+  </div>
+</div>
+
+<div class="planner-actions">
+  <button class="btn primary" onclick="buildWorkPlan()">Build Work Steps & Hazards</button>
+  <span class="planner-help">You can still add, remove, or reorder steps afterward.</span>
+</div>
+
+<div id="steps" class="step-list"></div>
+<div class="navrow" style="justify-content:flex-start">
+  <button class="btn secondary" onclick="addStep()">+ Add Another Step</button>
+  <button class="btn ghost" onclick="findAll()">Refresh Hazards</button>
+</div>
+
+<div class="navrow"><button class="btn ghost" onclick="go(2)">Back</button><button class="btn primary" onclick="go(4)">Continue to Checklist</button></div>
+</section>
 
 <section id="s4" class="card hidden"><h2>PTP Checklist</h2><p class="help">Answer the same Yes / No / N/A questions used on the CDI PTP. Your answers are carried onto the official form.</p><div id="checklist"></div>
 
@@ -98,7 +301,7 @@ h1,h2,h3{letter-spacing:-.2px}h1{font-size:28px;margin:0 0 7px}h2{font-size:21px
 <div class="checkrow"><b>Access changed from original plan?</b><div class="seg"><label><input type="radio" name="chgAccess" value="Y" onchange="answers.chgAccess='Y'"><span>Yes</span></label><label><input type="radio" name="chgAccess" value="N" onchange="answers.chgAccess='N'"><span>No</span></label><label><input type="radio" name="chgAccess" value="A" onchange="answers.chgAccess='A'"><span>N/A</span></label></div></div>
 <div class="checkrow"><b>Entire crew made aware of changes?</b><div class="seg"><label><input type="radio" name="crewAware" value="Y" onchange="answers.crewAware='Y'"><span>Yes</span></label><label><input type="radio" name="crewAware" value="N" onchange="answers.crewAware='N'"><span>No</span></label><label><input type="radio" name="crewAware" value="A" onchange="answers.crewAware='A'"><span>N/A</span></label></div></div>
 <div class="checkrow"><b>Any accident / injury today?</b><div class="seg"><label><input type="radio" name="accident" value="Y" onchange="answers.accident='Y'"><span>Yes</span></label><label><input type="radio" name="accident" value="N" onchange="answers.accident='N'"><span>No</span></label><label><input type="radio" name="accident" value="A" onchange="answers.accident='A'"><span>N/A</span></label></div></div>
-<div class="checkrow"><b>Materials and safety equipment available?</b><div class="seg"><label><input type="radio" name="materialsReady" value="Y" onchange="answers.materialsReady='Y'"><span>Yes</span></label><label><input type="radio" name="materialsReady" value="N" onchange="answers.materialsReady='N'"><span>No</span></label><label><input type="radio" name="materialsReady" value="A" onchange="answers.materialsReady='A'"><span>N/A</span></label></div></div>
+<div class="checkrow"><b>Materials and safety equipment available?</b><div class="seg"><label><input type="radio" name="materialsReady" value="Y" onchange="answers.materialsReady='Y'"><span>Yes</span></label><label><input type="radio" name="materialsReady" value="N" onchange="answers.materialsReady='N'"><span>No</span></label><label><input type="radio" name="materialsReady" value="A" onchange="answers.materialsReady='A'"><span>N/A</span></label></div></div><div class="checkrow"><b>All crew members confirm the final daily access statements on the CDI PTP?</b><div class="seg"><label><input type="radio" name="dailyConfirm" value="Y" onchange="answers.dailyConfirm='Y'"><span>Yes</span></label><label><input type="radio" name="dailyConfirm" value="N" onchange="answers.dailyConfirm='N'"><span>No</span></label><label><input type="radio" name="dailyConfirm" value="A" onchange="answers.dailyConfirm='A'"><span>N/A</span></label></div></div>
 <div style="padding:10px 0"><label class="lbl">What changed? Include date/time if applicable.</label><textarea id="changeText" placeholder="Leave blank if nothing changed"></textarea></div>
 </div></div>
 
@@ -125,32 +328,68 @@ E("addCrew").onclick=()=>{const v=E("crewInput").value.trim();if(!v)return;if(cr
 function renderCrew(){E("crewChips").innerHTML=crew.map((n,i)=>`<span class="chip">${esc(n)} <button onclick="crew.splice(${i},1);renderCrew()">×</button></span>`).join("")}
 function stepCards(){return [...document.querySelectorAll("#steps .step")]}function getSteps(){return stepCards().map(c=>({id:c.dataset.id,text:c.querySelector("textarea").value.trim()})).filter(x=>x.text)}
 function createStep(text="",before=null){sid++;const id=String(sid);selections[id]=[];const d=document.createElement("div");d.className="step";d.dataset.id=id;d.innerHTML=`<div class="stephead"><b>Step</b><div class="stepcontrols"><button class="btn ghost small" onclick="move(this,-1)">↑</button><button class="btn ghost small" onclick="move(this,1)">↓</button><button class="btn secondary small" onclick="insert(this,'before')">+ Above</button><button class="btn secondary small" onclick="insert(this,'after')">+ Below</button><button class="btn danger small" onclick="removeStep(this)">Remove</button></div></div><div class="stepbody"><textarea placeholder="Example: Label cables at both ends" oninput="changed('${id}')">${esc(text)}</textarea><div class="stepactions"><button class="btn primary small" onclick="findHazards('${id}')">Find Hazards</button><button class="btn ghost small" onclick="addCustom('${id}')">+ Custom Hazard</button><span id="status_${id}" class="stepstatus"></span></div><div id="haz_${id}" class="hazards"></div></div>`;const list=E("steps");before?list.insertBefore(d,before):list.appendChild(d);renumber();return id}
-function addStep(){const id=createStep();document.querySelector(`.step[data-id="${id}"] textarea`)?.focus()}function insert(btn,where){const card=btn.closest(".step");const before=where==="before"?card:card.nextElementSibling;const id=createStep("",before&&before.classList.contains("step")?before:null);document.querySelector(`.step[data-id="${id}"] textarea`)?.focus()}function move(btn,dir){const c=btn.closest(".step"),list=E("steps");if(dir<0){const p=c.previousElementSibling;if(p)list.insertBefore(c,p)}else{const n=c.nextElementSibling;if(n)list.insertBefore(n,c)}renumber()}function removeStep(btn){const c=btn.closest(".step");if(stepCards().length===1){alert("Keep at least one step.");return}delete selections[c.dataset.id];c.remove();renumber()}function renumber(){stepCards().forEach((c,i)=>c.querySelector(".stephead b").textContent=`Step ${i+1}`)}function changed(id){selections[id]=(selections[id]||[]).filter(x=>x.custom);renderHazards(id)}
-function contexts(){return [...document.querySelectorAll("#conditions input:checked")].map(x=>x.value)}function tokens(t){return String(t||"").toLowerCase().replace(/[^a-z0-9]+/g," ").split(/\s+/).filter(Boolean)}const SYN={scissor:["lift","mewp"],boom:["lift","mewp"],camera:["security","surveillance"],cat6:["cable","data"],cat6a:["cable","data"],fiber:["optical","cable"],ceiling:["overhead"],panel:["electrical"],drilling:["drill","penetration"],concrete:["silica","drill"],pulling:["pull","cable"],rack:["cabinet"],outside:["osp","weather"],label:["labeling"],housekeeping:["cleanup"]};
-function conceptSet(text){const s=new Set(tokens(text+" "+E("taskName").value+" "+contexts().join(" ")));[...s].forEach(w=>(SYN[w]||[]).forEach(x=>s.add(x)));return s}
+
+function buildWorkPlan(){
+ const scopes=plannerValues("scopePicks"),acts=plannerValues("activityPicks"),equip=plannerValues("equipmentPicks"),conds=plannerValues("conditionPicks");
+ if(!scopes.length && !E("taskName").value.trim()){
+   alert("Select what the crew is doing or enter the Task Name first.");return;
+ }
+ const steps=[];
+ const push=x=>{if(x&&!steps.includes(x))steps.push(x)};
+
+ push("Review work area, scope, access and nearby operations");
+ push("Stage tools, equipment and materials");
+
+ if(equip.includes("step-ladder")||equip.includes("extension-ladder"))push("Inspect and set up ladder access");
+ if(equip.includes("scissor-lift")||equip.includes("boom-lift"))push("Inspect, barricade and position aerial lift");
+
+ if(acts.includes("above-ceiling"))push("Open ceiling and establish controlled work area");
+ if(acts.includes("drill"))push("Verify penetration location and drill / install anchors");
+ if(acts.includes("excavation"))push("Set up excavation / handhole / manhole work area");
+ if(acts.includes("cable-pull"))push("Set up cable reel / pulling route and pull cable");
+ if(acts.includes("mount"))push("Mount and secure equipment / devices");
+ if(acts.includes("firestop"))push("Install required firestop at penetrations");
+ if(acts.includes("terminate"))push("Terminate and connect cable / devices");
+ if(acts.includes("splice"))push("Prepare, splice and protect fiber");
+ if(acts.includes("label") || scopes.some(x=>["camera","access-control","intrusion","fire-alarm","copper-cabling","fiber","rack","pathway","av"].includes(x)))push("Dress and label cable / equipment");
+ if(acts.includes("test") || scopes.some(x=>["camera","access-control","intrusion","fire-alarm","copper-cabling","fiber","av","troubleshoot"].includes(x)))push("Test / verify system operation");
+ if(acts.includes("hot-work"))push("Perform approved cutting / grinding / hot work");
+
+ push("Housekeeping, final inspection and restore work area");
+
+ E("steps").innerHTML="";
+ if(typeof sid!=="undefined")sid=0;
+ if(typeof stepCounter!=="undefined")stepCounter=0;
+ Object.keys(selections).forEach(k=>delete selections[k]);
+ steps.forEach(x=>{
+   if(typeof createStep==="function")createStep(x);
+   else addStep(x);
+ });
+ setTimeout(findAll,60);
+}
+
+function addStep(){const id=document.querySelector(`.step[data-id="${id}"] textarea`)?.focus()}function insert(btn,where){const card=btn.closest(".step");const before=where==="before"?card:card.nextElementSibling;const id=createStep("",before&&before.classList.contains("step")?before:null);document.querySelector(`.step[data-id="${id}"] textarea`)?.focus()}function move(btn,dir){const c=btn.closest(".step"),list=E("steps");if(dir<0){const p=c.previousElementSibling;if(p)list.insertBefore(c,p)}else{const n=c.nextElementSibling;if(n)list.insertBefore(n,c)}renumber()}function removeStep(btn){const c=btn.closest(".step");if(stepCards().length===1){alert("Keep at least one step.");return}delete selections[c.dataset.id];c.remove();renumber()}function renumber(){stepCards().forEach((c,i)=>c.querySelector(".stephead b").textContent=`Step ${i+1}`)}function changed(id){selections[id]=(selections[id]||[]).filter(x=>x.custom);renderHazards(id)}
+function contexts(){return plannerValues("conditionPicks")}
+function selectedContexts(){return contexts()}
+function plannerValues(id){return [...document.querySelectorAll(`#${id} input:checked`)].map(x=>x.value)}
+function plannerAll(){return [...plannerValues("scopePicks"),...plannerValues("activityPicks"),...plannerValues("equipmentPicks"),...plannerValues("conditionPicks")]}function tokens(t){return String(t||"").toLowerCase().replace(/[^a-z0-9]+/g," ").split(/\s+/).filter(Boolean)}const SYN={scissor:["lift","mewp"],boom:["lift","mewp"],camera:["security","surveillance"],cat6:["cable","data"],cat6a:["cable","data"],fiber:["optical","cable"],ceiling:["overhead"],panel:["electrical"],drilling:["drill","penetration"],concrete:["silica","drill"],pulling:["pull","cable"],rack:["cabinet"],outside:["osp","weather"],label:["labeling"],housekeeping:["cleanup"]};
+function conceptSet(text){const s=new Set(tokens(text+" "+E("taskName").value+" "+plannerAll().join(" ")));[...s].forEach(w=>(SYN[w]||[]).forEach(x=>s.add(x)));return s}
 function scoreEntry(e,c,raw){let s=0;(e.tags||[]).forEach(t=>{if(c.has(t))s+=5;if(raw.includes(t))s+=1.5});if(e.task)tokens(e.task).forEach(w=>{if(c.has(w))s+=.5});if(e.source==="CDI Manual"&&(e.tags||[]).some(t=>c.has(t)))s+=3;return s}
 function relevant(e,c,raw){const cat=(e.category||"").toLowerCase(),all=raw+" "+[...c].join(" ");const has=(...x)=>x.some(v=>all.includes(v));const tags=new Set(e.tags||[]);if(cat.includes("ladder")&&!has("ladder"))return false;if((cat.includes("mewp")||cat.includes("aerial"))&&!has("lift","mewp","scissor","boom"))return false;if(cat.includes("forklift")&&!has("forklift"))return false;if(cat.includes("confined")&&!has("confined","manhole"))return false;if(tags.has("cable_pull")&&!has("pull","route","feed","reel"))return false;if(tags.has("security_test")&&!has("test","commission","troubleshoot"))return false;if(tags.has("termination")&&!has("terminate","termination","connect","splice","crimp","punch"))return false;if(tags.has("drill")&&!has("drill","anchor","penetrat","core","mount","hole"))return false;if(tags.has("silica")&&!has("concrete","masonry","silica","core"))return false;return true}
 function recommend(text){const raw=text.toLowerCase(),c=conceptSet(text),arr=LIBRARY.map(e=>({...e,_s:scoreEntry(e,c,raw)})).filter(e=>e._s>=5&&relevant(e,c,raw)).sort((a,b)=>b._s-a._s),out=[],seen=new Set();for(const e of arr){const k=e.hazard.toLowerCase().replace(/[^a-z0-9]+/g," ");if(seen.has(k))continue;seen.add(k);out.push(e);if(out.length>=5)break}return out}
 function findHazards(id){const c=document.querySelector(`.step[data-id="${id}"]`),text=c?.querySelector("textarea").value.trim();if(!text){alert("Enter the work step first.");return}const custom=(selections[id]||[]).filter(x=>x.custom);selections[id]=[...custom,...recommend(text).map((x,i)=>({...x,selected:i<3,custom:false}))];renderHazards(id)}
 function findAll(){getSteps().forEach(s=>findHazards(s.id))}
-function renderHazards(id){const box=E("haz_"+id),arr=selections[id]||[],status=E("status_"+id);if(!box)return;const count=arr.filter(x=>x.selected).length;status.textContent=count?`${count} selected`:"";box.innerHTML=arr.map((h,i)=>`<label class="hazard ${h.selected?"selected":""}"><input type="checkbox" ${h.selected?"checked":""} onchange="selections['${id}'][${i}].selected=this.checked;renderHazards('${id}')"><div><h4>${esc(h.hazard)}</h4><p><b>Control:</b> ${esc(h.control)}</p><div class="hazmeta">${esc(h.source||"Crew Added")}</div></div></label>`).join("")}
-function addCustom(id){const h=prompt("Hazard:");if(!h)return;const c=prompt("Control / mitigation:");if(!c)return;selections[id]=selections[id]||[];selections[id].push({hazard:h,control:c,source:"Crew Added",selected:true,custom:true});renderHazards(id)}function selected(id){return (selections[id]||[]).filter(x=>x.selected)}
-function loadPreset(){const name=E("taskPreset").value;if(!name)return;E("taskName").value=name;E("steps").innerHTML="";sid=0;Object.keys(selections).forEach(k=>delete selections[k]);(PRESETS[name]||[]).forEach(x=>createStep(x));setTimeout(findAll,50)}
-
-const QUESTIONS=[
-["General Checklist",[["sds","SDS reviewed for task?"],["cords","All extension cords inspected?"],["hotgear","Electrical hot work equipment up-to-date?"],["confined","Confined space procedure / rescue plan?"],["utilities","Utility lines located above / below ground?"],["fall","All fall protection equipment inspected?"],["emergency","Emergency procedure and contacts reviewed?"],["communicated","Work communicated with others in area?"]]],
-["Material Handling Checklist",[["heavy","Item(s) lifted more than you can handle?"],["stretch","Stretch and flex performed?"],["lifting","Following safe lifting procedures?"],["gloves","Proper gloves being used?"],["pullinspect","If pulling wire/cable, is equipment inspected?"],["pullzone","Is the wire/cable pull area taped or controlled?"]]],
-["Ladder Safety Checklist",[["ladinspect","Ladder inspected?"],["ladstable","Ladder set on stable ground?"],["ladclear","Work area clear around ladder?"]]],
-["Lock Out / Tag Out Checklist",[["lotoreq","Is LOTO required?"],["walkdown","System walked down?"],["ownerlock","Owner isolated system and placed lock?"],["yourlock","Your lock placed?"],["teststart","System test-start attempted?"],["zero","Zero energy verified?"]]]
-];
-function seg(id){return `<div class="seg"><label><input type="radio" name="${id}" value="Y" onchange="answers['${id}']='Y'"><span>Yes</span></label><label><input type="radio" name="${id}" value="N" onchange="answers['${id}']='N'"><span>No</span></label><label><input type="radio" name="${id}" value="A" onchange="answers['${id}']='A'"><span>N/A</span></label></div>`}
-function renderChecklist(){E("checklist").innerHTML=QUESTIONS.map(([title,qs])=>`<div class="checksection"><h3>${title}</h3><div class="checkbody">${title==="Ladder Safety Checklist"?'<div class="grid2" style="margin:8px 0 4px"><div><label class="lbl">Height of work</label><input id="workHeight"></div><div><label class="lbl">Height of ladder</label><input id="ladderHeight"></div></div>':""}${qs.map(([id,q])=>`<div class="checkrow"><b>${q}</b>${seg(id)}</div>`).join("")}</div></div>`).join("");Object.entries(answers).forEach(([id,v])=>{const r=document.querySelector(`input[name="${id}"][value="${v}"]`);if(r){r.checked=true}})}
-function permits(){return [...document.querySelectorAll("#permits input:checked")].map(x=>x.value)}
-
-function ensureHazard(stepId,hazard,control,source="Checklist"){
- selections[stepId]=selections[stepId]||[];
- const exists=selections[stepId].some(x=>String(x.hazard).toLowerCase()===String(hazard).toLowerCase());
- if(!exists)selections[stepId].push({hazard,control,source,selected:true,custom:false,checklistAdded:true});
+function renderHazards(id){
+ const box=E("haz_"+id)||E("sugs_"+id),arr=selections[id]||[],status=E("status_"+id);
+ if(!box)return;
+ const count=arr.filter(x=>x.selected).length;
+ if(status)status.innerHTML=count?`${count} hazards selected · <button type="button" class="haztoggle" onclick="toggleHazards('${id}')">View / Edit</button>`:`<button type="button" class="haztoggle" onclick="findHazards('${id}')">Find Hazards</button>`;
+ box.classList.add("collapsed");
+ box.innerHTML=arr.map((h,i)=>`<label class="hazard ${h.selected?"selected":""}"><input type="checkbox" ${h.selected?"checked":""} onchange="selections['${id}'][${i}].selected=this.checked;renderHazards('${id}');toggleHazards('${id}',true)"><div><h4>${esc(h.hazard)}</h4><p><b>Control:</b> ${esc(h.control)}</p><div class="hazmeta">${esc(h.source||"Crew Added")}</div></div></label>`).join("");
+}
+function toggleHazards(id,open=false){
+ const box=E("haz_"+id)||E("sugs_"+id);if(!box)return;
+ if(open)box.classList.remove("collapsed");else box.classList.toggle("collapsed");
 }
 function findBestStep(wordsNeeded){
  const steps=getSteps();
@@ -274,6 +513,101 @@ function applyChecklistHazards(){
  steps.forEach(s=>renderHazards(s.id));
 }
 
+
+
+function plannerSupplementCandidates(){
+ const p=new Set(plannerAll()),out=[];
+ const add=(hazard,control,tags=[])=>out.push({hazard,control,tags,source:"Work Plan Review"});
+
+ if(p.has("step-ladder")||p.has("extension-ladder")){
+   add("Ladder struck by pedestrian / doorway movement","Control doors and pedestrian traffic; barricade the ladder area and maintain a clear setup zone.",["ladder","traffic"]);
+   add("Overreaching or side loading while working from ladder","Keep body centered between rails; descend and reposition instead of leaning or applying uncontrolled side force.",["ladder","fall"]);
+ }
+ if(p.has("scissor-lift")||p.has("boom-lift")){
+   add("MEWP crush / pinch exposure at overhead or side obstruction","Survey overhead and side clearances before movement; keep body inside platform and use a spotter where visibility is restricted.",["lift","crush"]);
+   add("MEWP collision with occupants, equipment or structure","Establish travel/exclusion route; use spotter and controlled speed; lower platform for travel when appropriate.",["lift","traffic"]);
+   add("Dropped tools or hardware from elevated platform","Secure tools/materials and control the area below; use parts containers or tethering where appropriate.",["lift","dropped"]);
+ }
+ if(p.has("drill-tool")||p.has("core-drill")||p.has("drill")){
+   add("Flying chips / debris during drilling or anchoring","Use eye/face protection and dust/debris capture; keep other personnel outside the immediate drilling zone.",["drill","particles"]);
+   add("Drill bind / kickback / awkward body position","Use correct bit and tool; maintain stable footing and two-hand control where designed; reposition rather than overreach.",["drill","kickback"]);
+ }
+ if(p.has("core-drill")||p.has("hepa")){
+   add("Respirable dust from concrete / masonry disturbance","Use effective HEPA or wet dust control as applicable; maintain capture at the source and clean using HEPA/wet methods.",["silica","dust"]);
+ }
+ if(p.has("cable-reel")||p.has("cable-puller")||p.has("cable-pull")){
+   add("Cable reel movement / rotating flange exposure","Set reel on stable rated stands, chock/control movement and keep hands/clothing clear of rotating flanges.",["reel","cable"]);
+   add("Stored tension / cable whip during pull","Keep personnel out of bights and recoil path; release tension in a controlled manner and use clear stop/start commands.",["cable","tension"]);
+ }
+ if(p.has("hand-tools")){
+   add("Hand-tool cut / pinch exposure","Inspect tools; use correct tool and controlled hand position; cut away from body and keep free hand out of the line of fire.",["tools","hands"]);
+ }
+ if(p.has("fiber-tools")||p.has("fiber")){
+   add("Fiber shard puncture / eye exposure","Use eye protection and a designated fiber-shard container/work mat; never handle shards with bare fingers and clean the work surface.",["fiber","shard"]);
+   add("Optical-source exposure from active fiber","Verify fiber state and never look directly into fiber ends/connectors; use appropriate test equipment.",["fiber","optical"]);
+ }
+ if(p.has("tester")||p.has("test")){
+   add("Unexpected device/system response during testing","Coordinate testing with affected personnel; control moving/locking/alarm outputs and verify restoration after testing.",["testing","commission"]);
+ }
+ if(p.has("cart")||p.has("forklift")||p.has("material-move")){
+   add("Material movement blocks visibility / strikes person or property","Plan the route; keep loads stable and within equipment capacity; maintain visibility or use a spotter.",["material","traffic"]);
+ }
+ if(p.has("occupied")||p.has("corridor")||p.has("other-trades")){
+   add("Public / other-trade interaction with active work zone","Use barricades/signage and coordinate sequencing; maintain required egress and prevent unauthorized entry into the work area.",["occupied","traffic"]);
+ }
+ if(p.has("ceiling")||p.has("above-ceiling")){
+   add("Hidden sharp edges / energized services above ceiling","Use task lighting; inspect before reaching; maintain separation from electrical and other existing services; wear appropriate hand/eye protection.",["ceiling","hidden"]);
+   add("Ceiling tile / debris falls during access","Remove and stage tiles securely; control the area below and contain dust/debris during overhead work.",["ceiling","dropped"]);
+ }
+ if(p.has("data-center")){
+   add("Impact to active data-center equipment / critical services","Coordinate exact work area and system with site operations; protect active equipment, airflow and cabling; maintain access and cleanliness.",["data-center","critical"]);
+ }
+ if(p.has("electrical-room")||p.has("electrical")){
+   add("Restricted electrical working space / proximity to energized equipment","Keep electrical working space clear; limit access to authorized/qualified personnel and maintain required separation.",["electrical","room"]);
+ }
+ if(p.has("outdoor")||p.has("osp")||p.has("parking")){
+   add("Vehicle / mobile-equipment exposure in exterior work area","Use high-visibility controls, cones/barricades and spotters as appropriate; maintain separation from moving vehicles.",["traffic","outside"]);
+ }
+ if(p.has("heat")){
+   add("Heat stress / dehydration","Provide water, cooling/rest opportunities and symptom monitoring appropriate to conditions; stop work and respond to heat illness symptoms promptly.",["heat"]);
+ }
+ if(p.has("wind-weather")){
+   add("Weather change affects elevated work, material control or electrical safety","Monitor wind/rain/lightning; secure loose material and stop/reassess work when conditions make the planned controls ineffective.",["weather","wind"]);
+ }
+ if(p.has("tight-space")){
+   add("Restricted access causes awkward posture / limited escape path","Reposition equipment and materials to preserve access/egress; limit congestion and avoid sustained awkward posture.",["access","ergonomics"]);
+ }
+ if(p.has("label")){
+   add("Misidentification of cable / device during labeling","Verify both endpoints/device identity before applying labels; coordinate changes so active or critical systems are not mislabeled.",["labeling","quality"]);
+ }
+ if(p.has("firestop")){
+   add("Firestop chemical / skin / eye exposure","Review product SDS; use required gloves/eye protection and ventilation; control spills and clean excess material.",["firestop","chemical"]);
+ }
+ return out;
+}
+
+function checklistCandidates(){
+ const out=[];
+ const add=(hazard,control,tags=["checklist"])=>out.push({hazard,control,tags,source:"Checklist / PTP Review"});
+ const applicable=id=>answers[id] && answers[id]!=="A";
+
+ if(applicable("cords"))add("Temporary power / extension cord trip or damage exposure","Inspect cords and plugs; remove damaged equipment; route/protect cords to prevent trips, pinch damage and contact with wet areas.",["cord","tools"]);
+ if(applicable("heavy") || applicable("lifting"))add("Material handling / overexertion exposure","Plan the move; use team or mechanical assistance when needed; keep the route clear and hands out of pinch points.",["material","lifting"]);
+ if(applicable("gloves"))add("Cuts, abrasions or pinch-point hand exposure","Use task-appropriate gloves and controlled hand placement; keep hands out of blades, sharp edges and pinch points.",["gloves","hands"]);
+ if(applicable("pullinspect") || applicable("pullzone"))add("Cable pulling line-of-fire, pinch and stored-tension exposure","Inspect reels, stands, grips and pulling equipment; control the pull zone; keep workers out of bights and the direct line of pull.",["cable","pull"]);
+ if(applicable("ladinspect") || applicable("ladstable") || applicable("ladclear"))add("Ladder fall / unstable setup / traffic exposure","Inspect ladder; use firm level footing; maintain three points of contact; control doors and pedestrian traffic; reposition instead of overreaching.",["ladder","fall"]);
+ if(applicable("fall"))add("Fall from elevated work position","Inspect required fall-protection equipment; use approved anchorage/tie-off where required; keep gates/rails in place and maintain safe access.",["fall","height"]);
+ if(applicable("lotoreq") || permits().includes("Electrical room work") || permits().includes("Energized elec. Work"))add("Electrical shock / unexpected energization","Identify electrical sources; de-energize and isolate when possible; use required LOTO and qualified personnel; verify safe condition before contact.",["electrical","loto"]);
+ if(applicable("utilities") || permits().includes("Ground & Wall Penetration"))add("Drilling or penetration into concealed utility","Verify the penetration path and utilities before drilling/coring; stop if conditions differ from the plan; use suitable dust/debris controls.",["penetration","utility"]);
+ if(applicable("sds"))add("Chemical / product exposure","Review label and SDS before use; apply required ventilation, handling, PPE and spill controls.",["chemical","sds"]);
+ if(applicable("communicated"))add("Interaction with occupants or other trades","Coordinate sequence and work-zone controls; communicate barricades, overhead work, equipment movement and access restrictions.",["communication","occupied"]);
+ if(applicable("emergency"))add("Delayed emergency response due to unclear site procedure","Review alarms, emergency contacts, evacuation/muster route and method for summoning medical assistance before work.",["emergency"]);
+ if(permits().includes("Hot work"))add("Fire, sparks, burns and hot-surface exposure","Remove/protect combustibles; contain sparks; provide required extinguisher/fire watch; control hot surfaces and fumes.",["hot-work","fire"]);
+ if(permits().includes("Confined space"))add("Confined-space atmospheric / access hazard","Verify entry classification and permit requirements; control atmosphere, ventilation, communication, access and rescue provisions.",["confined"]);
+ if(permits().includes("Crane – critical lift"))add("Suspended-load / rigging line-of-fire exposure","Use approved lift plan and rated inspected rigging; establish exclusion zone; use designated signaling and keep personnel clear of suspended loads.",["rigging","crane"]);
+ return out;
+}
+
 function reviewPTP(){try{applyChecklistHazards();const steps=getSteps(),issues=[];if(!E("jobNo").value.trim())issues.push("Enter Job No.");if(!E("jobLeader").value.trim())issues.push("Enter Job Leader.");if(!E("foreman").value.trim())issues.push("Enter Job Lead or Foreman.");if(!E("taskName").value.trim())issues.push("Enter Task Name.");if(!crew.length)issues.push("Add at least one crew member.");if(!steps.length)issues.push("Add at least one work step.");steps.forEach((s,i)=>{if(!selected(s.id).length)issues.push(`Step ${i+1} needs at least one selected hazard.`)});let out=issues.length?`<div class="notice warn"><b>${issues.length} item${issues.length===1?"":"s"} need attention:</b><ul>${issues.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:'<div class="notice good"><b>PTP content check passed.</b> Review the sequence below.</div>';out+=steps.map((s,i)=>`<div class="reviewstep"><b class="title">Step ${i+1} — ${esc(s.text)}</b><ul>${selected(s.id).map(h=>`<li><b>${esc(h.hazard)}</b><br>${esc(h.control)}</li>`).join("")||"<li>No selected hazards</li>"}</ul></div>`).join("");E("review").innerHTML=out;go(5)}catch(err){console.error(err);alert("Review could not open: "+err.message)}}
 
 function wrap(text,max){const w=String(text||"").trim().split(/\s+/).filter(Boolean),a=[];let l="";for(const x of w){const t=l?l+" "+x:x;if(t.length>max&&l){a.push(l);l=x}else l=t}if(l)a.push(l);return a}function compact(text,max){text=String(text||"").replace(/\s+/g," ").trim();if(text.length<=max)return text;const p=text.slice(0,max).lastIndexOf(" ");return text.slice(0,p>30?p:max).trim()}
@@ -340,30 +674,52 @@ function page1ControlFlags(){
  };
 }
 
-function pctX(x){return (x/1584*100).toFixed(4)+"%"}function pctY(y){return (y/1224*100).toFixed(4)+"%"}function pctW(w){return (w/1584*100).toFixed(4)+"%"}function pctH(h){return (h/1224*100).toFixed(4)+"%"}
+function editableLine(x,lineY,w,value,size=11,opts={}){
+ const id=opts.id||"";
+ const align=opts.align||"left";
+ const h=Math.max(12,size+3);
+ return `<input class="ovline" ${id?`data-field="${id}"`:""} value="${esc(value||"")}" style="left:${x}px;top:${lineY-h}px;width:${w}px;height:${h}px;line-height:${h}px;font-size:${size}px;text-align:${align};">`;
+}
 function editableField(x,y,w,h,value,size=12,opts={}){
  const id=opts.id||"";
  const align=opts.align||"left";
- return `<textarea class="ovtext" ${id?`data-field="${id}"`:""} style="left:${pctX(x)};top:${pctY(y)};width:${pctW(w)};height:${pctH(h)};font-size:${(size/1584*100).toFixed(4)}vw;text-align:${align};">${esc(value||"")}</textarea>`;
+ return `<textarea class="ovtext" ${id?`data-field="${id}"`:""} style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;font-size:${size}px;text-align:${align};">${esc(value||"")}</textarea>`;
 }
-function checkBox(x,y,on=false,key=""){
- return `<button type="button" class="ovcheck ${on?"on":""}" ${key?`data-check="${key}"`:""} style="left:${pctX(x-9)};top:${pctY(y-9)}" onclick="this.classList.toggle('on')"></button>`;
+function checkBox(x,y,on=false,key="",group=""){
+ return `<button type="button" class="ovcheck ${on?"on":""}" ${key?`data-check="${key}"`:""} ${group?`data-group="${group}"`:""} style="left:${x-9}px;top:${y-9}px" onclick="togglePreviewCheck(this)"></button>`;
 }
-function answerState(id){return answers[id]||""}
+function togglePreviewCheck(el){
+ const group=el.dataset.group;
+ if(group){
+   document.querySelectorAll(`.ovcheck[data-group="${group}"]`).forEach(x=>x.classList.remove("on"));
+   el.classList.add("on");
+ }else{
+   el.classList.toggle("on");
+ }
+}
+function scaleFormCanvases(){
+ document.querySelectorAll(".formpage").forEach(page=>{
+   const canvas=page.querySelector(".formcanvas");
+   if(!canvas)return;
+   const scale=page.clientWidth/1584;
+   canvas.style.transform=`scale(${scale})`;
+ });
+}
+window.addEventListener("resize",scaleFormCanvases);
 function editablePage1(){
- let h=`<div class="formpage"><img src="${BG1}" alt="Official CDI PTP page 1">`;
- h+=editableField(1167,184,260,23,E("jobNo").value,12,{id:"jobNo"});
- h+=editableField(1182,214,250,23,E("jobLeader").value,12,{id:"jobLeader"});
- h+=editableField(1168,244,265,23,E("company").value,12,{id:"company"});
- h+=editableField(1190,274,180,23,E("dateStarted").value,11,{id:"dateStarted"});
- h+=editableField(1400,274,120,23,E("timeStarted").value,11,{id:"timeStarted"});
- h+=editableField(1210,304,160,23,E("dateCompleted").value,11,{id:"dateCompleted"});
- h+=editableField(1400,304,120,23,E("timeCompleted").value,11,{id:"timeCompleted"});
- h+=editableField(1105,510,405,78,E("taskName").value,12,{id:"taskName"});
- h+=editableField(1105,642,405,53,E("goal").value,12,{id:"goal"});
- h+=editableField(1105,834,405,25,E("foreman").value,12,{id:"foreman"});
- const crewY=[898,928,958,988,1018,1048,1078,1108],crewX=[1105,1318];
- crew.slice(0,16).forEach((n,i)=>h+=editableField(crewX[i>=8?1:0],crewY[i%8],185,24,n,11,{id:"crew"+i}));
+ let h=`<div class="formpage"><div class="formcanvas"><img src="${BG1}" alt="Official CDI PTP page 1">`;
+ h+=editableLine(1167,213,260,E("jobNo").value,11,{id:"jobNo"});
+ h+=editableLine(1182,243,250,E("jobLeader").value,11,{id:"jobLeader"});
+ h+=editableLine(1168,273,265,E("company").value,11,{id:"company"});
+ h+=editableLine(1190,303,180,E("dateStarted").value,10,{id:"dateStarted"});
+ h+=editableLine(1400,303,120,E("timeStarted").value,10,{id:"timeStarted"});
+ h+=editableLine(1210,333,160,E("dateCompleted").value,10,{id:"dateCompleted"});
+ h+=editableLine(1400,333,120,E("timeCompleted").value,10,{id:"timeCompleted"});
+ h+=editableField(1105,522,405,66,E("taskName").value,12,{id:"taskName"});
+ h+=editableField(1105,655,405,42,E("goal").value,12,{id:"goal"});
+ h+=editableLine(1105,797,405,E("foreman").value,11,{id:"foreman"});
+ const crewY=[922,952,982,1012,1042,1072,1102,1132],crewX=[1105,1318];
+ crew.slice(0,16).forEach((n,i)=>h+=editableLine(crewX[i>=8?1:0],crewY[i%8],185,n,10.5,{id:"crew"+i}));
 
  // permits
  const pc={"Confined space":[228,134],"Hot work":[228,160],"Energized elec. Work":[228,188],"Elevator":[228,216],"Electrical room work":[432,134],"Crane – critical lift":[432,160],"Ladder":[432,188],"Ground & Wall Penetration":[432,216]};
@@ -376,7 +732,7 @@ function editablePage1(){
  [["ladinspect","ladstable","ladclear"],[770,796,821]],
  [["lotoreq","walkdown","ownerlock","yourlock","teststart","zero"],[877,902,928,952,978,1004]]
  ];
- groups.forEach(([ids,ys])=>ids.forEach((id,i)=>{const v=answerState(id);h+=checkBox(388,ys[i],v==="Y",id+":Y")+checkBox(425,ys[i],v==="N",id+":N")+checkBox(458,ys[i],v==="A",id+":A")}));
+ groups.forEach(([ids,ys])=>ids.forEach((id,i)=>{const v=answerState(id);h+=checkBox(388,ys[i],v==="Y",id+":Y",id)+checkBox(425,ys[i],v==="N",id+":N",id)+checkBox(458,ys[i],v==="A",id+":A",id)}));
  h+=editableField(300,690,110,22,E("workHeight")?.value||"",10,{id:"workHeight"});
  h+=editableField(300,720,110,22,E("ladderHeight")?.value||"",10,{id:"ladderHeight"});
 
@@ -390,26 +746,27 @@ function editablePage1(){
  h+=checkBox(93,1088,answers.cleanTools==="Y","cleanTools");
  h+=checkBox(92,1113,answers.cleanVehicle==="Y","cleanVehicle");
  h+=checkBox(92,1140,answers.cleanSurface==="Y","cleanSurface");
- return h+"</div>";
+ return h+"</div></div>";
 }
 function editablePage2(rows){
- let h=`<div class="formpage"><img src="${BG2}" alt="Official CDI PTP page 2">`;
- const ys=[132,165,197,229,261,293,325,357,389,421,453,485,517,549,581,613,645];
+ let h=`<div class="formpage"><div class="formcanvas"><img src="${BG2}" alt="Official CDI PTP page 2">`;
+ const stepLines=[146,179,211,242,275,307,339,371,403,435,467,499,531,563,595,627,659],hazLines=[148,180,212,244,276,308,340,372,404,436,468,500,532,564,596,628,660],ctlLines=[145,177,209,241,273,305,338,370,401,434,466,498,530,562,594,626,658];
  rows.slice(0,17).forEach((r,i)=>{
-   h+=editableField(60,ys[i],440,26,r.step,10,{id:"rowStep"+i});
-   h+=editableField(575,ys[i],430,26,r.haz,9.5,{id:"rowHaz"+i});
-   h+=editableField(1102,ys[i],415,26,r.ctl,9.2,{id:"rowCtl"+i});
+   h+=editableLine(60,stepLines[i],440,r.step,10,{id:"rowStep"+i});
+   h+=editableLine(575,hazLines[i],430,r.haz,9.5,{id:"rowHaz"+i});
+   h+=editableLine(1102,ctlLines[i],415,r.ctl,9.2,{id:"rowCtl"+i});
  });
  const chgy=[754,779,804,830],ids=["chgPersonnel","chgTask","chgWeather","chgAccess"];
- ids.forEach((id,i)=>{const v=answerState(id);h+=checkBox(387,chgy[i],v==="Y",id+":Y")+checkBox(424,chgy[i],v==="N",id+":N")+checkBox(458,chgy[i],v==="A",id+":A")});
- h+=checkBox(263,914,answers.crewAware==="Y","crewAware:Y")+checkBox(344,914,answers.crewAware==="N","crewAware:N");
+ ids.forEach((id,i)=>{const v=answerState(id);h+=checkBox(387,chgy[i],v==="Y",id+":Y",id)+checkBox(424,chgy[i],v==="N",id+":N",id)+checkBox(458,chgy[i],v==="A",id+":A",id)});
+ h+=checkBox(263,914,answers.crewAware==="Y","crewAware:Y","crewAware")+checkBox(344,914,answers.crewAware==="N","crewAware:N","crewAware");
  h+=editableField(60,970,440,60,E("changeText")?.value||"",10,{id:"changeText"});
- h+=checkBox(154,1094,answers.accident==="Y","accident:Y")+checkBox(233,1094,answers.accident==="N","accident:N");
- h+=checkBox(1283,758,answers.materialsReady==="Y","materialsReady:Y")+checkBox(1367,758,answers.materialsReady==="N","materialsReady:N");
+ h+=checkBox(154,1094,answers.accident==="Y","accident:Y","accident")+checkBox(233,1094,answers.accident==="N","accident:N","accident");
+ h+=checkBox(1283,758,answers.materialsReady==="Y","materialsReady:Y","materialsReady")+checkBox(1367,758,answers.materialsReady==="N","materialsReady:N","materialsReady");
+ h+=checkBox(1283,858,answers.dailyConfirm==="Y","dailyConfirm:Y","dailyConfirm")+checkBox(1367,858,answers.dailyConfirm==="N","dailyConfirm:N","dailyConfirm");
 
  const hr=highRiskFlags(),vals=[hr.material,hr.hazardous,hr.driving,hr.heights,hr.lifting,hr.confined,hr.isolation,hr.electrical,hr.ground,hr.mobile,hr.heat,hr.cold,hr.silica],hry=[720,752,788,820,857,888,924,958,992,1024,1059,1092,1126];
- vals.forEach((v,i)=>{h+=checkBox(814,hry[i],v,"hr"+i+":Y")+checkBox(910,hry[i],!v,"hr"+i+":N")});
- return h+"</div>";
+ vals.forEach((v,i)=>{h+=checkBox(814,hry[i],v,"hr"+i+":Y","hr"+i)+checkBox(910,hry[i],!v,"hr"+i+":N","hr"+i)});
+ return h+"</div></div>";
 }
 function page1(){let s=svg(BG1);s+=textEl(1170,198,E("jobNo").value,13)+textEl(1188,228,E("jobLeader").value,13)+textEl(1174,258,E("company").value,13)+textEl(1195,288,E("dateStarted").value,12)+textEl(1410,288,E("timeStarted").value,12)+textEl(1220,318,E("dateCompleted").value,12)+textEl(1410,318,E("timeCompleted").value,12);wrap(E("taskName").value,44).slice(0,3).forEach((l,i)=>s+=textEl(1110,533+i*25,l,13));wrap(E("goal").value,44).slice(0,2).forEach((l,i)=>s+=textEl(1110,668+i*26,l,13));s+=textEl(1110,852,compact(E("foreman").value,44),13);const cy=[915,945,975,1005,1035,1065,1095,1125],cx=[1110,1320];crew.slice(0,16).forEach((n,i)=>s+=textEl(cx[i>=8?1:0],cy[i%8],compact(n,24),12));
 const gy=[296,322,346,372,398,422,448,474],gids=["sds","cords","hotgear","confined","utilities","fall","emergency","communicated"];gids.forEach((id,i)=>s+=answerMark(id,388,425,458,gy[i]));
@@ -439,21 +796,91 @@ if(answers.cleanSurface==="Y")s+=xmark(92,1140);
 
 return s+"</svg>"}
 
-function ptpRows(){const rows=[];getSteps().forEach((st,idx)=>{const hs=selected(st.id).slice(0,3);const haz=hs.map(x=>compact(x.hazard,50)).join("; ");const ctl=hs.map(x=>compact(x.control,78)).join("; ");const a=wrap(st.text,42),b=wrap(haz,43),c=wrap(ctl,46),n=Math.max(1,a.length,b.length,c.length);for(let i=0;i<n;i++)rows.push({step:(i===0?(idx+1)+". ":"")+(a[i]||""),haz:b[i]||"",ctl:c[i]||""})});return rows}
-function fitRows(rows){
- if(rows.length<=17)return rows;
- // Preserve the CDI template: compress each work step to one physical form line.
- const out=[];
- getSteps().forEach((st,idx)=>{
-   const hs=selected(st.id).slice(0,2);
-   out.push({
-     step:(idx+1)+". "+compact(st.text,42),
-     haz:compact(hs.map(x=>x.hazard).join("; "),43),
-     ctl:compact(hs.map(x=>x.control).join("; "),46)
+function finalHazardRows(){
+ const steps=getSteps();
+ const all=[];
+ const seen=new Set();
+
+ function add(stepNo,stepText,h){
+   if(!h||!h.hazard||!h.control)return;
+   const key=h.hazard.toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+   if(seen.has(key))return;
+   seen.add(key);
+   all.push({
+     stepNo,
+     stepText,
+     hazard:compact(h.hazard,52),
+     control:compact(h.control,92),
+     source:h.source||"Safety Hub"
    });
+ }
+
+ // First: hazards already selected/recommended for each step.
+ steps.forEach((st,i)=>{
+   let chosen=selected(st.id);
+   // Add additional relevant recommendations so the final form is thorough,
+   // while the field screen remains simple.
+   const auto=recommend(st.text);
+   const merged=[...chosen,...auto];
+   merged.slice(0,5).forEach(h=>add(i+1,st.text,h));
  });
- return out;
+
+ // Second: checklist and permit information.
+ checklistCandidates().forEach(h=>{
+   const target=steps.findIndex(s=>{
+     const t=s.text.toLowerCase(),tags=(h.tags||[]);
+     return tags.some(tag=>t.includes(tag.replace("-"," ")));
+   });
+   const idx=target>=0?target:0;
+   if(steps[idx])add(idx+1,steps[idx].text,h);
+ });
+
+ // Third: direct work-plan/equipment/condition hazards.
+ plannerSupplementCandidates().forEach(h=>{
+   if(all.length>=17)return;
+   const target=steps.findIndex(s=>(h.tags||[]).some(tag=>s.text.toLowerCase().includes(tag.replace("-"," "))));
+   const si=target>=0?target:Math.min(steps.length-1,Math.max(0,Math.floor(all.length/3)));
+   if(steps[si])add(si+1,steps[si].text,h);
+ });
+
+ // Fourth: equipment/condition-specific recommendations from the library
+ // using the complete plan context, until the official form is nearly full.
+ if(all.length<17){
+   steps.forEach((st,i)=>{
+     recommend(st.text).slice(0,8).forEach(h=>{if(all.length<17)add(i+1,st.text,h)});
+   });
+ }
+
+ // Always keep a final housekeeping/restoration hazard if relevant and room remains.
+ if(all.length<17 && steps.length){
+   add(steps.length,steps[steps.length-1].text,{
+     hazard:"Residual trip / debris / incomplete restoration",
+     control:"Remove tools, cords, scrap and temporary controls when safe; replace covers/ceiling tiles; verify the area and affected systems are restored.",
+     source:"Closeout"
+   });
+ }
+
+ // Prioritize broad step coverage before allowing one step to consume all 17 lines.
+ const byStep=new Map();
+ all.forEach(r=>{if(!byStep.has(r.stepNo))byStep.set(r.stepNo,[]);byStep.get(r.stepNo).push(r)});
+ const ordered=[];
+ let round=0;
+ while(ordered.length<17){
+   let added=false;
+   for(const [stepNo,rows] of byStep){
+     if(rows[round] && ordered.length<17){ordered.push(rows[round]);added=true}
+   }
+   if(!added)break;
+   round++;
+ }
+ return ordered.slice(0,17).map(r=>({
+   step:`${r.stepNo}. ${compact(r.stepText,39)}`,
+   haz:compact(r.hazard,47),
+   ctl:compact(r.control,51)
+ }));
 }
+function ptpRows(){return finalHazardRows()}
+function fitRows(rows){return rows.slice(0,17)}
 function highRiskFlags(){
  const b=selectedBlob();
  return {
@@ -500,14 +927,14 @@ function generatePTP(){
    if(!steps.length){alert("Add at least one work step.");go(3);return}
    if(steps.some(s=>!selected(s.id).length)){alert("Every work step needs at least one selected hazard.");go(3);return}
    if(steps.length>17){alert("The CDI form has 17 work-step lines. Combine the work into 17 or fewer steps.");go(3);return}
-   const rows=fitRows(ptpRows());
-   E("preview").innerHTML=editablePage1()+editablePage2(rows);
+   const rows=finalHazardRows();
+   E("preview").innerHTML=editablePage1()+editablePage2(rows);requestAnimationFrame(scaleFormCanvases);setTimeout(scaleFormCanvases,60);
    E("s5").classList.add("hidden");E("output").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"});
  }catch(err){console.error(err);alert("PTP could not be generated: "+err.message)}
 }
 function renderLibrary(){const q=(E("libSearch").value||"").toLowerCase(),cat=E("libCategory").value,rows=LIBRARY.filter(e=>{const blob=(e.hazard+" "+e.control+" "+(e.task||"")+" "+(e.tags||[]).join(" ")+" "+e.category).toLowerCase();return(!q||blob.includes(q))&&(!cat||e.category===cat)});E("libStats").textContent=`Showing ${rows.length} of ${LIBRARY.length} records`;E("libResults").innerHTML=rows.slice(0,150).map(e=>`<div class="libitem"><h4>${esc(e.hazard)}<span class="badge">${esc(e.source)}</span></h4><p><b>Control:</b> ${esc(e.control)}</p>${e.task?`<p><b>Common task:</b> ${esc(e.task)}</p>`:""}</div>`).join("")}[...new Set(LIBRARY.map(x=>x.category))].sort().forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;E("libCategory").appendChild(o)});E("libSearch").addEventListener("input",renderLibrary);E("libCategory").addEventListener("change",renderLibrary);E("manualRules").innerHTML=LIBRARY.filter(x=>x.source==="CDI Manual").map(x=>`<div class="reviewstep"><b class="title">${esc(x.hazard)}</b><div>${esc(x.control)}</div></div>`).join("");
 function resetApp(){if(confirm("Clear this PTP and start over?"))location.reload()}
-createStep();
+
 </script>
 </body>
 </html>
