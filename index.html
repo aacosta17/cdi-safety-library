@@ -589,6 +589,10 @@ function plannerSupplementCandidates(){
 function getSelectedPermits(){
  return [...document.querySelectorAll("#permits input:checked")].map(x=>x.value);
 }
+function selectedFor(stepId){ return selected(stepId); }
+function selected(stepId){
+ return (selections[stepId]||[]).filter(x=>x && x.selected);
+}
 function checklistCandidates(){
  const out=[];
  const add=(hazard,control,tags=["checklist"])=>out.push({hazard,control,tags,source:"Checklist / PTP Review"});
@@ -944,6 +948,23 @@ function safetyHubSelfCheck(){
  if(problems.length)console.error("Safety Hub startup check failed:",problems);
  return problems.length===0;
 }
+function safetyHubIntegrityCheck(){
+ const required={
+   getSelectedPermits:typeof getSelectedPermits==="function",
+   selected:typeof selected==="function",
+   applyChecklistHazards:typeof applyChecklistHazards==="function",
+   checklistCandidates:typeof checklistCandidates==="function",
+   plannerSupplementCandidates:typeof plannerSupplementCandidates==="function",
+   finalHazardRows:typeof finalHazardRows==="function",
+   reviewPTP:typeof reviewPTP==="function",
+   generatePTP:typeof generatePTP==="function",
+   getSteps:typeof getSteps==="function"
+ };
+ const missing=Object.entries(required).filter(([,ok])=>!ok).map(([name])=>name);
+ if(missing.length)console.error("Safety Hub integrity check failed:",missing);
+ return {ok:missing.length===0,missing};
+}
+
 function resetApp(){if(confirm("Clear this PTP and start over?"))location.reload()}
 
 </script>
