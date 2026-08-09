@@ -717,12 +717,35 @@ function appPreflight(){
 
 function reviewPTP(){try{const pf=appPreflight();if(!pf.ok)throw new Error("Missing app function(s): "+pf.missing.join(", "));applyChecklistHazards();const steps=getSteps(),issues=[];if(!E("jobNo").value.trim())issues.push("Enter Job No.");if(!E("jobLeader").value.trim())issues.push("Enter Job Leader.");if(!E("foreman").value.trim())issues.push("Enter Job Lead or Foreman.");if(!E("taskName").value.trim())issues.push("Enter Task Name.");if(!crew.length)issues.push("Add at least one crew member.");if(!steps.length)issues.push("Add at least one work step.");steps.forEach((s,i)=>{if(!selected(s.id).length)issues.push(`Step ${i+1} needs at least one selected hazard.`)});let out=issues.length?`<div class="notice warn"><b>${issues.length} item${issues.length===1?"":"s"} need attention:</b><ul>${issues.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:'<div class="notice good"><b>PTP content check passed.</b> Review the sequence below.</div>';out+=steps.map((s,i)=>`<div class="reviewstep"><b class="title">Step ${i+1} — ${esc(s.text)}</b><ul>${selected(s.id).map(h=>`<li><b>${esc(h.hazard)}</b><br>${esc(h.control)}</li>`).join("")||"<li>No selected hazards</li>"}</ul></div>`).join("");E("review").innerHTML=out;go(5)}catch(err){console.error(err);alert("Review could not open: "+err.message)}}
 
-function wrap(text,max){const w=String(text||"").trim().split(/\s+/).filter(Boolean),a=[];let l="";for(const x of w){const t=l?l+" "+x:x;if(t.length>max&&l){a.push(l);l=x}else l=t}if(l)a.push(l);return a}function compact(text,max){text=String(text||"").replace(/\s+/g," ").trim();if(text.length<=max)return text;const p=text.slice(0,max).lastIndexOf(" ");return text.slice(0,p>30?p:max).trim()}
-function textEl(x,y,t,size=12,bold=false,anchor="start"){return `<text x="${x}" y="${y}" font-family="Arial,Helvetica,sans-serif" font-size="${size}" font-weight="${bold?700:400}" fill="#111" text-anchor="${anchor}">${xml(t)}</text>`}function xmark(x,y){return `<text x="${x}" y="${y}" font-family="Arial" font-size="18" font-weight="900" fill="#111" text-anchor="middle" dominant-baseline="middle">X</text>`}function answerMark(id,xY,xN,xA,y){const v=answers[id];return v==="Y"?xmark(xY,y):v==="N"?xmark(xN,y):v==="A"?xmark(xA,y):""}function svg(bg){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1584 1224"><image href="${bg}" x="0" y="0" width="1584" height="1224"/>`}
+function wrap(text,max){const w=String(text||"").trim().split(/\s+/).filter(Boolean),a=[];let l="";for(const x of w){const t=l?l+" "+x:x;if(t.length>max&&l){a.push(l);l=x}else l=t}if(l)a.push(l);return a}function compact(s,n){
+ s=String(s||"").replace(/\s+/g," ").trim();
+ if(!s)return "";
+ if(s.length<=n)return s;
 
+ // Prefer a complete clause/sentence that fits.
+ const clauses=s.split(/(?<=[.;:])\s+|;\s+|,\s+(?=(?:and|but|then|use|keep|maintain|verify|inspect|remove|coordinate|control|plan|wear|secure|avoid)\b)/i);
+ let out="";
+ for(const c0 of clauses){
+   let c=c0.trim().replace(/[;,:\s]+$/,"");
+   if(!c)continue;
+   const candidate=out?out+"; "+c:c;
+   if(candidate.length<=n)out=candidate;
+   else break;
+ }
+ if(out && out.length>=Math.min(18,n*.55)){
+   return /[.!?]$/.test(out)?out:out+".";
+ }
 
-function selectedBlob(){
- return getSteps().flatMap(s=>selected(s.id)).map(x=>(x.hazard+" "+x.control+" "+(x.tags||[]).join(" "))).join(" ").toLowerCase()+" "+contexts().join(" ");
+ // If the first clause itself is too long, shorten at a safe word boundary,
+ // then remove dangling connector words so the printed line does not end
+ // with "and", "or", "with", "to", etc.
+ let cut=s.slice(0,n+1);
+ const lastSpace=cut.lastIndexOf(" ");
+ if(lastSpace>15)cut=cut.slice(0,lastSpace);
+ cut=cut.replace(/[;,:\-–—\s]+$/,"")
+        .replace(/\b(and|or|with|to|for|of|the|a|an|while|during|using|from|by|in|on|at)\s*$/i,"")
+        .replace(/[;,:\-–—\s]+$/,"");
+ return cut+(cut && !/[.!?]$/.test(cut)?".":"");
 }
 function hasAny(blob,words){return words.some(w=>blob.includes(w))}
 function page1HazardFlags(){
@@ -843,8 +866,8 @@ function editablePage1(){
  [["lotoreq","walkdown","ownerlock","yourlock","teststart","zero"],[877,902,928,952,978,1004]]
  ];
  groups.forEach(([ids,ys])=>ids.forEach((id,i)=>{const v=answerState(id);h+=checkBox(388,ys[i],v==="Y",id+":Y",id)+checkBox(425,ys[i],v==="N",id+":N",id)+checkBox(458,ys[i],v==="A",id+":A",id)}));
- h+=editableField(365,681,95,18,E("workHeight")?.value||"",10,{id:"workHeight"});
- h+=editableField(365,707,95,18,E("ladderHeight")?.value||"",10,{id:"ladderHeight"});
+ h+=editableField(405,705,70,16,E("workHeight")?.value||"",9,{id:"workHeight"});
+ h+=editableField(405,735,70,16,E("ladderHeight")?.value||"",9,{id:"ladderHeight"});
 
  // possible hazards / controls
  const hf=page1HazardFlags(),hvals=[hf.chemical,hf.thermal,hf.particles,hf.overexertion,hf.elevated,hf.overhead,hf.dropping,hf.inhalation,hf.vehicle,hf.cuts,hf.fire,hf.spills,hf.abrasions,hf.cavein,hf.noise,hf.heat,hf.traffic,hf.rodents,hf.crane,hf.access,hf.silica],hy=[120,143,170,188,209,231,251,276,298,318,341,364,384,407,428,449,473,493,517,541,562];
@@ -1074,10 +1097,17 @@ function finalHazardRows(){
 
    return {
      step:firstForStep?`${r.stepNo}. ${compact(r.stepText,39)}`:"",
-     haz:compact(r.hazard,47),
-     ctl:compact(r.control,51)
+     haz:cleanFinalLine(compact(r.hazard,55)),
+     ctl:cleanFinalLine(compact(r.control,62))
    };
  });
+}
+
+function cleanFinalLine(s){
+ return String(s||"").trim()
+   .replace(/[;,:\-–—\s]+$/,"")
+   .replace(/\b(and|or|with|to|for|of|the|a|an|while|during|using|from|by|in|on|at)\s*$/i,"")
+   .replace(/[;,:\-–—\s]+$/,"");
 }
 
 function ptpRows(){return finalHazardRows()}
