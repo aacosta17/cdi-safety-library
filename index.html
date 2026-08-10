@@ -181,7 +181,7 @@ h1,h2,h3{letter-spacing:-.2px}h1{font-size:28px;margin:0 0 7px}h2{font-size:21px
 @media print{.ovline:focus{background:transparent;box-shadow:none}}
 
 
-/* BUILD v18 · premium visual system inspired by approved design mockup */
+/* BUILD v19 · premium visual system inspired by approved design mockup */
 :root{--navy:#071a2f;--navy2:#0b2440;--blue:#0b63ce;--blue2:#2488f2;--ink:#101b2b;--muted:#667489;--bg:#f4f6f8;--line:#dce3ea;--shadow:0 14px 34px rgba(16,35,58,.09)}
 body{background:linear-gradient(180deg,#f6f8fa 0,#f3f6f8 46%,#eef2f5 100%);color:var(--ink)}
 header{position:sticky;top:0;background:rgba(255,255,255,.985);border-bottom:1px solid #e0e6ec;box-shadow:none}
@@ -201,6 +201,18 @@ section:not(#home)>.hero{margin-top:0;background:linear-gradient(120deg,#071a2f,
 @media(max-width:860px){.headerin{min-height:auto}.brand{min-width:auto}.brand img{width:88px;height:48px}.brandtext{display:none}.wxitem.wind,.wxitem.tomorrow{display:none}.weatherbar{min-height:58px}.wxitem{padding:8px 9px;min-width:82px}.wxitem:first-child{min-width:96px}.wxitem.alert{min-width:105px}.wxvalue{font-size:14px}.wxitem:first-child .wxvalue{font-size:17px}.nav{margin-bottom:24px;padding-top:14px;padding-bottom:14px}.nav button{padding:11px 15px;font-size:13px}.premium-hero{min-height:250px;padding:30px}.premium-hero h1{font-size:34px}.hero-silhouette{display:none}.premium-tiles{grid-template-columns:1fr}.premium-tiles .tile{min-height:auto}.desktop-break{display:none}}
 @media(max-width:560px){.headerin{padding:9px 10px;gap:8px}.brand img{width:72px;height:40px}.wxitem.heat{display:none}.wxitem:first-child{min-width:88px}.wxitem.alert{min-width:94px}.wxlabel{font-size:7px}.wxvalue{font-size:12px}.wxsub{font-size:9px}.navico{display:none}.premium-hero{padding:24px;min-height:220px}.hero-shield{width:52px;height:52px;margin-bottom:16px}.premium-hero h1{font-size:30px}.premium-hero p{font-size:14px}.premium-tiles .tile{grid-template-columns:54px 1fr 22px;padding:22px;gap:16px}.premium-tiles .tile .icon{width:52px;height:52px;font-size:25px}.premium-tiles .tilecopy h3{font-size:18px}}
 
+
+/* BUILD v19 — reference-only safety manual */
+.manual-pdf-card{padding:0;overflow:hidden}
+.manual-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border-bottom:1px solid var(--line,#dbe3ec);background:#fff}
+.manual-toolbar>div:first-child{display:flex;align-items:baseline;gap:10px}
+.manual-sub{font-size:12px;color:#748196;font-weight:600}
+.manual-actions{display:flex;gap:8px}
+.manual-btn{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 14px;border-radius:10px;background:#10243d;color:#fff;text-decoration:none;font-size:13px;font-weight:800;box-shadow:0 6px 18px rgba(16,36,61,.14)}
+.manual-btn:hover{filter:brightness(1.06)}
+.manual-pdf{display:block;width:100%;height:76vh;min-height:680px;border:0;background:#eef2f6}
+.manual-fallback{display:none;padding:14px 16px;font-size:13px;color:#657186;background:#fff;border-top:1px solid var(--line,#dbe3ec)}
+@media(max-width:760px){.manual-toolbar{align-items:flex-start;flex-direction:column}.manual-pdf{height:72vh;min-height:560px}.manual-fallback{display:block}}
 </style>
 </head>
 <body>
@@ -210,11 +222,11 @@ section:not(#home)>.hero{margin-top:0;background:linear-gradient(120deg,#071a2f,
 
 <section id="home">
 <div class="hero premium-hero"><div class="hero-shield">✓</div><h1>CDI Safety Hub</h1><div class="hero-accent"></div><p>Build and review field safety documentation using<br class="desktop-break"> CDI standards and a low-voltage construction hazard library.</p><div class="hero-silhouette" aria-hidden="true"><span></span><i></i><b></b></div></div>
-<div class="tiles premium-tiles"><div class="tile" onclick="showView('ptp')"><div class="icon docicon">▤</div><div class="tilecopy"><h3>Create PTP</h3><p>Create a field-ready PTP using the official CDI form.</p></div><div class="tilearrow">→</div></div><div class="tile" onclick="showView('library')"><div class="icon hazardicon">△</div><div class="tilecopy"><h3>Hazard Library</h3><p>Search low-voltage, electrical, security, fiber, data-center, and construction hazards.</p></div><div class="tilearrow">→</div></div><div class="tile" onclick="showView('manual')"><div class="icon manualicon">▢</div><div class="tilecopy"><h3>Safety Manual</h3><p>Review CDI company-rule topics used in Safety Hub.</p></div><div class="tilearrow">→</div></div></div>
+<div class="tiles premium-tiles"><div class="tile" onclick="showView('ptp')"><div class="icon docicon">▤</div><div class="tilecopy"><h3>Create PTP</h3><p>Create a field-ready PTP using the official CDI form.</p></div><div class="tilearrow">→</div></div><div class="tile" onclick="showView('library')"><div class="icon hazardicon">△</div><div class="tilecopy"><h3>Hazard Library</h3><p>Search low-voltage, electrical, security, fiber, data-center, and construction hazards.</p></div><div class="tilearrow">→</div></div><div class="tile" onclick="showView('manual')"><div class="icon manualicon">▢</div><div class="tilecopy"><h3>Safety Manual</h3><p>Open and reference the CDI Safety Manual.</p></div><div class="tilearrow">→</div></div></div>
 </section>
 
 <section id="library" class="hidden"><div class="hero"><h1>Hazard Library</h1><p>Reference library for safety leaders and supervisors.</p></div><div class="card"><div class="libfilters"><input id="libSearch" placeholder="Search hazard or task"><select id="libCategory"><option value="">All categories</option></select></div><div id="libStats" class="help"></div><div id="libResults"></div></div></section>
-<section id="manual" class="hidden"><div class="hero"><h1>Safety Manual</h1><p>Selected CDI company rules used by the PTP workflow.</p></div><div class="card"><div id="manualRules"></div></div></section>
+<section id="manual" class="hidden"><div class="hero"><h1>Safety Manual</h1></div><div class="card manual-pdf-card"><div class="manual-toolbar no-print"><div><b>CDI Safety Manual</b><span class="manual-sub">Reference copy</span></div><div class="manual-actions"><a class="manual-btn" href="SafetyManual2202023_4.pdf" target="_blank" rel="noopener">Open Full Screen</a></div></div><iframe class="manual-pdf" src="SafetyManual2202023_4.pdf#view=FitH" title="CDI Safety Manual"></iframe><div class="manual-fallback">If the manual does not display here, <a href="SafetyManual2202023_4.pdf" target="_blank" rel="noopener">open the Safety Manual in a new tab</a>.</div></div></section>
 <section id="projects" class="hidden"><div class="hero"><h1>Project Standards</h1><p>Project-specific policy layers will be added here without changing CDI's base requirements.</p></div><div class="card"><div class="notice warn">No project-specific manual is active in this version. CDI company standards remain the base layer.</div></div></section>
 
 <section id="ptp" class="hidden">
@@ -1225,7 +1237,7 @@ function generatePTP(){
    E("s5").classList.add("hidden");E("output").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"});
  }catch(err){console.error(err);alert("PTP could not be generated: "+err.message)}
 }
-function renderLibrary(){const q=(E("libSearch").value||"").toLowerCase(),cat=E("libCategory").value,rows=LIBRARY.filter(e=>{const blob=(e.hazard+" "+e.control+" "+(e.task||"")+" "+(e.tags||[]).join(" ")+" "+e.category).toLowerCase();return(!q||blob.includes(q))&&(!cat||e.category===cat)});E("libStats").textContent=`Showing ${rows.length} of ${LIBRARY.length} records`;E("libResults").innerHTML=rows.slice(0,150).map(e=>`<div class="libitem"><h4>${esc(e.hazard)}<span class="badge">${esc(e.source)}</span></h4><p><b>Control:</b> ${esc(e.control)}</p>${e.task?`<p><b>Common task:</b> ${esc(e.task)}</p>`:""}</div>`).join("")}[...new Set(LIBRARY.map(x=>x.category))].sort().forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;E("libCategory").appendChild(o)});E("libSearch").addEventListener("input",renderLibrary);E("libCategory").addEventListener("change",renderLibrary);E("manualRules").innerHTML=LIBRARY.filter(x=>x.source==="CDI Manual").map(x=>`<div class="reviewstep"><b class="title">${esc(x.hazard)}</b><div>${esc(x.control)}</div></div>`).join("");
+function renderLibrary(){const q=(E("libSearch").value||"").toLowerCase(),cat=E("libCategory").value,rows=LIBRARY.filter(e=>{const blob=(e.hazard+" "+e.control+" "+(e.task||"")+" "+(e.tags||[]).join(" ")+" "+e.category).toLowerCase();return(!q||blob.includes(q))&&(!cat||e.category===cat)});E("libStats").textContent=`Showing ${rows.length} of ${LIBRARY.length} records`;E("libResults").innerHTML=rows.slice(0,150).map(e=>`<div class="libitem"><h4>${esc(e.hazard)}<span class="badge">${esc(e.source)}</span></h4><p><b>Control:</b> ${esc(e.control)}</p>${e.task?`<p><b>Common task:</b> ${esc(e.task)}</p>`:""}</div>`).join("")}[...new Set(LIBRARY.map(x=>x.category))].sort().forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;E("libCategory").appendChild(o)});E("libSearch").addEventListener("input",renderLibrary);E("libCategory").addEventListener("change",renderLibrary);
 function safetyHubSelfCheck(){
  const problems=[];
  if(typeof getSelectedPermits!=="function")problems.push("Permit reader");
@@ -1252,7 +1264,7 @@ function safetyHubIntegrityCheck(){
 }
 
 
-/* BUILD v18 · NOAA/NWS compact safety weather for San Antonio */
+/* BUILD v19 · NOAA/NWS compact safety weather for San Antonio */
 const WX_POINT={lat:29.4241,lon:-98.4936};
 const WX_REFRESH_MS=10*60*1000;
 function wxE(id){return document.getElementById(id)}
