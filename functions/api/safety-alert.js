@@ -1,8 +1,3 @@
-// Cloudflare Pages Function: /functions/api/safety-alert.js
-// Required encrypted environment variables / secrets:
-//   TEAMS_WORKFLOW_URL = URL from the Microsoft Teams Workflow HTTP trigger
-//   ALERT_PIN = private PIN authorized CDI Safety senders enter on the website
-
 const json = (data, status = 200) => new Response(JSON.stringify(data), {
   status,
   headers: {
@@ -13,20 +8,34 @@ const json = (data, status = 200) => new Response(JSON.stringify(data), {
 });
 
 export async function onRequestGet(context) {
-  const configured = Boolean(context.env.TEAMS_WORKFLOW_URL && context.env.ALERT_PIN);
-  return json({ configured });
+  return json({
+    pinConfigured: Boolean(context.env.ALERT_PIN),
+    teamsConfigured: Boolean(context.env.TEAMS_WORKFLOW_URL),
+    configured: Boolean(
+      context.env.ALERT_PIN &&
+      context.env.TEAMS_WORKFLOW_URL
+    )
+  });
 }
 
 export async function onRequestPost(context) {
   const expectedPin = String(context.env.ALERT_PIN || '');
-  const suppliedPin = String(context.request.headers.get('x-alert-pin') || '');
+  const suppliedPin = String(
+    context.request.headers.get('x-alert-pin') || ''
+  );
 
-  if (!expectedPin || !context.env.TEAMS_WORKFLOW_URL) {
-    return json({ error: 'Safety alert service is not configured.' }, 503);
+  // PIN must exist before anything can be unlocked.
+  if (!expectedPin) {
+    return json({
+      error: 'Safety Alert PIN is not configured.'
+    }, 503);
   }
 
+  // Check PIN first.
   if (!suppliedPin || suppliedPin !== expectedPin) {
-    return json({ error: 'Invalid Safety Alert PIN.' }, 401);
+    return json({
+      error: 'Invalid Safety Alert PIN.'
+    }, 401);
   }
 
   let body;
@@ -34,34 +43,72 @@ export async function onRequestPost(context) {
   try {
     body = await context.request.json();
   } catch {
-    return json({ error: 'Invalid request.' }, 400);
+    return json({
+      error: 'Invalid request.'
+    }, 400);
   }
 
-  const recipients = Array.isArray(body?.recipients) ? body.recipients : [];
+  // Allow the hidden Safety Alert screen to unlock
+  // even before Microsoft Teams is connected.
+  if (body?.action === 'unlock') {
+    return json({
+      ok: true,
+      unlocked: true,
+      teamsConfigured: Boolean(context.env.TEAMS_WORKFLOW_URL)
+    });
+  }
+
+  // Teams is only required when actually sending an alert.
+  if (!context.env.TEAMS_WORKFLOW_URL) {
+    return json({
+      error: 'Microsoft Teams has not been connected yet.'
+    }, 503);
+  }
+
+  const recipients = Array.isArray(body?.recipients)
+    ? body.recipients
+    : [];
+
   const message = String(body?.message || '').trim();
 
   if (!message) {
-    return json({ error: 'Alert message is required.' }, 400);
+    return json({
+      error: 'Alert message is required.'
+    }, 400);
   }
 
   if (!recipients.length) {
-    return json({ error: 'Select at least one job lead.' }, 400);
+    return json({
+      error: 'Select at least one job lead.'
+    }, 400);
   }
 
   if (recipients.length > 50) {
-    return json({ error: 'Too many recipients.' }, 400);
+    return json({
+      error: 'Too many recipients.'
+    }, 400);
   }
 
-  const cleanRecipients = recipients.map(x => ({
-    name: String(x?.name || '').trim().slice(0, 120),
-    email: String(x?.email || '').trim().toLowerCase().slice(0, 254)
-  })).filter(x =>
-    x.name &&
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x.email)
-  );
+  const cleanRecipients = recipients
+    .map(x => ({
+      name: String(x?.name || '')
+        .trim()
+        .slice(0, 120),
+
+      email: String(x?.email || '')
+        .trim()
+        .toLowerCase()
+        .slice(0, 254)
+    }))
+    .filter(x =>
+      x.name &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x.email)
+    );
 
   if (!cleanRecipients.length) {
-    return json({ error: 'No valid recipients.' }, 400);
+    return json({
+      error: 'No valid recipients.'
+    }, 400);
   }
 
   const teamsPayload = {
@@ -77,20 +124,26 @@ export async function onRequestPost(context) {
   let teamsResponse;
 
   try {
-    teamsResponse = await fetch(context.env.TEAMS_WORKFLOW_URL, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify(teamsPayload)
-    });
+    teamsResponse = await fetch(
+      context.env.TEAMS_WORKFLOW_URL,
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify(teamsPayload)
+      }
+    );
   } catch {
-    return json({ error: 'Could not reach Microsoft Teams Workflow.' }, 502);
+    return json({
+      error: 'Could not reach Microsoft Teams Workflow.'
+    }, 502);
   }
 
   if (!teamsResponse.ok) {
     return json({
-      error: `Teams Workflow rejected the alert (${teamsResponse.status}).`
+      error:
+        `Teams Workflow rejected the alert (${teamsResponse.status}).`
     }, 502);
   }
 
