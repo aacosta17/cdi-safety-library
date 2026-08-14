@@ -20,52 +20,42 @@ export async function onRequestGet(context) {
 }
 
 export async function onRequestPost(context) {
-  const expectedPin = String(context.env.ALERT_PIN || '');
+  const expectedPin = String(context.env.ALERT_PIN || '').trim();
 
-  const suppliedPin = String(
-    context.request.headers.get('x-alert-pin') || ''
-  );
-
-  // PIN must exist before anything can be unlocked.
   if (!expectedPin) {
     return json(
-      {
-        error: 'Safety Alert PIN is not configured.'
-      },
+      { error: 'Safety Alert PIN is not configured.' },
       503
     );
   }
 
-  // Check PIN first.
-  if (!suppliedPin || suppliedPin !== expectedPin) {
-    return json(
-      {
-        error: 'Invalid Safety Alert PIN.'
-      },
-      401
-    );
-  }
-
-  // Teams webhook must also be configured.
-  if (!context.env.TEAMS_WORKFLOW_URL) {
-    return json(
-      {
-        error: 'Microsoft Teams Workflow is not configured.'
-      },
-      503
-    );
-  }
-
-  let body;
+  let body = {};
 
   try {
     body = await context.request.json();
   } catch {
+    body = {};
+  }
+
+  // Accept the PIN from the header OR request body.
+  const suppliedPin = String(
+    context.request.headers.get('x-alert-pin') ||
+    body?.pin ||
+    body?.alertPin ||
+    ''
+  ).trim();
+
+  if (!suppliedPin || suppliedPin !== expectedPin) {
     return json(
-      {
-        error: 'Invalid request body.'
-      },
-      400
+      { error: 'Invalid Safety Alert PIN.' },
+      401
+    );
+  }
+
+  if (!context.env.TEAMS_WORKFLOW_URL) {
+    return json(
+      { error: 'Microsoft Teams Workflow is not configured.' },
+      503
     );
   }
 
@@ -93,29 +83,38 @@ export async function onRequestPost(context) {
     ? body.recipients
     : [];
 
+  // A PIN-only request is allowed for unlock testing.
+  const isUnlockOnly =
+    !site &&
+    !type &&
+    !severity &&
+    !incomingMessage &&
+    recipients.length === 0;
+
+  if (isUnlockOnly) {
+    return json({
+      ok: true,
+      authorized: true
+    });
+  }
+
   if (!incomingMessage) {
     return json(
-      {
-        error: 'Alert message is required.'
-      },
+      { error: 'Alert message is required.' },
       400
     );
   }
 
   if (!recipients.length) {
     return json(
-      {
-        error: 'Select at least one job lead.'
-      },
+      { error: 'Select at least one job lead.' },
       400
     );
   }
 
   if (recipients.length > 50) {
     return json(
-      {
-        error: 'Too many recipients.'
-      },
+      { error: 'Too many recipients.' },
       400
     );
   }
@@ -139,74 +138,20 @@ export async function onRequestPost(context) {
 
   if (!cleanRecipients.length) {
     return json(
-      {
-        error: 'No valid recipients.'
-      },
+      { error: 'No valid recipients.' },
       400
     );
   }
 
-  /*
-    ---------------------------------------------------------
-    FIX TEAMS ALERT FORMATTING
-    ---------------------------------------------------------
-
-    The website currently builds a message that can look like:
-
-    AdvisoryALL CDI LOCATIONS
-
-    This safely converts it to:
-
-    Advisory · ALL CDI LOCATIONS
-
-    without changing the rest of the message.
-  */
-
+  // Fix missing separator in the Teams header.
   let message = incomingMessage;
 
   if (severity && site) {
-    const joinedWithoutSpace = `${severity}${site}`;
-
-    if (message.includes(joinedWithoutSpace)) {
-      message = message.replace(
-        joinedWithoutSpace,
-        `${severity} · ${site}`
-      );
-    }
+    message = message.replace(
+      `${severity}${site}`,
+      `${severity} · ${site}`
+    );
   }
-
-  /*
-    If the website sends the header with only a space but no separator,
-    normalize that too.
-  */
-
-  if (severity && site) {
-    const joinedWithSpace = `${severity} ${site}`;
-    const preferred = `${severity} · ${site}`;
-
-    if (
-      message.includes(joinedWithSpace) &&
-      !message.includes(preferred)
-    ) {
-      message = message.replace(
-        joinedWithSpace,
-        preferred
-      );
-    }
-  }
-
-  /*
-    Payload that Power Automate Parse JSON receives.
-
-    We keep all the fields Power Automate is already using:
-    site
-    type
-    severity
-    expiry
-    message
-    recipients
-    sentAt
-  */
 
   const teamsPayload = {
     site,
@@ -235,9 +180,7 @@ export async function onRequestPost(context) {
     console.error('Teams workflow request failed:', error);
 
     return json(
-      {
-        error: 'Could not connect to Microsoft Teams Workflow.'
-      },
+      { error: 'Could not connect to Microsoft Teams Workflow.' },
       502
     );
   }
@@ -247,9 +190,7 @@ export async function onRequestPost(context) {
 
     try {
       responseText = await teamsResponse.text();
-    } catch {
-      // Ignore response-body read errors.
-    }
+    } catch {}
 
     console.error(
       'Teams workflow returned an error:',
