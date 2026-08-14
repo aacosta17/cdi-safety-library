@@ -37,7 +37,6 @@ export async function onRequestPost(context) {
     body = {};
   }
 
-  // Accept the PIN from the header OR request body.
   const suppliedPin = String(
     context.request.headers.get('x-alert-pin') ||
     body?.pin ||
@@ -83,7 +82,7 @@ export async function onRequestPost(context) {
     ? body.recipients
     : [];
 
-  // A PIN-only request is allowed for unlock testing.
+  // Allow PIN-only unlock checks.
   const isUnlockOnly =
     !site &&
     !type &&
@@ -143,14 +142,46 @@ export async function onRequestPost(context) {
     );
   }
 
-  // Fix missing separator in the Teams header.
-  let message = incomingMessage;
+  /*
+    ----------------------------------------------------
+    REBUILD THE TEAMS MESSAGE HEADER
+    ----------------------------------------------------
 
-  if (severity && site) {
-    message = message.replace(
-      `${severity}${site}`,
-      `${severity} · ${site}`
-    );
+    We do not trust the website's first line spacing.
+
+    We rebuild the first line as:
+
+    ℹ️ CDI SAFETY ALERT — Advisory · SITE · Safety Notice
+  */
+
+  const lines = incomingMessage.split(/\r?\n/);
+
+  // Remove the old first line because we are rebuilding it.
+  if (
+    lines.length &&
+    /CDI SAFETY ALERT/i.test(lines[0])
+  ) {
+    lines.shift();
+  }
+
+  // Remove blank lines at the beginning.
+  while (lines.length && !lines[0].trim()) {
+    lines.shift();
+  }
+
+  const headerParts = [];
+
+  if (severity) headerParts.push(severity);
+  if (site) headerParts.push(site);
+  if (type) headerParts.push(type);
+
+  const header =
+    `ℹ️ CDI SAFETY ALERT — ${headerParts.join(' · ')}`;
+
+  let message = header;
+
+  if (lines.length) {
+    message += `\n${lines.join('\n')}`;
   }
 
   const teamsPayload = {
@@ -180,7 +211,9 @@ export async function onRequestPost(context) {
     console.error('Teams workflow request failed:', error);
 
     return json(
-      { error: 'Could not connect to Microsoft Teams Workflow.' },
+      {
+        error: 'Could not connect to Microsoft Teams Workflow.'
+      },
       502
     );
   }
