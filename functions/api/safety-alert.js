@@ -143,29 +143,47 @@ export async function onRequestPost(context) {
   }
 
   /*
-    ----------------------------------------------------
-    REBUILD THE TEAMS MESSAGE HEADER
-    ----------------------------------------------------
+    CLEAN AND REBUILD THE TEAMS HEADER
 
-    We do not trust the website's first line spacing.
-
-    We rebuild the first line as:
-
-    ℹ️ CDI SAFETY ALERT — Advisory · SITE · Safety Notice
+    The website may send the old header across one or more lines.
+    We remove every header fragment before adding one clean header.
   */
 
-  const lines = incomingMessage.split(/\r?\n/);
+  let lines = incomingMessage
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
 
-  // Remove the old first line because we are rebuilding it.
-  if (
+  const isOldHeaderFragment = (line) => {
+    let check = line;
+
+    check = check.replace(/ℹ️/g, '');
+    check = check.replace(/CDI SAFETY ALERT/gi, '');
+
+    if (severity) {
+      check = check.replaceAll(severity, '');
+    }
+
+    if (site) {
+      check = check.replaceAll(site, '');
+    }
+
+    if (type) {
+      check = check.replaceAll(type, '');
+    }
+
+    // Remove separators/punctuation/spaces.
+    check = check.replace(/[—·|:\-–]+/g, '');
+    check = check.replace(/\s+/g, '');
+
+    return check.length === 0;
+  };
+
+  // Remove all old header pieces from the beginning.
+  while (
     lines.length &&
-    /CDI SAFETY ALERT/i.test(lines[0])
+    isOldHeaderFragment(lines[0])
   ) {
-    lines.shift();
-  }
-
-  // Remove blank lines at the beginning.
-  while (lines.length && !lines[0].trim()) {
     lines.shift();
   }
 
