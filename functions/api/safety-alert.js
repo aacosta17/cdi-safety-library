@@ -1,4 +1,4 @@
- const json = (data, status = 200) =>
+const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
     headers: {
@@ -8,82 +8,44 @@
     }
   });
 
-const escapeRegExp = (value) =>
-  String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-const removeLeadingSeparators = (value) =>
-  String(value)
-    .replace(/^[\s·|:—–\-]+/, '')
-    .trimStart();
-
-function buildCleanTeamsMessage({
-  incomingMessage,
-  severity,
-  site,
-  type
-}) {
-  let text = String(incomingMessage || '')
-    .replace(/\r\n/g, '\n')
-    .trim();
+function cleanAlertMessage(incomingMessage, severity, site, type) {
+  let text = String(incomingMessage || '').trim();
 
   /*
-    ---------------------------------------------------------
-    REMOVE THE WEBSITE'S OLD HEADER
-    ---------------------------------------------------------
+    Remove the OLD website-generated header completely.
 
-    This handles all of these kinds of broken headers:
+    We look for:
+    CDI SAFETY ALERT
 
-    WarningALL CDI LOCATIONS
-    Warning ALL CDI LOCATIONS
-    Warning · ALL CDI LOCATIONS
-    WarningALL CDI LOCATIONS · Severe Weather
-    etc.
+    Then we find the first occurrence of the alert TYPE
+    (example: "Lightning Stand Down" or "Severe Weather")
 
-    We only strip these fields if the message actually begins
-    with "CDI SAFETY ALERT", so normal alert instructions are
-    not accidentally changed.
+    Everything through the end of that type is removed.
   */
 
-  const headerPattern =
-    /^\s*ℹ️?\s*CDI\s+SAFETY\s+ALERT\s*[—–-]?\s*/i;
+  const upperText = text.toUpperCase();
+  const alertMarker = 'CDI SAFETY ALERT';
 
-  const hasOldHeader = headerPattern.test(text);
+  const markerIndex = upperText.indexOf(alertMarker);
 
-  if (hasOldHeader) {
-    text = text.replace(headerPattern, '');
+  if (markerIndex >= 0 && markerIndex < 30) {
+    const typeText = String(type || '').trim();
 
-    if (severity) {
-      text = text.replace(
-        new RegExp(`^${escapeRegExp(severity)}`, 'i'),
-        ''
+    if (typeText) {
+      const typeIndex = upperText.indexOf(
+        typeText.toUpperCase(),
+        markerIndex
       );
 
-      text = removeLeadingSeparators(text);
-    }
-
-    if (site) {
-      text = text.replace(
-        new RegExp(`^${escapeRegExp(site)}`, 'i'),
-        ''
-      );
-
-      text = removeLeadingSeparators(text);
-    }
-
-    if (type) {
-      text = text.replace(
-        new RegExp(`^${escapeRegExp(type)}`, 'i'),
-        ''
-      );
-
-      text = removeLeadingSeparators(text);
+      if (typeIndex >= 0) {
+        text = text.slice(typeIndex + typeText.length);
+      }
     }
   }
 
   /*
-    ---------------------------------------------------------
-    CLEAN THE REMAINING ALERT BODY
-    ---------------------------------------------------------
+    Remove leftover punctuation/spaces/newlines from
+    where the old header was removed.
   */
 
   text = text
@@ -91,78 +53,67 @@ function buildCleanTeamsMessage({
     .trim();
 
   /*
-    The website already creates a nice local-time Issued line.
-    Separate it from the instructions so Teams always gets
-    a blank line before it.
+    Make sure "Issued" is separated from the instructions.
 
     Example:
-    "...emergency instructions.Issued Aug 13..."
-    becomes:
-    "...emergency instructions."
 
-    "Issued Aug 13..."
+    instructions.Issued Aug 13...
+
+    becomes:
+
+    instructions.
+
+    Issued Aug 13...
   */
 
-  let alertBody = text;
-  let issuedLine = '';
-
-  const issuedMatch = text.match(
-    /\bIssued\s+([A-Z][a-z]{2}\s+\d{1,2},\s+\d{4}\s+at\s+.+)$/i
+  text = text.replace(
+    /\s*Issued\s+/i,
+    '\n\nIssued '
   );
 
-  if (issuedMatch) {
-    const issuedIndex = issuedMatch.index;
-
-    alertBody = text
-      .slice(0, issuedIndex)
-      .trim()
-      .replace(/\s+$/, '');
-
-    issuedLine = `Issued ${issuedMatch[1].trim()}`;
-  }
-
   /*
-    Remove excessive blank lines while preserving paragraph
-    breaks.
+    Remove excessive blank lines.
   */
 
-  alertBody = alertBody
-    .replace(/[ \t]+\n/g, '\n')
+  text = text
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 
   /*
-    ---------------------------------------------------------
-    BUILD ONE NEW HEADER FROM SCRATCH
-    ---------------------------------------------------------
+    Build ONE clean header.
   */
 
-  const headerParts = [
-    severity,
-    site,
-    type
-  ].filter(Boolean);
+  const headerParts = [];
 
-  const cleanHeader =
+  if (severity) {
+    headerParts.push(String(severity).trim());
+  }
+
+  if (site) {
+    headerParts.push(String(site).trim());
+  }
+
+  if (type) {
+    headerParts.push(String(type).trim());
+  }
+
+  const header =
     `ℹ️ CDI SAFETY ALERT — ${headerParts.join(' · ')}`;
 
-  const sections = [cleanHeader];
-
-  if (alertBody) {
-    sections.push(alertBody);
+  if (!text) {
+    return header;
   }
 
-  if (issuedLine) {
-    sections.push(issuedLine);
-  }
-
-  return sections.join('\n\n');
+  return `${header}\n\n${text}`;
 }
 
 export async function onRequestGet(context) {
   return json({
     pinConfigured: Boolean(context.env.ALERT_PIN),
-    teamsConfigured: Boolean(context.env.TEAMS_WORKFLOW_URL),
+
+    teamsConfigured: Boolean(
+      context.env.TEAMS_WORKFLOW_URL
+    ),
 
     configured: Boolean(
       context.env.ALERT_PIN &&
@@ -173,9 +124,9 @@ export async function onRequestGet(context) {
 
 export async function onRequestPost(context) {
   /*
-    ---------------------------------------------------------
-    READ SERVER-SIDE SETTINGS
-    ---------------------------------------------------------
+    -----------------------------------------
+    GET SECRET PIN
+    -----------------------------------------
   */
 
   const expectedPin = String(
@@ -191,6 +142,12 @@ export async function onRequestPost(context) {
     );
   }
 
+  /*
+    -----------------------------------------
+    READ WEBSITE REQUEST
+    -----------------------------------------
+  */
+
   let body = {};
 
   try {
@@ -200,8 +157,7 @@ export async function onRequestPost(context) {
   }
 
   /*
-    Accept the PIN either in the request header or body.
-    This keeps the website unlock check compatible.
+    PIN can come from the header or request body.
   */
 
   const suppliedPin = String(
@@ -223,7 +179,16 @@ export async function onRequestPost(context) {
     );
   }
 
-  if (!context.env.TEAMS_WORKFLOW_URL) {
+  /*
+    -----------------------------------------
+    CHECK TEAMS CONNECTION
+    -----------------------------------------
+  */
+
+  const teamsWorkflowUrl =
+    context.env.TEAMS_WORKFLOW_URL;
+
+  if (!teamsWorkflowUrl) {
     return json(
       {
         error:
@@ -234,24 +199,32 @@ export async function onRequestPost(context) {
   }
 
   /*
-    ---------------------------------------------------------
-    CLEAN DATA RECEIVED FROM WEBSITE
-    ---------------------------------------------------------
+    -----------------------------------------
+    CLEAN WEBSITE VALUES
+    -----------------------------------------
   */
 
-  const site = String(body?.site || '')
+  const site = String(
+    body?.site || ''
+  )
     .trim()
     .slice(0, 120);
 
-  const type = String(body?.type || '')
+  const type = String(
+    body?.type || ''
+  )
     .trim()
     .slice(0, 80);
 
-  const severity = String(body?.severity || '')
+  const severity = String(
+    body?.severity || ''
+  )
     .trim()
     .slice(0, 40);
 
-  const expiry = String(body?.expiry || '')
+  const expiry = String(
+    body?.expiry || ''
+  )
     .trim()
     .slice(0, 120);
 
@@ -268,8 +241,12 @@ export async function onRequestPost(context) {
     : [];
 
   /*
-    The website may send a PIN-only request just to unlock
-    the hidden Safety Alert panel.
+    -----------------------------------------
+    PIN-ONLY UNLOCK CHECK
+    -----------------------------------------
+
+    The website can check the PIN without
+    actually sending an alert.
   */
 
   const isUnlockOnly =
@@ -287,9 +264,9 @@ export async function onRequestPost(context) {
   }
 
   /*
-    ---------------------------------------------------------
+    -----------------------------------------
     VALIDATE ALERT
-    ---------------------------------------------------------
+    -----------------------------------------
   */
 
   if (!incomingMessage) {
@@ -320,30 +297,35 @@ export async function onRequestPost(context) {
   }
 
   /*
-    ---------------------------------------------------------
-    CLEAN RECIPIENT LIST
-    ---------------------------------------------------------
+    -----------------------------------------
+    CLEAN RECIPIENTS
+    -----------------------------------------
   */
 
   const cleanRecipients = recipients
     .map((person) => ({
-      name: String(person?.name || '')
+      name: String(
+        person?.name || ''
+      )
         .trim()
         .slice(0, 120),
 
-      email: String(person?.email || '')
+      email: String(
+        person?.email || ''
+      )
         .trim()
         .toLowerCase()
         .slice(0, 254)
     }))
 
-    .filter(
-      (person) =>
+    .filter((person) => {
+      return (
         person.name &&
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
           person.email
         )
-    );
+      );
+    });
 
   if (!cleanRecipients.length) {
     return json(
@@ -355,21 +337,25 @@ export async function onRequestPost(context) {
   }
 
   /*
-    ---------------------------------------------------------
-    BUILD FINAL TEAMS MESSAGE
-    ---------------------------------------------------------
+    -----------------------------------------
+    BUILD CLEAN TEAMS MESSAGE
+    -----------------------------------------
   */
 
-  const cleanMessage = buildCleanTeamsMessage({
+  const finalMessage = cleanAlertMessage(
     incomingMessage,
     severity,
     site,
     type
-  });
+  );
 
   /*
-    Power Automate Parse JSON already expects these fields,
-    so we are keeping the same structure.
+    -----------------------------------------
+    DATA FOR POWER AUTOMATE
+    -----------------------------------------
+
+    Keep these names unchanged because your
+    Parse JSON / Apply to each flow uses them.
   */
 
   const teamsPayload = {
@@ -378,7 +364,7 @@ export async function onRequestPost(context) {
     severity,
     expiry,
 
-    message: cleanMessage.slice(0, 6000),
+    message: finalMessage.slice(0, 6000),
 
     recipients: cleanRecipients,
 
@@ -386,16 +372,16 @@ export async function onRequestPost(context) {
   };
 
   /*
-    ---------------------------------------------------------
-    SEND TO MICROSOFT TEAMS WORKFLOW
-    ---------------------------------------------------------
+    -----------------------------------------
+    SEND TO POWER AUTOMATE / TEAMS
+    -----------------------------------------
   */
 
   let teamsResponse;
 
   try {
     teamsResponse = await fetch(
-      context.env.TEAMS_WORKFLOW_URL,
+      teamsWorkflowUrl,
       {
         method: 'POST',
 
@@ -422,9 +408,9 @@ export async function onRequestPost(context) {
   }
 
   /*
-    ---------------------------------------------------------
-    CHECK TEAMS RESPONSE
-    ---------------------------------------------------------
+    -----------------------------------------
+    CHECK MICROSOFT RESPONSE
+    -----------------------------------------
   */
 
   if (!teamsResponse.ok) {
@@ -434,7 +420,7 @@ export async function onRequestPost(context) {
       responseText =
         await teamsResponse.text();
     } catch {
-      // Ignore response-body read errors.
+      // Nothing needed here.
     }
 
     console.error(
@@ -455,22 +441,20 @@ export async function onRequestPost(context) {
   }
 
   /*
-    ---------------------------------------------------------
+    -----------------------------------------
     SUCCESS
-    ---------------------------------------------------------
+    -----------------------------------------
   */
+
+  const count = cleanRecipients.length;
 
   return json({
     ok: true,
 
-    sent: cleanRecipients.length,
+    sent: count,
 
     message:
-      `Alert sent to ${cleanRecipients.length} ` +
-      `selected job lead${
-        cleanRecipients.length === 1
-          ? ''
-          : 's'
-      } in Teams.`
+      `Alert sent to ${count} selected job lead` +
+      `${count === 1 ? '' : 's'} in Teams.`
   });
 }
