@@ -1,11 +1,12 @@
-const json = (data, status = 200) => new Response(JSON.stringify(data), {
-  status,
-  headers: {
-    'content-type': 'application/json; charset=utf-8',
-    'cache-control': 'no-store',
-    'x-content-type-options': 'nosniff'
-  }
-});
+const json = (data, status = 200) =>
+  new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+      'cache-control': 'no-store',
+      'x-content-type-options': 'nosniff'
+    }
+  });
 
 export async function onRequestGet(context) {
   return json({
@@ -20,22 +21,39 @@ export async function onRequestGet(context) {
 
 export async function onRequestPost(context) {
   const expectedPin = String(context.env.ALERT_PIN || '');
+
   const suppliedPin = String(
     context.request.headers.get('x-alert-pin') || ''
   );
 
   // PIN must exist before anything can be unlocked.
   if (!expectedPin) {
-    return json({
-      error: 'Safety Alert PIN is not configured.'
-    }, 503);
+    return json(
+      {
+        error: 'Safety Alert PIN is not configured.'
+      },
+      503
+    );
   }
 
   // Check PIN first.
   if (!suppliedPin || suppliedPin !== expectedPin) {
-    return json({
-      error: 'Invalid Safety Alert PIN.'
-    }, 401);
+    return json(
+      {
+        error: 'Invalid Safety Alert PIN.'
+      },
+      401
+    );
+  }
+
+  // Teams webhook must also be configured.
+  if (!context.env.TEAMS_WORKFLOW_URL) {
+    return json(
+      {
+        error: 'Microsoft Teams Workflow is not configured.'
+      },
+      503
+    );
   }
 
   let body;
@@ -43,54 +61,67 @@ export async function onRequestPost(context) {
   try {
     body = await context.request.json();
   } catch {
-    return json({
-      error: 'Invalid request.'
-    }, 400);
+    return json(
+      {
+        error: 'Invalid request body.'
+      },
+      400
+    );
   }
 
-  // Allow the hidden Safety Alert screen to unlock
-  // even before Microsoft Teams is connected.
-  if (body?.action === 'unlock') {
-    return json({
-      ok: true,
-      unlocked: true,
-      teamsConfigured: Boolean(context.env.TEAMS_WORKFLOW_URL)
-    });
-  }
+  const site = String(body?.site || '')
+    .trim()
+    .slice(0, 120);
 
-  // Teams is only required when actually sending an alert.
-  if (!context.env.TEAMS_WORKFLOW_URL) {
-    return json({
-      error: 'Microsoft Teams has not been connected yet.'
-    }, 503);
-  }
+  const type = String(body?.type || '')
+    .trim()
+    .slice(0, 80);
+
+  const severity = String(body?.severity || '')
+    .trim()
+    .slice(0, 40);
+
+  const expiry = String(body?.expiry || '')
+    .trim()
+    .slice(0, 120);
+
+  const incomingMessage = String(body?.message || '')
+    .trim()
+    .slice(0, 6000);
 
   const recipients = Array.isArray(body?.recipients)
     ? body.recipients
     : [];
 
-  const message = String(body?.message || '').trim();
-
-  if (!message) {
-    return json({
-      error: 'Alert message is required.'
-    }, 400);
+  if (!incomingMessage) {
+    return json(
+      {
+        error: 'Alert message is required.'
+      },
+      400
+    );
   }
 
   if (!recipients.length) {
-    return json({
-      error: 'Select at least one job lead.'
-    }, 400);
+    return json(
+      {
+        error: 'Select at least one job lead.'
+      },
+      400
+    );
   }
 
   if (recipients.length > 50) {
-    return json({
-      error: 'Too many recipients.'
-    }, 400);
+    return json(
+      {
+        error: 'Too many recipients.'
+      },
+      400
+    );
   }
 
   const cleanRecipients = recipients
-    .map(x => ({
+    .map((x) => ({
       name: String(x?.name || '')
         .trim()
         .slice(0, 120),
@@ -100,22 +131,88 @@ export async function onRequestPost(context) {
         .toLowerCase()
         .slice(0, 254)
     }))
-    .filter(x =>
-      x.name &&
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x.email)
+    .filter(
+      (x) =>
+        x.name &&
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x.email)
     );
 
   if (!cleanRecipients.length) {
-    return json({
-      error: 'No valid recipients.'
-    }, 400);
+    return json(
+      {
+        error: 'No valid recipients.'
+      },
+      400
+    );
   }
 
+  /*
+    ---------------------------------------------------------
+    FIX TEAMS ALERT FORMATTING
+    ---------------------------------------------------------
+
+    The website currently builds a message that can look like:
+
+    AdvisoryALL CDI LOCATIONS
+
+    This safely converts it to:
+
+    Advisory · ALL CDI LOCATIONS
+
+    without changing the rest of the message.
+  */
+
+  let message = incomingMessage;
+
+  if (severity && site) {
+    const joinedWithoutSpace = `${severity}${site}`;
+
+    if (message.includes(joinedWithoutSpace)) {
+      message = message.replace(
+        joinedWithoutSpace,
+        `${severity} · ${site}`
+      );
+    }
+  }
+
+  /*
+    If the website sends the header with only a space but no separator,
+    normalize that too.
+  */
+
+  if (severity && site) {
+    const joinedWithSpace = `${severity} ${site}`;
+    const preferred = `${severity} · ${site}`;
+
+    if (
+      message.includes(joinedWithSpace) &&
+      !message.includes(preferred)
+    ) {
+      message = message.replace(
+        joinedWithSpace,
+        preferred
+      );
+    }
+  }
+
+  /*
+    Payload that Power Automate Parse JSON receives.
+
+    We keep all the fields Power Automate is already using:
+    site
+    type
+    severity
+    expiry
+    message
+    recipients
+    sentAt
+  */
+
   const teamsPayload = {
-    site: String(body?.site || '').slice(0, 120),
-    type: String(body?.type || '').slice(0, 80),
-    severity: String(body?.severity || '').slice(0, 40),
-    expiry: String(body?.expiry || '').slice(0, 120),
+    site,
+    type,
+    severity,
+    expiry,
     message: message.slice(0, 6000),
     recipients: cleanRecipients,
     sentAt: new Date().toISOString()
@@ -134,21 +231,46 @@ export async function onRequestPost(context) {
         body: JSON.stringify(teamsPayload)
       }
     );
-  } catch {
-    return json({
-      error: 'Could not reach Microsoft Teams Workflow.'
-    }, 502);
+  } catch (error) {
+    console.error('Teams workflow request failed:', error);
+
+    return json(
+      {
+        error: 'Could not connect to Microsoft Teams Workflow.'
+      },
+      502
+    );
   }
 
   if (!teamsResponse.ok) {
-    return json({
-      error:
-        `Teams Workflow rejected the alert (${teamsResponse.status}).`
-    }, 502);
+    let responseText = '';
+
+    try {
+      responseText = await teamsResponse.text();
+    } catch {
+      // Ignore response-body read errors.
+    }
+
+    console.error(
+      'Teams workflow returned an error:',
+      teamsResponse.status,
+      responseText
+    );
+
+    return json(
+      {
+        error: 'Microsoft Teams Workflow rejected the alert.',
+        status: teamsResponse.status
+      },
+      502
+    );
   }
 
   return json({
     ok: true,
-    recipients: cleanRecipients.length
+    sent: cleanRecipients.length,
+    message: `Alert sent to ${cleanRecipients.length} selected job lead${
+      cleanRecipients.length === 1 ? '' : 's'
+    } in Teams.`
   });
 }
