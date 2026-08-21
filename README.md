@@ -1,4 +1,4 @@
-# CDI Field Safety Management Tool · v222
+# CDI Field Safety Management Tool · v223
 
 This folder is the complete multi-file website. Keep every folder and filename together.
 
@@ -13,7 +13,7 @@ For a quick visual check, open `index.html`. Some browsers block PDF viewing or 
 3. Keep these folders unchanged: `assets`, `css`, `data`, `forms`, and `js`.
 4. In GitHub, open **Settings → Pages**.
 5. Select **Deploy from a branch**, choose the site branch and `/ (root)`, then save.
-6. Open the GitHub Pages link after deployment finishes and confirm the badge reads `v222`.
+6. Open the GitHub Pages link after deployment finishes and confirm the badge reads `v223`.
 
 ## Important checks after upload
 
