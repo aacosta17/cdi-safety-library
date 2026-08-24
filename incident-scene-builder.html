@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CDI Incident Scene Builder · v1</title>
+<link rel="icon" href="assets/cdi-logo.jpg">
+<style>
+:root{--navy:#073b63;--blue:#0b5f9e;--cyan:#16a8d8;--bg:#eef3f7;--card:#fff;--text:#152331;--muted:#647485;--line:#d7e0e8;--danger:#b42318}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{min-height:100vh}.topbar{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.topbar-inner{max-width:1800px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 18px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}.brand img{width:70px;height:42px;object-fit:contain}.brand-copy{min-width:0}
+.brand-copy b{display:block;font-size:17px;color:var(--navy)}.brand-copy span{font-size:12px;color:var(--muted)}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn,a.btn{appearance:none;border:1px solid transparent;border-radius:9px;min-height:42px;padding:0 14px;font-weight:700;font-size:14px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;cursor:pointer;background:#fff;color:var(--navy)}
+.btn.primary{background:var(--blue);color:#fff}.btn.secondary{border-color:#b9c8d5}.btn.danger{border-color:#f0b7b2;color:var(--danger)}
+.app{max-width:1800px;margin:auto;padding:14px;display:grid;grid-template-columns:250px minmax(0,1fr) 285px;gap:12px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;min-width:0}.panel-title{padding:14px 14px 10px;border-bottom:1px solid var(--line)}
+.panel-title b{font-size:14px;color:var(--navy)}.panel-title small{display:block;color:var(--muted);margin-top:3px}.panel-body{padding:12px}
+.section-label{font-size:11px;font-weight:800;color:#687b8d;letter-spacing:.08em;margin:6px 0 8px}.asset-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.asset-btn{border:1px solid var(--line);border-radius:9px;background:#fff;padding:10px 7px;min-height:66px;cursor:pointer;font-weight:700;color:#29455d;text-align:center}
+.asset-btn span{display:block;font-size:23px;margin-bottom:4px}.asset-btn:hover{border-color:#7fb8db;background:#f4fbff}.separator{height:1px;background:var(--line);margin:13px 0}
+.field{margin-bottom:11px}.field label{display:block;font-size:12px;font-weight:800;color:#526679;margin-bottom:5px}.field select,.field input[type="range"]{width:100%}
+.field select{min-height:42px;border:1px solid #cbd7e0;border-radius:8px;background:#fff;padding:0 10px;font-size:16px}
+.mode-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.mode-row .btn{padding:0 8px;font-size:12px}.mode-row .btn.active{background:#e8f6fc;border-color:#80c9e6;color:#064f7b}
+.canvas-panel{overflow:hidden;display:flex;flex-direction:column;min-height:640px}.canvas-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 11px;border-bottom:1px solid var(--line);background:#fff;flex-wrap:wrap}
+.canvas-toolbar .status{font-size:12px;color:var(--muted)}#viewport{position:relative;min-height:590px;flex:1;background:linear-gradient(#dceaf3,#f5f8fa);touch-action:none}
+#viewport canvas{display:block;width:100%;height:100%}.tip{position:absolute;left:12px;bottom:12px;background:rgba(7,59,99,.9);color:#fff;border-radius:8px;padding:8px 10px;font-size:11px;max-width:330px;pointer-events:none}
+.selection-box{border:1px solid #d4e0e9;background:#f7fafc;border-radius:9px;padding:10px;margin-bottom:12px}.selection-box b{display:block;color:var(--navy)}.selection-box span{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.pose-group{display:none}.pose-group.visible{display:block}.range-row{margin-bottom:10px}.range-head{display:flex;justify-content:space-between;gap:10px;font-size:12px;font-weight:700;color:#526679;margin-bottom:3px}
+.range-row input{width:100%}.legend{font-size:11px;line-height:1.5;color:var(--muted);background:#f7fafc;border-radius:8px;padding:9px}.weather-note{font-size:11px;color:var(--muted);margin-top:6px}
+@media(max-width:1050px){.app{grid-template-columns:220px minmax(0,1fr)}.right-panel{grid-column:1/-1}.right-panel .panel-body{display:grid;grid-template-columns:1fr 1fr;gap:14px}.canvas-panel{min-height:560px}#viewport{min-height:510px}}
+@media(max-width:720px){.topbar-inner{align-items:flex-start}.brand img{width:58px}.app{grid-template-columns:1fr;padding:8px}.left-panel,.right-panel{grid-column:auto}.canvas-panel{order:-1;min-height:520px}#viewport{min-height:470px}.right-panel .panel-body{display:block}.asset-grid{grid-template-columns:repeat(3,1fr)}.asset-btn{min-height:62px;font-size:11px}.top-actions .btn{min-height:38px;padding:0 10px}.tip{right:12px;max-width:none}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topbar-inner"><div class="brand"><a href="index.html" aria-label="Back to CDI Field Safety Management Tool"><img src="assets/cdi-logo.jpg" alt="CDI Technology Services logo"></a><div class="brand-copy"><b>Incident Scene Builder</b><span>CDI Technology Services · Version 1</span></div></div><div class="top-actions"><a class="btn secondary" href="index.html">← Safety Tool</a><button id="resetBtn" class="btn danger" type="button">Reset Scene</button><button id="exportBtn" class="btn primary" type="button">Export PNG</button></div></div></header>
+<main class="app">
+<aside class="panel left-panel"><div class="panel-title"><b>Scene Library</b><small>Add workers and objects to the canvas.</small></div><div class="panel-body">
+<div class="section-label">PEOPLE</div><div class="asset-grid"><button class="asset-btn" data-add="worker" type="button"><span>◉</span>Worker</button><button class="asset-btn" data-add="workerKneel" type="button"><span>◒</span>Kneeling Worker</button></div>
+<div class="separator"></div><div class="section-label">EQUIPMENT</div><div class="asset-grid">
+<button class="asset-btn" data-add="palletJack" type="button"><span>⌁</span>Pallet Jack</button><button class="asset-btn" data-add="ladder" type="button"><span>╱</span>Ladder</button><button class="asset-btn" data-add="liftGate" type="button"><span>▰</span>Truck / Lift Gate</button><button class="asset-btn" data-add="cart" type="button"><span>▣</span>Cart</button><button class="asset-btn" data-add="cone" type="button"><span>▲</span>Cone</button><button class="asset-btn" data-add="barrier" type="button"><span>━</span>Barrier</button><button class="asset-btn" data-add="box" type="button"><span>□</span>Material</button><button class="asset-btn" data-add="mewp" type="button"><span>▤</span>MEWP</button></div>
+<div class="separator"></div><div class="section-label">MANHOLE / OPENING</div><div class="asset-grid"><button class="asset-btn" data-add="manholeClosed" type="button"><span>●</span>Closed Cover</button><button class="asset-btn" data-add="manholeOpen" type="button"><span>◌</span>Open Manhole</button><button class="asset-btn" data-add="manholeSet" type="button"><span>◍</span>Cover Beside Hole</button><button class="asset-btn" data-add="holeZone" type="button"><span>⚠</span>Open-Hole Zone</button></div>
+</div></aside>
+<section class="panel canvas-panel"><div class="canvas-toolbar"><div><b id="sceneName">Blank Scene</b><div class="status">Select an object to move, rotate, scale, or pose it.</div></div><div class="mode-row"><button id="translateBtn" class="btn secondary active" type="button">Move</button><button id="rotateBtn" class="btn secondary" type="button">Rotate</button><button id="scaleBtn" class="btn secondary" type="button">Scale</button></div></div><div id="viewport"><div class="tip">Drag empty space to orbit the camera. Select an object, then use the colored handles. On a worker, use the pose sliders at right.</div></div></section>
+<aside class="panel right-panel"><div class="panel-title"><b>Scene Controls</b><small>Set the environment and adjust the selected object.</small></div><div class="panel-body">
+<div class="field"><label for="scenePreset">Environment</label><select id="scenePreset"><option value="blank">Blank / Open Area</option><option value="warehouse">Warehouse</option><option value="plant">Plant / Industrial</option><option value="store">Store / Interior</option><option value="parking">Parking Lot</option><option value="delivery">Delivery / Loading Area</option></select></div>
+<div class="field"><label for="conditionPreset">Conditions</label><select id="conditionPreset"><option value="day">Day / Clear</option><option value="morning">Early Morning</option><option value="late">Late Day</option><option value="night">Night</option><option value="cloudy">Cloudy</option><option value="rain">Rainy</option><option value="wind">Windy</option><option value="cold">Cold / Winter</option></select><div class="weather-note">V1 changes the visual scene only. It does not calculate weather hazards.</div></div>
+<div class="separator"></div><div class="selection-box"><b id="selectedName">Nothing selected</b><span id="selectedType">Tap an object in the scene.</span></div>
+<div id="objectActions" style="display:none"><div class="mode-row" style="margin-bottom:10px"><button id="duplicateBtn" class="btn secondary" type="button">Duplicate</button><button id="deleteBtn" class="btn danger" type="button">Delete</button><button id="focusBtn" class="btn secondary" type="button">Focus</button></div></div>
+<div id="poseControls" class="pose-group"><div class="section-label">WORKER POSE</div>
+<div class="range-row"><div class="range-head"><span>Head Turn</span><span id="headVal">0°</span></div><input id="headPose" type="range" min="-80" max="80" value="0"></div>
+<div class="range-row"><div class="range-head"><span>Left Arm</span><span id="leftArmVal">0°</span></div><input id="leftArmPose" type="range" min="-150" max="150" value="0"></div>
+<div class="range-row"><div class="range-head"><span>Right Arm</span><span id="rightArmVal">0°</span></div><input id="rightArmPose" type="range" min="-150" max="150" value="0"></div>
+<div class="range-row"><div class="range-head"><span>Left Forearm</span><span id="leftForeVal">0°</span></div><input id="leftForePose" type="range" min="-145" max="10" value="0"></div>
+<div class="range-row"><div class="range-head"><span>Right Forearm</span><span id="rightForeVal">0°</span></div><input id="rightForePose" type="range" min="-145" max="10" value="0"></div>
+<div class="range-row"><div class="range-head"><span>Left Leg</span><span id="leftLegVal">0°</span></div><input id="leftLegPose" type="range" min="-100" max="100" value="0"></div>
+<div class="range-row"><div class="range-head"><span>Right Leg</span><span id="rightLegVal">0°</span></div><input id="rightLegPose" type="range" min="-100" max="100" value="0"></div>
+<div class="range-row"><div class="range-head"><span>Left Knee</span><span id="leftKneeVal">0°</span></div><input id="leftKneePose" type="range" min="0" max="145" value="0"></div>
+<div class="range-row"><div class="range-head"><span>Right Knee</span><span id="rightKneeVal">0°</span></div><input id="rightKneePose" type="range" min="0" max="145" value="0"></div></div>
+<div class="separator"></div><div class="legend"><b>V1 controls</b><br>Move = position an object.<br>Rotate = change its angle.<br>Scale = resize it.<br>Worker sliders = change basic body pose.<br><br>Detailed hands/fingers and advanced body rigging are planned for a later version.</div>
+</div></aside>
+</main>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/controls/OrbitControls.js';
+import { TransformControls } from 'https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/controls/TransformControls.js';
+
+const viewport=document.getElementById('viewport');
+const scene=new THREE.Scene();scene.background=new THREE.Color(0xdceaf3);
+const camera=new THREE.PerspectiveCamera(45,1,.1,1000);camera.position.set(9,7,12);
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.setPixelRatio(Math.min(devicePixelRatio,2));viewport.prepend(renderer.domElement);
+const orbit=new OrbitControls(camera,renderer.domElement);orbit.target.set(0,1.4,0);orbit.enableDamping=true;orbit.dampingFactor=.08;orbit.minDistance=3;orbit.maxDistance=35;
+const transform=new TransformControls(camera,renderer.domElement);transform.setSize(.85);scene.add(transform);transform.addEventListener('dragging-changed',e=>orbit.enabled=!e.value);
+const hemi=new THREE.HemisphereLight(0xffffff,0x506070,2.4);scene.add(hemi);const sun=new THREE.DirectionalLight(0xffffff,3.2);sun.position.set(7,12,8);sun.castShadow=true;scene.add(sun);
+const groundMat=new THREE.MeshStandardMaterial({color:0xc8ced3,roughness:.95});const ground=new THREE.Mesh(new THREE.PlaneGeometry(50,50),groundMat);ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+const grid=new THREE.GridHelper(30,30,0x78909c,0xaab7c0);grid.position.y=.006;scene.add(grid);
+const envGroup=new THREE.Group();scene.add(envGroup);const objectRoot=new THREE.Group();scene.add(objectRoot);
+let selected=null,objectCounter=0,rainPoints=null;
+const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
+const mat=(color,rough=.65,metal=.05)=>new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal});
+const workerMat=mat(0x236b9a),darkMat=mat(0x2d3945),metalMat=mat(0x7d8b94,.4,.55),yellowMat=mat(0xf3b61f),orangeMat=mat(0xe36b23),blackMat=mat(0x252c33),coverMat=mat(0x4d555b,.9,.15);
+function mesh(geo,material){const m=new THREE.Mesh(geo,material);m.castShadow=true;m.receiveShadow=true;return m}
+function named(group,type,label){group.userData.selectable=true;group.userData.type=type;group.userData.label=label;group.userData.id=++objectCounter;group.name=`${label} ${objectCounter}`;return group}
+function addBox(group,size,pos,material=darkMat){const m=mesh(new THREE.BoxGeometry(...size),material);m.position.set(...pos);group.add(m);return m}
+function addCylinder(group,r,h,pos,material=darkMat,rot=[0,0,0]){const m=mesh(new THREE.CylinderGeometry(r,r,h,20),material);m.position.set(...pos);m.rotation.set(...rot);group.add(m);return m}
+function limb(radius,length,material=workerMat){const pivot=new THREE.Group();const part=mesh(new THREE.CapsuleGeometry(radius,length,6,10),material);part.position.y=-(length/2+radius);pivot.add(part);return pivot}
+
+function createWorker(kneel=false){
+ const g=named(new THREE.Group(),'worker','Worker');g.userData.worker=true;
+ const hips=new THREE.Group();hips.position.y=1.75;g.add(hips);addBox(hips,[.62,.28,.34],[0,0,0],darkMat);
+ const torsoPivot=new THREE.Group();torsoPivot.position.y=.18;hips.add(torsoPivot);
+ const torso=mesh(new THREE.CapsuleGeometry(.34,.75,8,12),workerMat);torso.position.y=.55;torsoPivot.add(torso);
+ const neck=new THREE.Group();neck.position.y=1.05;torsoPivot.add(neck);addCylinder(neck,.11,.15,[0,.07,0],workerMat);
+ const head=mesh(new THREE.SphereGeometry(.25,20,16),mat(0xc99772));head.position.y=.38;neck.add(head);g.userData.joints={head:neck};
+ function arm(side){const shoulder=new THREE.Group();shoulder.position.set(side*.43,.85,0);torsoPivot.add(shoulder);shoulder.add(limb(.105,.55,workerMat));const elbow=new THREE.Group();elbow.position.y=-.76;shoulder.add(elbow);elbow.add(limb(.09,.50,workerMat));const hand=mesh(new THREE.SphereGeometry(.11,14,10),mat(0xc99772));hand.position.y=-.70;elbow.add(hand);return{shoulder,elbow}}
+ const la=arm(-1),ra=arm(1);Object.assign(g.userData.joints,{leftArm:la.shoulder,rightArm:ra.shoulder,leftFore:la.elbow,rightFore:ra.elbow});
+ function leg(side){const hip=new THREE.Group();hip.position.set(side*.2,-.12,0);hips.add(hip);hip.add(limb(.12,.68,darkMat));const knee=new THREE.Group();knee.position.y=-.92;hip.add(knee);knee.add(limb(.105,.62,darkMat));addBox(knee,[.22,.16,.42],[0,-.85,.12],blackMat);return{hip,knee}}
+ const ll=leg(-1),rl=leg(1);Object.assign(g.userData.joints,{leftLeg:ll.hip,rightLeg:rl.hip,leftKnee:ll.knee,rightKnee:rl.knee});
+ if(kneel){ll.hip.rotation.x=-.55;ll.knee.rotation.x=1.5;rl.hip.rotation.x=.3;rl.knee.rotation.x=1.1;g.position.y=.2}
+ g.traverse(o=>{if(o.isMesh)o.userData.owner=g});return g
+}
+function createPalletJack(){const g=named(new THREE.Group(),'equipment','Pallet Jack');addBox(g,[.38,.12,2.4],[-.32,.16,.65],yellowMat);addBox(g,[.38,.12,2.4],[.32,.16,.65],yellowMat);addBox(g,[.85,.45,.55],[0,.37,-.72],yellowMat);addCylinder(g,.09,.9,[0,1.0,-.92],metalMat,[0,0,.35]);return g}
+function createLadder(){const g=named(new THREE.Group(),'equipment','Ladder');for(const x of[-.35,.35])addBox(g,[.1,2.9,.1],[x,1.45,0],metalMat);for(let y=.25;y<2.8;y+=.38)addBox(g,[.72,.07,.09],[0,y,0],metalMat);g.rotation.z=-.12;return g}
+function createLiftGate(){const g=named(new THREE.Group(),'equipment','Truck / Lift Gate');addBox(g,[3.7,2.7,2.4],[0,1.35,-1.1],mat(0xe7ecef));addBox(g,[3.35,.15,2.0],[0,.12,1.0],metalMat);return g}
+function createCart(){const g=named(new THREE.Group(),'equipment','Cart');addBox(g,[1.5,.12,.9],[0,.8,0],metalMat);for(const x of[-.62,.62])for(const z of[-.3,.3])addCylinder(g,.11,.08,[x,.12,z],blackMat,[Math.PI/2,0,0]);for(const x of[-.65,.65])addBox(g,[.08,.72,.08],[x,.43,-.32],metalMat);return g}
+function createCone(){const g=named(new THREE.Group(),'equipment','Cone');const c=mesh(new THREE.ConeGeometry(.28,.8,24),orangeMat);c.position.y=.4;g.add(c);addBox(g,[.7,.08,.7],[0,.04,0],blackMat);return g}
+function createBarrier(){const g=named(new THREE.Group(),'equipment','Barrier');for(const x of[-1.15,1.15])addBox(g,[.12,1.2,.12],[x,.6,0],metalMat);addBox(g,[2.5,.25,.12],[0,.92,0],orangeMat);addBox(g,[2.5,.18,.12],[0,.48,0],mat(0xf5f5f5));return g}
+function createMaterial(){const g=named(new THREE.Group(),'equipment','Material');addBox(g,[1.1,.75,.9],[0,.38,0],mat(0xa87945));return g}
+function createMEWP(){const g=named(new THREE.Group(),'equipment','MEWP');addBox(g,[1.8,.5,1.2],[0,.32,0],darkMat);for(const x of[-.7,.7])for(const z of[-.45,.45])addCylinder(g,.22,.18,[x,.23,z],blackMat,[Math.PI/2,0,0]);addBox(g,[1.3,.12,.9],[0,1.85,0],yellowMat);for(const x of[-.58,.58])addBox(g,[.07,1.3,.07],[x,1.25,0],metalMat);addBox(g,[.12,1.2,.12],[0,1.2,0],metalMat);return g}
+function createManholeClosed(){const g=named(new THREE.Group(),'manhole','Closed Manhole Cover');const m=mesh(new THREE.CylinderGeometry(.78,.78,.08,40),coverMat);m.position.y=.04;g.add(m);return g}
+function createManholeOpen(){const g=named(new THREE.Group(),'manhole','Open Manhole');const ring=mesh(new THREE.TorusGeometry(.82,.11,14,48),coverMat);ring.rotation.x=Math.PI/2;ring.position.y=.05;g.add(ring);const dark=mesh(new THREE.CylinderGeometry(.7,.7,.06,40),blackMat);dark.position.y=.01;g.add(dark);return g}
+function createManholeSet(){const g=named(new THREE.Group(),'manhole','Open Manhole + Removed Cover');const open=createManholeOpen();open.userData.selectable=false;open.position.x=-.9;g.add(open);const cover=createManholeClosed();cover.userData.selectable=false;cover.position.x=.9;cover.rotation.z=.18;g.add(cover);g.traverse(o=>{if(o.isMesh)o.userData.owner=g});return g}
+function createHoleZone(){const g=named(new THREE.Group(),'hazard','Open-Hole Hazard Zone');const ring=mesh(new THREE.RingGeometry(1.0,1.55,48),new THREE.MeshBasicMaterial({color:0xc8453c,transparent:true,opacity:.35,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.y=.012;g.add(ring);return g}
+
+const factories={worker:()=>createWorker(false),workerKneel:()=>createWorker(true),palletJack:createPalletJack,ladder:createLadder,liftGate:createLiftGate,cart:createCart,cone:createCone,barrier:createBarrier,box:createMaterial,mewp:createMEWP,manholeClosed:createManholeClosed,manholeOpen:createManholeOpen,manholeSet:createManholeSet,holeZone:createHoleZone};
+
+function addAsset(type){const obj=factories[type]?.();if(!obj)return;obj.position.x=(objectCounter%4-1.5)*.55;objectRoot.add(obj);selectObject(obj)}
+function rootSelectable(obj){while(obj&&obj!==scene){if(obj.userData?.owner)return obj.userData.owner;if(obj.userData?.selectable)return obj;obj=obj.parent}return null}
+function selectObject(obj){
+ selected=obj||null;transform.detach();
+ if(selected){transform.attach(selected);document.getElementById('selectedName').textContent=selected.name;document.getElementById('selectedType').textContent=selected.userData.worker?'Poseable worker':selected.userData.label||'Scene object';document.getElementById('objectActions').style.display='block'}
+ else{document.getElementById('selectedName').textContent='Nothing selected';document.getElementById('selectedType').textContent='Tap an object in the scene.';document.getElementById('objectActions').style.display='none'}
+ document.getElementById('poseControls').classList.toggle('visible',!!selected?.userData?.worker);syncPoseUI()
+}
+renderer.domElement.addEventListener('pointerdown',e=>{if(transform.dragging)return;const r=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-((e.clientY-r.top)/r.height)*2+1;raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(objectRoot.children,true);if(hits.length)selectObject(rootSelectable(hits[0].object))});
+function setMode(mode){transform.setMode(mode);['translate','rotate','scale'].forEach(m=>document.getElementById(m+'Btn').classList.toggle('active',m===mode))}
+document.getElementById('translateBtn').addEventListener('click',()=>setMode('translate'));
+document.getElementById('rotateBtn').addEventListener('click',()=>setMode('rotate'));
+document.getElementById('scaleBtn').addEventListener('click',()=>setMode('scale'));
+document.querySelectorAll('[data-add]').forEach(b=>b.addEventListener('click',()=>addAsset(b.dataset.add)));
+document.getElementById('deleteBtn').addEventListener('click',()=>{if(!selected)return;objectRoot.remove(selected);selectObject(null)});
+document.getElementById('duplicateBtn').addEventListener('click',()=>{if(!selected)return;const copy=selected.clone(true);copy.position.x+=.8;copy.position.z+=.5;copy.userData={...selected.userData,id:++objectCounter};copy.name=`${selected.userData.label||'Object'} ${objectCounter}`;copy.traverse(o=>{if(o.isMesh)o.userData.owner=copy});objectRoot.add(copy);selectObject(copy)});
+document.getElementById('focusBtn').addEventListener('click',()=>{if(!selected)return;const p=new THREE.Vector3();selected.getWorldPosition(p);orbit.target.copy(p);camera.position.copy(p).add(new THREE.Vector3(5,4,6));orbit.update()});
+
+const poseMap={headPose:['head','y','headVal'],leftArmPose:['leftArm','z','leftArmVal'],rightArmPose:['rightArm','z','rightArmVal'],leftForePose:['leftFore','z','leftForeVal'],rightForePose:['rightFore','z','rightForeVal'],leftLegPose:['leftLeg','x','leftLegVal'],rightLegPose:['rightLeg','x','rightLegVal'],leftKneePose:['leftKnee','x','leftKneeVal'],rightKneePose:['rightKnee','x','rightKneeVal']};
+Object.entries(poseMap).forEach(([id,[joint,axis,valId]])=>document.getElementById(id).addEventListener('input',e=>{if(!selected?.userData?.worker)return;const deg=Number(e.target.value);selected.userData.joints[joint].rotation[axis]=THREE.MathUtils.degToRad((joint==='rightArm'||joint==='rightFore')?-deg:deg);document.getElementById(valId).textContent=`${deg}°`}));
+function syncPoseUI(){if(!selected?.userData?.worker)return;Object.entries(poseMap).forEach(([id,[joint,axis,valId]])=>{const j=selected.userData.joints?.[joint];if(!j)return;let deg=Math.round(THREE.MathUtils.radToDeg(j.rotation[axis]));if(joint==='rightArm'||joint==='rightFore')deg=-deg;document.getElementById(id).value=deg;document.getElementById(valId).textContent=`${deg}°`})}
+
+function clearEnv(){while(envGroup.children.length)envGroup.remove(envGroup.children[0]);groundMat.color.set(0xc8ced3);grid.visible=true}
+function wall(x,y,z,w,h,d,color=0xdfe5e8){const m=mesh(new THREE.BoxGeometry(w,h,d),mat(color));m.position.set(x,y,z);envGroup.add(m);return m}
+function buildEnvironment(kind){
+ clearEnv();document.getElementById('sceneName').textContent=document.getElementById('scenePreset').selectedOptions[0].text;
+ switch(kind){
+  case'warehouse':groundMat.color.set(0xbfc5c9);wall(0,2.8,-7,14,5.6,.25);wall(-7,2.8,0,.25,5.6,14);for(let x=-4;x<=4;x+=4){wall(x,1.8,-5.5,2.8,3.6,.18,0x9aa8b1);for(let y=.5;y<3.4;y+=.9)wall(x,y,-5.25,2.7,.08,.55,0x71818b)}break;
+  case'plant':groundMat.color.set(0xb9bec0);wall(0,2.8,-7,14,5.6,.25,0xd4d9dc);for(let x=-4;x<=4;x+=4){addCylinder(envGroup,.65,3.7,[x,1.85,-4.8],metalMat);addCylinder(envGroup,.16,5,[x,4,-4.8],metalMat,[0,0,Math.PI/2])}break;
+  case'store':groundMat.color.set(0xd8d8d5);wall(0,2.8,-7,14,5.6,.25,0xf1f2f2);for(let x=-4;x<=4;x+=4){wall(x,1.3,-4.7,2.6,2.6,.45,0xd0d6da);for(let y=.4;y<2.4;y+=.65)wall(x,y,-4.4,2.5,.08,.65,0x8a969d)}break;
+  case'parking':groundMat.color.set(0x60676c);grid.visible=false;for(let x=-6;x<=6;x+=3){const stripe=mesh(new THREE.PlaneGeometry(.08,4),new THREE.MeshBasicMaterial({color:0xffffff}));stripe.rotation.x=-Math.PI/2;stripe.position.set(x,.01,0);envGroup.add(stripe)}break;
+  case'delivery':groundMat.color.set(0x70777c);grid.visible=false;wall(0,1.4,-7,14,2.8,.35,0xd6dce0);wall(0,.18,-5.2,6,.36,2.2,0x989fa4);break;
+ }
+ applyConditions(document.getElementById('conditionPreset').value)
+}
+function applyConditions(kind){
+ if(rainPoints){scene.remove(rainPoints);rainPoints.geometry.dispose();rainPoints.material.dispose();rainPoints=null}
+ scene.fog=null;hemi.intensity=2.4;sun.intensity=3.2;sun.color.set(0xffffff);
+ switch(kind){
+  case'morning':scene.background=new THREE.Color(0xf3d5ba);sun.color.set(0xffc58a);sun.intensity=2;break;
+  case'late':scene.background=new THREE.Color(0xe8b18b);sun.color.set(0xffa45c);sun.intensity=2;break;
+  case'night':scene.background=new THREE.Color(0x101b29);hemi.intensity=.7;sun.intensity=.6;break;
+  case'cloudy':scene.background=new THREE.Color(0x9eabb4);hemi.intensity=1.8;sun.intensity=1.2;scene.fog=new THREE.Fog(0x9eabb4,18,42);break;
+  case'rain':
+   scene.background=new THREE.Color(0x7e8d99);hemi.intensity=1.5;sun.intensity=.9;scene.fog=new THREE.Fog(0x7e8d99,16,38);
+   const pts=[];for(let i=0;i<700;i++)pts.push((Math.random()-.5)*24,Math.random()*12,(Math.random()-.5)*24);
+   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pts,3));
+   rainPoints=new THREE.Points(geo,new THREE.PointsMaterial({color:0xb9d8ec,size:.035,transparent:true,opacity:.75}));scene.add(rainPoints);break;
+  case'wind':scene.background=new THREE.Color(0xb7c5cf);sun.intensity=1.6;scene.fog=new THREE.Fog(0xb7c5cf,22,48);break;
+  case'cold':scene.background=new THREE.Color(0xe5eef5);groundMat.color.set(0xe1e7ea);sun.color.set(0xd8ecff);sun.intensity=1.7;break;
+  default:scene.background=new THREE.Color(0xdceaf3)
+ }
+}
+document.getElementById('scenePreset').addEventListener('change',e=>buildEnvironment(e.target.value));
+document.getElementById('conditionPreset').addEventListener('change',e=>applyConditions(e.target.value));
+document.getElementById('resetBtn').addEventListener('click',()=>{if(!confirm('Clear all workers and equipment from this scene?'))return;transform.detach();objectRoot.clear();selectObject(null);buildEnvironment(document.getElementById('scenePreset').value)});
+document.getElementById('exportBtn').addEventListener('click',()=>{transform.detach();selectObject(null);renderer.render(scene,camera);const a=document.createElement('a');a.download=`CDI-Incident-Scene-${new Date().toISOString().slice(0,10)}.png`;a.href=renderer.domElement.toDataURL('image/png');a.click()});
+
+function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+new ResizeObserver(resize).observe(viewport);resize();
+function animate(){requestAnimationFrame(animate);orbit.update();if(rainPoints){rainPoints.position.y-=.07;if(rainPoints.position.y<-5)rainPoints.position.y=5}renderer.render(scene,camera)}
+buildEnvironment('blank');addAsset('worker');animate();
+</script>
+</body>
+</html>
