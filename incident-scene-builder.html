@@ -62,10 +62,18 @@ body{min-height:100vh}.topbar{background:#fff;border-bottom:1px solid var(--line
 <div class="separator"></div><div class="legend"><b>V1 controls</b><br>Move = position an object.<br>Rotate = change its angle.<br>Scale = resize it.<br>Worker sliders = change basic body pose.<br><br>Detailed hands/fingers and advanced body rigging are planned for a later version.</div>
 </div></aside>
 </main>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/"
+  }
+}
+</script>
 <script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/controls/OrbitControls.js';
-import { TransformControls } from 'https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/controls/TransformControls.js';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { TransformControls } from 'three/addons/controls/TransformControls.js';
 
 const viewport=document.getElementById('viewport');
 const scene=new THREE.Scene();scene.background=new THREE.Color(0xdceaf3);
