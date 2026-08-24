@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CDI Incident Scene Builder · v16</title>
+<title>CDI Incident Scene Builder · v17</title>
 <link rel="icon" href="assets/cdi-logo.jpg">
 <style>
 :root{--navy:#073b63;--blue:#0b5f9e;--cyan:#16a8d8;--bg:#eef3f7;--card:#fff;--text:#152331;--muted:#647485;--line:#d7e0e8;--danger:#b42318}
@@ -53,7 +53,7 @@ body{min-height:100vh}.topbar{background:#fff;border-bottom:1px solid var(--line
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topbar-inner"><div class="brand"><a href="index.html" aria-label="Back to CDI Field Safety Management Tool"><img src="assets/cdi-logo.jpg" alt="CDI Technology Services logo"></a><div class="brand-copy"><b>Incident Scene Builder</b><span>CDI Technology Services · Version 16</span></div></div><div class="top-actions"><a class="btn secondary" href="index.html">← Safety Tool</a><button id="saveSceneBtn" class="btn secondary" type="button">Save Scene</button><button id="loadSceneBtn" class="btn secondary" type="button">Load Scene</button><input id="loadSceneInput" class="file-input" type="file" accept="application/json,.json"><button id="resetBtn" class="btn danger" type="button">Reset Scene</button><button id="exportBtn" class="btn primary" type="button">Export PNG</button></div></div></header>
+<header class="topbar"><div class="topbar-inner"><div class="brand"><a href="index.html" aria-label="Back to CDI Field Safety Management Tool"><img src="assets/cdi-logo.jpg" alt="CDI Technology Services logo"></a><div class="brand-copy"><b>Incident Scene Builder</b><span>CDI Technology Services · Version 17</span></div></div><div class="top-actions"><a class="btn secondary" href="index.html">← Safety Tool</a><button id="saveSceneBtn" class="btn secondary" type="button">Save Scene</button><button id="loadSceneBtn" class="btn secondary" type="button">Load Scene</button><input id="loadSceneInput" class="file-input" type="file" accept="application/json,.json"><button id="resetBtn" class="btn danger" type="button">Reset Scene</button><button id="exportBtn" class="btn primary" type="button">Export PNG</button></div></div></header>
 <main class="app">
 <aside class="panel left-panel"><div class="panel-title"><b>Scene Library</b><small>Add workers and objects to the canvas.</small></div><div class="panel-body"><div class="asset-search"><input id="assetSearch" type="search" placeholder="Search assets — crowbar, van, cone..."><div id="assetEmpty" class="asset-empty">No matching assets.</div></div>
 <div class="section-label">PEOPLE</div><div class="asset-grid"><button class="asset-btn" data-add="worker" type="button"><span>◉</span>Worker</button><button class="asset-btn" data-add="workerKneel" type="button"><span>◒</span>Kneeling Worker</button></div>
@@ -77,7 +77,7 @@ body{min-height:100vh}.topbar{background:#fff;border-bottom:1px solid var(--line
 <div class="field"><label for="scenePreset">Environment</label><select id="scenePreset"><option value="blank">Blank / Open Area</option><option value="warehouse">Warehouse</option><option value="plant">Plant / Industrial</option><option value="store">Store / Interior</option><option value="parking">Parking Lot</option><option value="delivery">Delivery / Loading Area</option><option value="office">Office / Data Room</option><option value="rooftop">Rooftop</option><option value="roadside">Roadside / Exterior</option><option value="mechanical">Mechanical Room</option></select></div>
 <div class="field"><label for="sceneTemplateSelect">Scene Template</label><div class="template-row"><select id="sceneTemplateSelect"><option value="delivery">Delivery / Lift Gate</option><option value="manhole">Open Manhole</option><option value="material">Material Handling</option><option value="traffic">Traffic / Vehicle Area</option><option value="mewp">MEWP Work Area</option></select><button id="loadTemplateBtn" class="btn secondary" type="button">Load</button></div></div>
 
-<div class="field"><label for="conditionPreset">Conditions</label><select id="conditionPreset"><option value="day">Day / Clear</option><option value="morning">Early Morning</option><option value="late">Late Day</option><option value="night">Night</option><option value="cloudy">Cloudy</option><option value="rain">Rainy</option><option value="wind">Windy</option><option value="cold">Cold / Winter</option></select><div class="weather-note">V16 simplifies the editor, keeps Undo / Redo visible, and adds Snap & Lock plus Lock Here attachment modes.</div></div>
+<div class="field"><label for="conditionPreset">Conditions</label><select id="conditionPreset"><option value="day">Day / Clear</option><option value="morning">Early Morning</option><option value="late">Late Day</option><option value="night">Night</option><option value="cloudy">Cloudy</option><option value="rain">Rainy</option><option value="wind">Windy</option><option value="cold">Cold / Winter</option></select><div class="weather-note">V17 simplifies the editor, keeps Undo / Redo visible, and adds Snap & Lock plus Lock Here attachment modes.</div></div>
 <div class="separator"></div><div class="section-label">CAMERA ANGLE</div><div class="camera-row"><button class="btn secondary" data-camera="iso" type="button">3D</button><button class="btn secondary" data-camera="front" type="button">Front</button><button class="btn secondary" data-camera="side" type="button">Side</button><button class="btn secondary" data-camera="top" type="button">Top</button><button class="btn secondary" data-camera="rear" type="button">Rear</button><button class="btn secondary" data-camera="reset" type="button">Reset</button></div><div class="toggle-row"><span>Show floor grid</span><input id="gridToggle" type="checkbox" checked></div>
 </section>
 <section id="objectControlPane" class="control-pane" data-pane="object">
@@ -88,8 +88,8 @@ body{min-height:100vh}.topbar{background:#fff;border-bottom:1px solid var(--line
 <div class="attach-box"><div class="attach-title">ATTACH / LOCK ON</div>
 <div class="field"><label for="attachTargetSelect">Attach to</label><select id="attachTargetSelect"><option value="">Choose object or worker</option></select></div>
 <div class="field"><label for="attachPointSelect">Attach point</label><select id="attachPointSelect"><option value="body">Object / Body</option><option value="leftHand">Left Hand</option><option value="rightHand">Right Hand</option></select></div>
-<div class="attach-actions"><button id="snapAttachBtn" class="btn primary" type="button">Snap & Lock</button><button id="attachBtn" class="btn secondary" type="button">Lock Here</button><button id="detachBtn" class="btn secondary wide" type="button">Clear Lock</button></div>
-<div id="attachStatus" class="weather-note" style="margin-top:8px">Not attached.</div></div></div>
+<div class="attach-actions"><button id="snapAttachBtn" class="btn primary" type="button">Snap Tool to Hand</button><button id="attachBtn" class="btn secondary" type="button">Keep Position & Lock</button><button id="detachBtn" class="btn secondary wide" type="button">Clear Lock</button></div>
+<div id="attachStatus" class="weather-note" style="margin-top:8px">Not attached.</div><div class="subtle" style="margin-top:6px">For worker hands, use <b>Snap Tool to Hand</b>. For a crowbar already touching a manhole cover, use <b>Keep Position & Lock</b>.</div></div></div>
 <div id="annotationEditor" class="annotation-editor"><div class="section-label">ANNOTATION</div><div class="field"><label for="annotationTextInput">Label Text</label><input id="annotationTextInput" type="text" placeholder="Annotation text"></div><button id="updateAnnotationBtn" class="btn secondary" type="button">Update Label</button></div>
 <div id="objectActions" style="display:none">
 <div class="mode-row" style="margin-bottom:10px"><button id="duplicateBtn" class="btn secondary" type="button">Duplicate</button><button id="deleteBtn" class="btn danger" type="button">Delete</button><button id="focusBtn" class="btn secondary" type="button">Focus</button></div>
@@ -330,10 +330,41 @@ function attachPointLabel(point){return point==='leftHand'?'Left Hand':point==='
 function getAttachNode(target,point='body'){if(!target)return null;if(point==='leftHand'&&target.userData?.worker)return target.userData.joints?.leftWrist||target;if(point==='rightHand'&&target.userData?.worker)return target.userData.joints?.rightWrist||target;return target}
 function refreshAttachPointOptions(target){const sel=document.getElementById('attachPointSelect');if(!sel)return;const current=selected?.userData?.attach?.point||sel.value||'body';let html='<option value="body">Object / Body</option>';if(target?.userData?.worker)html+='<option value="leftHand">Left Hand</option><option value="rightHand">Right Hand</option>';sel.innerHTML=html;sel.value=[...sel.options].some(o=>o.value===current)?current:'body'}
 function populateAttachTargets(){const sel=document.getElementById('attachTargetSelect');if(!sel)return;const current=selected?.userData?.attach?.targetId?String(selected.userData.attach.targetId):'';const items=objectRoot.children.filter(o=>selected&&o!==selected);sel.innerHTML='<option value="">None</option>'+items.map(o=>`<option value="${o.userData.id}">${o.name}</option>`).join('');if(current&&items.some(o=>String(o.userData.id)===current))sel.value=current;refreshAttachPointOptions(getObjectById(sel.value))}
-function updateAttachUI(){const status=document.getElementById('attachStatus');if(!status)return;if(!selected){status.textContent='Not attached.';document.getElementById('attachBtn').disabled=true;document.getElementById('snapAttachBtn').disabled=true;document.getElementById('detachBtn').disabled=true;document.getElementById('attachTargetSelect').disabled=true;document.getElementById('attachPointSelect').disabled=true;return}populateAttachTargets();const attach=selected.userData.attach;document.getElementById('attachBtn').disabled=false;document.getElementById('snapAttachBtn').disabled=false;document.getElementById('attachTargetSelect').disabled=false;document.getElementById('attachPointSelect').disabled=false;document.getElementById('detachBtn').disabled=!attach;if(attach){const target=getObjectById(attach.targetId);status.textContent=target?`Attached to ${target.name} · ${attachPointLabel(attach.point)}`:'Attachment target missing — choose a new target or clear it.'}else status.textContent='Not attached.'}
+function updateAttachUI(){const status=document.getElementById('attachStatus');if(!status)return;if(!selected){status.textContent='Not attached.';document.getElementById('attachBtn').disabled=true;document.getElementById('snapAttachBtn').disabled=true;document.getElementById('detachBtn').disabled=true;document.getElementById('attachTargetSelect').disabled=true;document.getElementById('attachPointSelect').disabled=true;return}populateAttachTargets();const attach=selected.userData.attach;document.getElementById('attachBtn').disabled=false;document.getElementById('snapAttachBtn').disabled=false;document.getElementById('attachTargetSelect').disabled=false;document.getElementById('attachPointSelect').disabled=false;document.getElementById('detachBtn').disabled=!attach;if(attach){const target=getObjectById(attach.targetId);status.textContent=target?`Locked to ${target.name} · ${attachPointLabel(attach.point)}`:'Attachment target missing — choose a new target or clear it.'}else status.textContent='Not attached.'}
 function captureAttachmentFromCurrent(obj=selected){const attach=obj?.userData?.attach;if(!attach)return;const node=getAttachNode(getObjectById(attach.targetId),attach.point);if(!node)return;scene.updateMatrixWorld(true);const worldPos=new THREE.Vector3();obj.getWorldPosition(worldPos);const worldQuat=new THREE.Quaternion();obj.getWorldQuaternion(worldQuat);const localPos=node.worldToLocal(worldPos.clone());const nodeQuat=new THREE.Quaternion();node.getWorldQuaternion(nodeQuat);const localQuat=nodeQuat.clone().invert().multiply(worldQuat);attach.localPosition=[localPos.x,localPos.y,localPos.z];attach.localQuaternion=[localQuat.x,localQuat.y,localQuat.z,localQuat.w]}
 function applyAttachment(obj){const attach=obj?.userData?.attach;if(!attach)return;const node=getAttachNode(getObjectById(attach.targetId),attach.point);if(!node)return;const localPos=new THREE.Vector3().fromArray(attach.localPosition||[0,0,0]);const localQuat=new THREE.Quaternion().fromArray(attach.localQuaternion||[0,0,0,1]);scene.updateMatrixWorld(true);const worldPos=node.localToWorld(localPos.clone());obj.parent?.worldToLocal(worldPos);obj.position.copy(worldPos);const nodeQuat=new THREE.Quaternion();node.getWorldQuaternion(nodeQuat);const worldQuat=nodeQuat.clone().multiply(localQuat);if(obj.parent){const parentQuat=new THREE.Quaternion();obj.parent.getWorldQuaternion(parentQuat);obj.quaternion.copy(parentQuat.invert().multiply(worldQuat))}else obj.quaternion.copy(worldQuat)}
-function setAttachment(obj,targetId,point='body',mode='here'){if(!obj)return;targetId=Number(targetId);if(!targetId||obj.userData.id===targetId)return;const target=getObjectById(targetId),node=getAttachNode(target,point);if(!node)return;obj.userData.attach={targetId,point,localPosition:[0,0,0],localQuaternion:[0,0,0,1]};if(mode==='snap'){const offset=point==='leftHand'||point==='rightHand'?[0,-.12,0]:[0,0,0];obj.userData.attach.localPosition=offset;obj.userData.attach.localQuaternion=[0,0,0,1];applyAttachment(obj)}else captureAttachmentFromCurrent(obj);updateAttachUI();recordHistory()}
+function toolSnapPreset(obj,point){
+ const type=obj?.userData?.factoryType||'';const side=point==='leftHand'?-1:1;const d=THREE.MathUtils.degToRad;
+ const presets={
+  crowbar:{p:[side*.10,-.62,.18],e:[d(8),d(0),d(side*32)]},
+  hammer:{p:[side*.08,-.42,.15],e:[d(4),0,d(side*18)]},
+  sledge:{p:[side*.09,-.58,.18],e:[d(6),0,d(side*24)]},
+  wrench:{p:[side*.07,-.34,.14],e:[d(5),0,d(side*16)]},
+  screwdriver:{p:[side*.06,-.22,.13],e:[d(3),0,d(side*12)]},
+  shovel:{p:[side*.10,-.68,.18],e:[d(8),0,d(side*28)]},
+  broom:{p:[side*.10,-.62,.18],e:[d(8),0,d(side*28)]},
+  drill:{p:[side*.10,-.12,.19],e:[0,d(side*6),d(side*85)]},
+  impact:{p:[side*.10,-.12,.19],e:[0,d(side*6),d(side*85)]},
+  tapeMeasure:{p:[side*.10,-.10,.16],e:[0,0,d(side*10)]}
+ };
+ return presets[type]||{p:[side*.10,-.20,.16],e:[0,0,d(side*18)]}
+}
+function setAttachment(obj,targetId,point='body',mode='here'){
+ if(!obj)return;targetId=Number(targetId);if(!targetId||obj.userData.id===targetId)return;
+ const target=getObjectById(targetId),node=getAttachNode(target,point);if(!node)return;
+ obj.userData.attach={targetId,point,localPosition:[0,0,0],localQuaternion:[0,0,0,1]};
+ if(mode==='snap'&&(point==='leftHand'||point==='rightHand')){
+   const preset=toolSnapPreset(obj,point);const q=new THREE.Quaternion().setFromEuler(new THREE.Euler(...preset.e));
+   obj.userData.attach.localPosition=preset.p;obj.userData.attach.localQuaternion=[q.x,q.y,q.z,q.w];
+   applyAttachment(obj);scene.updateMatrixWorld(true);
+ }else if(mode==='snap'){
+   const box=new THREE.Box3().setFromObject(target);const targetTop=box.max.y;const ownBox=new THREE.Box3().setFromObject(obj);const ownHeight=Math.max(.05,ownBox.max.y-ownBox.min.y);
+   const worldTarget=new THREE.Vector3();target.getWorldPosition(worldTarget);worldTarget.y=targetTop+ownHeight*.08;
+   obj.parent?.worldToLocal(worldTarget);obj.position.copy(worldTarget);captureAttachmentFromCurrent(obj);
+ }else captureAttachmentFromCurrent(obj);
+ updateAttachUI();syncObjectUI();recordHistory();
+ const status=document.getElementById('attachStatus');if(status)status.textContent=`Snapped to ${target.name} · ${attachPointLabel(point)}`;
+}
 function clearAttachment(obj=selected){if(!obj?.userData?.attach)return;delete obj.userData.attach;updateAttachUI();recordHistory()}
 const tabButtons=[...document.querySelectorAll('[data-control-tab]')];
 function showControlTab(name){tabButtons.forEach(b=>b.classList.toggle('active',b.dataset.controlTab===name));document.querySelectorAll('.control-pane').forEach(p=>p.classList.toggle('active',p.dataset.pane===name));}
