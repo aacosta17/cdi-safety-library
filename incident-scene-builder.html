@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CDI Incident Scene Builder · v2</title>
+<title>CDI Incident Scene Builder · v3</title>
 <link rel="icon" href="assets/cdi-logo.jpg">
 <style>
 :root{--navy:#073b63;--blue:#0b5f9e;--cyan:#16a8d8;--bg:#eef3f7;--card:#fff;--text:#152331;--muted:#647485;--line:#d7e0e8;--danger:#b42318}
@@ -29,15 +29,13 @@ body{min-height:100vh}.topbar{background:#fff;border-bottom:1px solid var(--line
 #viewport canvas{display:block;width:100%;height:100%}.tip{position:absolute;left:12px;bottom:12px;background:rgba(7,59,99,.9);color:#fff;border-radius:8px;padding:8px 10px;font-size:11px;max-width:330px;pointer-events:none}
 .selection-box{border:1px solid #d4e0e9;background:#f7fafc;border-radius:9px;padding:10px;margin-bottom:12px}.selection-box b{display:block;color:var(--navy)}.selection-box span{display:block;color:var(--muted);font-size:12px;margin-top:2px}
 .pose-group{display:none}.pose-group.visible{display:block}.range-row{margin-bottom:10px}.range-head{display:flex;justify-content:space-between;gap:10px;font-size:12px;font-weight:700;color:#526679;margin-bottom:3px}
-.range-row input{width:100%}.legend{font-size:11px;line-height:1.5;color:var(--muted);background:#f7fafc;border-radius:8px;padding:9px}.weather-note{font-size:11px;color:var(--muted);margin-top:6px}
-
-.camera-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.camera-row .btn{min-height:36px;padding:0 7px;font-size:11px}.mini-row{display:grid;grid-template-columns:1fr 1fr;gap:7px}.field input[type="text"]{width:100%;min-height:42px;border:1px solid #cbd7e0;border-radius:8px;padding:0 10px;font-size:16px}.annotation-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px}.pose-presets{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}.pose-presets .btn{min-height:36px;padding:0 8px;font-size:11px}.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;font-weight:700;color:#526679;margin:8px 0}.toggle-row input{width:20px;height:20px}.subtle{font-size:11px;color:var(--muted)}.fine-pose{border:1px solid var(--line);border-radius:8px;padding:8px;margin:10px 0}.fine-pose summary{cursor:pointer;font-size:12px;font-weight:800;color:var(--navy)}.fine-pose .range-row:first-of-type{margin-top:10px}
+.range-row input{width:100%}.legend{font-size:11px;line-height:1.5;color:var(--muted);background:#f7fafc;border-radius:8px;padding:9px}.weather-note{font-size:11px;color:var(--muted);margin-top:6px}.easy-section{border:1px solid var(--line);border-radius:10px;background:#f7fafc;padding:10px;margin:10px 0}.easy-title{font-size:11px;font-weight:800;color:#687b8d;letter-spacing:.08em;margin-bottom:8px}.easy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.easy-grid .btn,.mini-row .btn{min-height:36px;padding:0 8px;font-size:11px}.easy-grid .wide{grid-column:span 3}.toolbar-help{font-size:12px;color:var(--muted);font-weight:700}.camera-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.camera-row .btn{min-height:36px;padding:0 7px;font-size:11px}.mini-row{display:grid;grid-template-columns:1fr 1fr;gap:7px}.field input[type="text"]{width:100%;min-height:42px;border:1px solid #cbd7e0;border-radius:8px;padding:0 10px;font-size:16px}.annotation-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px}.pose-presets{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}.pose-presets .btn{min-height:36px;padding:0 8px;font-size:11px}.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;font-weight:700;color:#526679;margin:8px 0}.toggle-row input{width:20px;height:20px}.subtle{font-size:11px;color:var(--muted)}.fine-pose{border:1px solid var(--line);border-radius:8px;padding:8px;margin:10px 0}.fine-pose summary{cursor:pointer;font-size:12px;font-weight:800;color:var(--navy)}.fine-pose .range-row:first-of-type{margin-top:10px}
 @media(max-width:1050px){.app{grid-template-columns:220px minmax(0,1fr)}.right-panel{grid-column:1/-1}.right-panel .panel-body{display:grid;grid-template-columns:1fr 1fr;gap:14px}.canvas-panel{min-height:560px}#viewport{min-height:510px}}
 @media(max-width:720px){.topbar-inner{align-items:flex-start}.brand img{width:58px}.app{grid-template-columns:1fr;padding:8px}.left-panel,.right-panel{grid-column:auto}.canvas-panel{order:-1;min-height:520px}#viewport{min-height:470px}.right-panel .panel-body{display:block}.asset-grid{grid-template-columns:repeat(3,1fr)}.asset-btn{min-height:62px;font-size:11px}.top-actions .btn{min-height:38px;padding:0 10px}.tip{right:12px;max-width:none}}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topbar-inner"><div class="brand"><a href="index.html" aria-label="Back to CDI Field Safety Management Tool"><img src="assets/cdi-logo.jpg" alt="CDI Technology Services logo"></a><div class="brand-copy"><b>Incident Scene Builder</b><span>CDI Technology Services · Version 2</span></div></div><div class="top-actions"><a class="btn secondary" href="index.html">← Safety Tool</a><button id="resetBtn" class="btn danger" type="button">Reset Scene</button><button id="exportBtn" class="btn primary" type="button">Export PNG</button></div></div></header>
+<header class="topbar"><div class="topbar-inner"><div class="brand"><a href="index.html" aria-label="Back to CDI Field Safety Management Tool"><img src="assets/cdi-logo.jpg" alt="CDI Technology Services logo"></a><div class="brand-copy"><b>Incident Scene Builder</b><span>CDI Technology Services · Version 3</span></div></div><div class="top-actions"><a class="btn secondary" href="index.html">← Safety Tool</a><button id="resetBtn" class="btn danger" type="button">Reset Scene</button><button id="exportBtn" class="btn primary" type="button">Export PNG</button></div></div></header>
 <main class="app">
 <aside class="panel left-panel"><div class="panel-title"><b>Scene Library</b><small>Add workers and objects to the canvas.</small></div><div class="panel-body">
 <div class="section-label">PEOPLE</div><div class="asset-grid"><button class="asset-btn" data-add="worker" type="button"><span>◉</span>Worker</button><button class="asset-btn" data-add="workerKneel" type="button"><span>◒</span>Kneeling Worker</button></div>
@@ -45,12 +43,12 @@ body{min-height:100vh}.topbar{background:#fff;border-bottom:1px solid var(--line
 <button class="asset-btn" data-add="palletJack" type="button"><span>⌁</span>Pallet Jack</button><button class="asset-btn" data-add="ladder" type="button"><span>╱</span>Ladder</button><button class="asset-btn" data-add="liftGate" type="button"><span>▰</span>Truck / Lift Gate</button><button class="asset-btn" data-add="cart" type="button"><span>▣</span>Cart</button><button class="asset-btn" data-add="cone" type="button"><span>▲</span>Cone</button><button class="asset-btn" data-add="barrier" type="button"><span>━</span>Barrier</button><button class="asset-btn" data-add="box" type="button"><span>□</span>Material</button><button class="asset-btn" data-add="mewp" type="button"><span>▤</span>MEWP</button><button class="asset-btn" data-add="forklift" type="button"><span>▥</span>Forklift</button><button class="asset-btn" data-add="boomLift" type="button"><span>⌜</span>Boom Lift</button><button class="asset-btn" data-add="workbench" type="button"><span>▱</span>Workbench</button><button class="asset-btn" data-add="panel" type="button"><span>▦</span>Electrical Panel</button><button class="asset-btn" data-add="pipeRack" type="button"><span>≡</span>Pipe / Conduit</button><button class="asset-btn" data-add="truck" type="button"><span>▰</span>Delivery Truck</button></div>
 <div class="separator"></div><div class="section-label">ANNOTATIONS</div><div class="asset-grid"><button class="asset-btn" id="addLabelBtn" type="button"><span>TXT</span>Label</button><button class="asset-btn" id="addArrowBtn" type="button"><span>➜</span>Arrow</button></div><div class="separator"></div><div class="section-label">MANHOLE / OPENING</div><div class="asset-grid"><button class="asset-btn" data-add="manholeClosed" type="button"><span>●</span>Closed Cover</button><button class="asset-btn" data-add="manholeOpen" type="button"><span>◌</span>Open Manhole</button><button class="asset-btn" data-add="manholeSet" type="button"><span>◍</span>Cover Beside Hole</button><button class="asset-btn" data-add="holeZone" type="button"><span>⚠</span>Open-Hole Zone</button></div>
 </div></aside>
-<section class="panel canvas-panel"><div class="canvas-toolbar"><div><b id="sceneName">Blank Scene</b><div class="status">Select an object to move, rotate, scale, or pose it.</div></div><div class="mode-row"><button id="translateBtn" class="btn secondary active" type="button">Move</button><button id="rotateBtn" class="btn secondary" type="button">Rotate</button><button id="scaleBtn" class="btn secondary" type="button">Scale</button></div></div><div id="viewport"><div class="tip">Drag empty space to orbit the camera. Select an object, then use the colored handles. On a worker, use the pose sliders at right.</div></div></section>
+<section class="panel canvas-panel"><div class="canvas-toolbar"><div><b id="sceneName">Blank Scene</b><div class="status">Select an object to move, rotate, scale, or pose it.</div></div><div class="mode-row"><button id="translateBtn" class="btn secondary active" type="button">Move</button><button id="rotateBtn" class="btn secondary" type="button">Rotate</button><button id="scaleBtn" class="btn secondary" type="button">Scale</button></div></div><div id="viewport"><div class="tip">Drag empty space to orbit the camera. Select an object, then use the simple move, turn, and size buttons on the right. On a worker, use the pose sliders at right.</div></div></section>
 <aside class="panel right-panel"><div class="panel-title"><b>Scene Controls</b><small>Set the environment and adjust the selected object.</small></div><div class="panel-body">
 <div class="field"><label for="scenePreset">Environment</label><select id="scenePreset"><option value="blank">Blank / Open Area</option><option value="warehouse">Warehouse</option><option value="plant">Plant / Industrial</option><option value="store">Store / Interior</option><option value="parking">Parking Lot</option><option value="delivery">Delivery / Loading Area</option><option value="office">Office / Data Room</option><option value="rooftop">Rooftop</option><option value="roadside">Roadside / Exterior</option><option value="mechanical">Mechanical Room</option></select></div>
-<div class="field"><label for="conditionPreset">Conditions</label><select id="conditionPreset"><option value="day">Day / Clear</option><option value="morning">Early Morning</option><option value="late">Late Day</option><option value="night">Night</option><option value="cloudy">Cloudy</option><option value="rain">Rainy</option><option value="wind">Windy</option><option value="cold">Cold / Winter</option></select><div class="weather-note">V2 changes the visual scene only. It does not calculate weather hazards.</div></div>
+<div class="field"><label for="conditionPreset">Conditions</label><select id="conditionPreset"><option value="day">Day / Clear</option><option value="morning">Early Morning</option><option value="late">Late Day</option><option value="night">Night</option><option value="cloudy">Cloudy</option><option value="rain">Rainy</option><option value="wind">Windy</option><option value="cold">Cold / Winter</option></select><div class="weather-note">V3 uses easier on-screen controls and a block-style poseable model. It still does not calculate weather hazards.</div></div>
 <div class="separator"></div><div class="section-label">CAMERA ANGLE</div><div class="camera-row"><button class="btn secondary" data-camera="iso" type="button">3D</button><button class="btn secondary" data-camera="front" type="button">Front</button><button class="btn secondary" data-camera="side" type="button">Side</button><button class="btn secondary" data-camera="top" type="button">Top</button><button class="btn secondary" data-camera="rear" type="button">Rear</button><button class="btn secondary" data-camera="reset" type="button">Reset</button></div><div class="toggle-row"><span>Show floor grid</span><input id="gridToggle" type="checkbox" checked></div><div class="separator"></div><div class="selection-box"><b id="selectedName">Nothing selected</b><span id="selectedType">Tap an object in the scene.</span></div>
-<div id="objectActions" style="display:none"><div class="mode-row" style="margin-bottom:10px"><button id="duplicateBtn" class="btn secondary" type="button">Duplicate</button><button id="deleteBtn" class="btn danger" type="button">Delete</button><button id="focusBtn" class="btn secondary" type="button">Focus</button></div></div>
+<div id="objectActions" style="display:none"><div class="mode-row" style="margin-bottom:10px"><button id="duplicateBtn" class="btn secondary" type="button">Duplicate</button><button id="deleteBtn" class="btn danger" type="button">Delete</button><button id="focusBtn" class="btn secondary" type="button">Focus</button></div><div class="easy-section"><div class="easy-title">EASY OBJECT CONTROLS</div><div class="easy-grid"><button id="moveLeftBtn" class="btn secondary" type="button">← Left</button><button id="moveForwardBtn" class="btn secondary" type="button">↑ Forward</button><button id="moveRightBtn" class="btn secondary" type="button">Right →</button><button id="moveDownBtn" class="btn secondary" type="button">↓ Down</button><button id="moveBackBtn" class="btn secondary" type="button">Back ↓</button><button id="moveUpBtn" class="btn secondary" type="button">Up ↑</button></div><div class="mini-row" style="margin-top:8px"><button id="rotateLeftBtn" class="btn secondary" type="button">↺ Rotate Left</button><button id="rotateRightBtn" class="btn secondary" type="button">Rotate Right ↻</button><button id="scaleDownBtn" class="btn secondary" type="button">－ Smaller</button><button id="scaleUpBtn" class="btn secondary" type="button">＋ Bigger</button></div></div></div>
 <div id="poseControls" class="pose-group"><div class="section-label">WORKER POSE</div><div class="pose-presets"><button class="btn secondary" data-pose="standing" type="button">Standing</button><button class="btn secondary" data-pose="reaching" type="button">Reaching</button><button class="btn secondary" data-pose="lifting" type="button">Lifting</button><button class="btn secondary" data-pose="kneeling" type="button">Kneeling</button><button class="btn secondary" data-pose="crouching" type="button">Crouching</button><button class="btn secondary" data-pose="walking" type="button">Walking</button></div>
 <div class="range-row"><div class="range-head"><span>Head Turn</span><span id="headVal">0°</span></div><input id="headPose" type="range" min="-80" max="80" value="0"></div>
 <div class="range-row"><div class="range-head"><span>Head Tilt</span><span id="headTiltVal">0°</span></div><input id="headTiltPose" type="range" min="-45" max="45" value="0"></div>
@@ -101,7 +99,7 @@ const scene=new THREE.Scene();scene.background=new THREE.Color(0xdceaf3);
 const camera=new THREE.PerspectiveCamera(45,1,.1,1000);camera.position.set(9,7,12);
 const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.setPixelRatio(Math.min(devicePixelRatio,2));viewport.prepend(renderer.domElement);
 const orbit=new OrbitControls(camera,renderer.domElement);orbit.target.set(0,1.4,0);orbit.enableDamping=true;orbit.dampingFactor=.08;orbit.minDistance=3;orbit.maxDistance=35;
-const transform=new TransformControls(camera,renderer.domElement);transform.setSize(.85);scene.add(transform);transform.addEventListener('dragging-changed',e=>orbit.enabled=!e.value);
+const transform=new TransformControls(camera,renderer.domElement);transform.setSize(.85);scene.add(transform);transform.addEventListener('dragging-changed',e=>orbit.enabled=!e.value);transform.visible=false;
 const hemi=new THREE.HemisphereLight(0xffffff,0x506070,2.4);scene.add(hemi);const sun=new THREE.DirectionalLight(0xffffff,3.2);sun.position.set(7,12,8);sun.castShadow=true;scene.add(sun);
 const groundMat=new THREE.MeshStandardMaterial({color:0xc8ced3,roughness:.95});const ground=new THREE.Mesh(new THREE.PlaneGeometry(50,50),groundMat);ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
 const grid=new THREE.GridHelper(30,30,0x78909c,0xaab7c0);grid.position.y=.006;scene.add(grid);
@@ -118,29 +116,59 @@ function limb(radius,length,material=workerMat){const pivot=new THREE.Group();co
 
 function createWorker(kneel=false){
  const g=named(new THREE.Group(),'worker','Worker');g.userData.worker=true;
- const hips=new THREE.Group();hips.position.y=1.75;g.add(hips);addBox(hips,[.62,.28,.34],[0,0,0],darkMat);
- const torsoPivot=new THREE.Group();torsoPivot.position.y=.18;hips.add(torsoPivot);
- const torso=mesh(new THREE.CapsuleGeometry(.34,.75,8,12),workerMat);torso.position.y=.55;torsoPivot.add(torso);
- const neck=new THREE.Group();neck.position.y=1.05;torsoPivot.add(neck);addCylinder(neck,.11,.15,[0,.07,0],workerMat);
- const headTilt=new THREE.Group();headTilt.position.y=.20;neck.add(headTilt);const head=mesh(new THREE.SphereGeometry(.25,20,16),mat(0xc99772));head.position.y=.18;headTilt.add(head);
- const helmet=mesh(new THREE.SphereGeometry(.28,20,10,0,Math.PI*2,0,Math.PI/2),mat(0x166aa8));helmet.position.y=.28;headTilt.add(helmet);
+ const shellMat=mat(0x7f4be0,.72,.08), shellDark=mat(0x6c3fd0,.75,.08), jointMat=mat(0x1f1f26,.55,.2), handMat=mat(0x111216,.55,.15);
+ const hips=new THREE.Group();hips.position.y=1.62;g.add(hips);
+ addBox(hips,[.34,.54,.24],[0,-.02,0],shellDark);
+ addBox(hips,[.54,.18,.26],[0,.23,0],shellMat);
+ const torsoPivot=new THREE.Group();torsoPivot.position.y=.32;hips.add(torsoPivot);
+ addBox(torsoPivot,[.82,.82,.36],[0,.42,0],shellMat);
+ addBox(torsoPivot,[.34,.36,.24],[0,.95,0],shellDark);
+ const neck=new THREE.Group();neck.position.y=1.02;torsoPivot.add(neck);
+ const headTilt=new THREE.Group();headTilt.position.y=.14;neck.add(headTilt);
+ addBox(headTilt,[.38,.54,.32],[0,.26,0],shellMat);
  g.userData.joints={head:neck,headTilt,torso:torsoPivot};
- function hand(side,elbow){
-   const wrist=new THREE.Group();wrist.position.y=-.64;elbow.add(wrist);
-   const palm=addBox(wrist,[.18,.22,.08],[0,-.12,0],mat(0xc99772));
+ function hand(side,forePivot){
+   const wrist=new THREE.Group();wrist.position.y=-.69;forePivot.add(wrist);
+   addBox(wrist,[.14,.14,.14],[0,0,0],jointMat);
+   addBox(wrist,[.18,.16,.18],[0,-.12,0],handMat);
    const fingers=[];
+   const xPositions=[-.08,-.028,.028,.08];
    for(let i=0;i<4;i++){
-     const fp=new THREE.Group();fp.position.set((i-1.5)*.045,-.22,0);wrist.add(fp);
-     const seg1=mesh(new THREE.CapsuleGeometry(.018,.10,4,6),mat(0xc99772));seg1.position.y=-.065;fp.add(seg1);
-     const seg2p=new THREE.Group();seg2p.position.y=-.13;fp.add(seg2p);const seg2=mesh(new THREE.CapsuleGeometry(.016,.075,4,6),mat(0xc99772));seg2.position.y=-.052;seg2p.add(seg2);
-     fingers.push({base:fp,tip:seg2p});
+     const fp=new THREE.Group();fp.position.set(xPositions[i],-.18,0);wrist.add(fp);
+     addBox(fp,[.03,.16,.05],[0,-.08,0],handMat);
+     const tip=new THREE.Group();tip.position.y=-.16;fp.add(tip);
+     addBox(tip,[.028,.12,.048],[0,-.06,0],handMat);
+     fingers.push({base:fp,tip});
    }
-   const thumb=new THREE.Group();thumb.position.set(side*.12,-.10,.02);thumb.rotation.z=side*.55;wrist.add(thumb);const th=mesh(new THREE.CapsuleGeometry(.022,.10,4,6),mat(0xc99772));th.position.y=-.065;thumb.add(th);
+   const thumb=new THREE.Group();thumb.position.set(side*.12,-.10,.02);thumb.rotation.z=side*.55;wrist.add(thumb);
+   addBox(thumb,[.045,.15,.055],[0,-.07,0],handMat);
    return {wrist,fingers,thumb};
  }
- function arm(side){const shoulder=new THREE.Group();shoulder.position.set(side*.43,.85,0);torsoPivot.add(shoulder);shoulder.add(limb(.105,.55,workerMat));const elbow=new THREE.Group();elbow.position.y=-.76;shoulder.add(elbow);elbow.add(limb(.09,.50,workerMat));const h=hand(side,elbow);return{shoulder,elbow,...h}}
+ function arm(side){
+   const shoulderMount=new THREE.Group();shoulderMount.position.set(side*.52,.74,0);torsoPivot.add(shoulderMount);
+   addBox(shoulderMount,[.16,.16,.16],[0,0,0],jointMat);
+   const shoulder=new THREE.Group();shoulder.position.set(0,-.02,0);shoulderMount.add(shoulder);
+   addBox(shoulder,[.28,.66,.24],[0,-.36,0],shellMat);
+   const elbow=new THREE.Group();elbow.position.y=-.70;shoulder.add(elbow);
+   addBox(elbow,[.14,.14,.14],[0,0,0],jointMat);
+   const forePivot=new THREE.Group();elbow.add(forePivot);
+   addBox(forePivot,[.24,.62,.20],[0,-.34,0],shellDark);
+   const h=hand(side,forePivot);
+   return {shoulder,elbow,forePivot,...h};
+ }
  const la=arm(-1),ra=arm(1);Object.assign(g.userData.joints,{leftArm:la.shoulder,rightArm:ra.shoulder,leftFore:la.elbow,rightFore:ra.elbow,leftWrist:la.wrist,rightWrist:ra.wrist,leftFingers:la.fingers,rightFingers:ra.fingers,leftThumb:la.thumb,rightThumb:ra.thumb});
- function leg(side){const hip=new THREE.Group();hip.position.set(side*.2,-.12,0);hips.add(hip);hip.add(limb(.12,.68,darkMat));const knee=new THREE.Group();knee.position.y=-.92;hip.add(knee);knee.add(limb(.105,.62,darkMat));addBox(knee,[.22,.16,.42],[0,-.85,.12],blackMat);return{hip,knee}}
+ function leg(side){
+   const hipMount=new THREE.Group();hipMount.position.set(side*.23,-.18,0);hips.add(hipMount);
+   addBox(hipMount,[.14,.14,.14],[0,0,0],jointMat);
+   const hip=new THREE.Group();hipMount.add(hip);
+   addBox(hip,[.26,.78,.24],[0,-.43,0],shellMat);
+   const knee=new THREE.Group();knee.position.y=-.82;hip.add(knee);
+   addBox(knee,[.14,.14,.14],[0,0,0],jointMat);
+   const shin=new THREE.Group();knee.add(shin);
+   addBox(shin,[.24,.76,.22],[0,-.42,0],shellDark);
+   addBox(shin,[.26,.14,.36],[0,-.86,.08],shellDark);
+   return {hip,knee};
+ }
  const ll=leg(-1),rl=leg(1);Object.assign(g.userData.joints,{leftLeg:ll.hip,rightLeg:rl.hip,leftKnee:ll.knee,rightKnee:rl.knee});
  if(kneel){applyPoseToWorker(g,'kneeling')}
  g.traverse(o=>{if(o.isMesh)o.userData.owner=g});return g
@@ -185,12 +213,12 @@ function addAsset(type){const obj=factories[type]?.();if(!obj)return;obj.positio
 function rootSelectable(obj){while(obj&&obj!==scene){if(obj.userData?.owner)return obj.userData.owner;if(obj.userData?.selectable)return obj;obj=obj.parent}return null}
 function selectObject(obj){
  selected=obj||null;transform.detach();
- if(selected){transform.attach(selected);document.getElementById('selectedName').textContent=selected.name;document.getElementById('selectedType').textContent=selected.userData.worker?'Poseable worker':selected.userData.label||'Scene object';document.getElementById('objectActions').style.display='block'}
- else{document.getElementById('selectedName').textContent='Nothing selected';document.getElementById('selectedType').textContent='Tap an object in the scene.';document.getElementById('objectActions').style.display='none'}
+ if(selected){document.getElementById('selectedName').textContent=selected.name;document.getElementById('selectedType').textContent=selected.userData.worker?'Poseable worker · use the easy controls below':(selected.userData.label||'Scene object')+' · use the easy controls below';document.getElementById('objectActions').style.display='block'}
+ else{document.getElementById('selectedName').textContent='Nothing selected';document.getElementById('selectedType').textContent='Tap an object in the scene, then use the easy controls below.';document.getElementById('objectActions').style.display='none'}
  document.getElementById('poseControls').classList.toggle('visible',!!selected?.userData?.worker);syncPoseUI()
 }
 renderer.domElement.addEventListener('pointerdown',e=>{if(transform.dragging)return;const r=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-((e.clientY-r.top)/r.height)*2+1;raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(objectRoot.children,true);if(hits.length)selectObject(rootSelectable(hits[0].object))});
-function setMode(mode){transform.setMode(mode);['translate','rotate','scale'].forEach(m=>document.getElementById(m+'Btn').classList.toggle('active',m===mode))}
+function setMode(mode){['translate','rotate','scale'].forEach(m=>document.getElementById(m+'Btn').classList.toggle('active',m===mode))}
 document.getElementById('translateBtn').addEventListener('click',()=>setMode('translate'));
 document.getElementById('rotateBtn').addEventListener('click',()=>setMode('rotate'));
 document.getElementById('scaleBtn').addEventListener('click',()=>setMode('scale'));
@@ -198,6 +226,19 @@ document.querySelectorAll('[data-add]').forEach(b=>b.addEventListener('click',()
 document.getElementById('deleteBtn').addEventListener('click',()=>{if(!selected)return;objectRoot.remove(selected);selectObject(null)});
 document.getElementById('duplicateBtn').addEventListener('click',()=>{if(!selected)return;let copy;if(selected.userData.worker){copy=createWorker(false);copy.position.copy(selected.position).add(new THREE.Vector3(.8,0,.5));copy.rotation.copy(selected.rotation);copy.scale.copy(selected.scale);const src=selected.userData.joints,dst=copy.userData.joints;['head','headTilt','torso','leftArm','rightArm','leftFore','rightFore','leftWrist','rightWrist','leftLeg','rightLeg','leftKnee','rightKnee'].forEach(k=>dst[k]?.rotation.copy(src[k]?.rotation||new THREE.Euler()));['left','right'].forEach(side=>{setHandGrip(copy,side,selected.userData[side+'Grip']||0);for(let i=0;i<4;i++)setFingerCurl(copy,side,i,selected.userData[side+'Finger'+i]??selected.userData[side+'Grip']??0);setThumbCurl(copy,side,selected.userData[side+'ThumbCurl']??selected.userData[side+'Grip']??0)});}else{copy=selected.clone(true);copy.position.x+=.8;copy.position.z+=.5;copy.userData={...selected.userData,id:++objectCounter};copy.name=`${selected.userData.label||'Object'} ${objectCounter}`;copy.traverse(o=>{if(o.isMesh)o.userData.owner=copy});}objectRoot.add(copy);selectObject(copy)});
 document.getElementById('focusBtn').addEventListener('click',()=>{if(!selected)return;const p=new THREE.Vector3();selected.getWorldPosition(p);orbit.target.copy(p);camera.position.copy(p).add(new THREE.Vector3(5,4,6));orbit.update()});
+function nudgeSelected(x=0,y=0,z=0){if(!selected)return;selected.position.x+=x;selected.position.y=Math.max(0,selected.position.y+y);selected.position.z+=z;}
+function rotateSelected(delta){if(!selected)return;selected.rotation.y+=delta;}
+function scaleSelected(factor){if(!selected)return;selected.scale.multiplyScalar(factor);selected.scale.x=Math.max(.2,selected.scale.x);selected.scale.y=Math.max(.2,selected.scale.y);selected.scale.z=Math.max(.2,selected.scale.z);}
+document.getElementById('moveLeftBtn').addEventListener('click',()=>nudgeSelected(-.25,0,0));
+document.getElementById('moveRightBtn').addEventListener('click',()=>nudgeSelected(.25,0,0));
+document.getElementById('moveForwardBtn').addEventListener('click',()=>nudgeSelected(0,0,-.25));
+document.getElementById('moveBackBtn').addEventListener('click',()=>nudgeSelected(0,0,.25));
+document.getElementById('moveUpBtn').addEventListener('click',()=>nudgeSelected(0,.15,0));
+document.getElementById('moveDownBtn').addEventListener('click',()=>nudgeSelected(0,-.15,0));
+document.getElementById('rotateLeftBtn').addEventListener('click',()=>rotateSelected(THREE.MathUtils.degToRad(10)));
+document.getElementById('rotateRightBtn').addEventListener('click',()=>rotateSelected(THREE.MathUtils.degToRad(-10)));
+document.getElementById('scaleUpBtn').addEventListener('click',()=>scaleSelected(1.08));
+document.getElementById('scaleDownBtn').addEventListener('click',()=>scaleSelected(.92));
 
 const poseMap={headPose:['head','y','headVal'],headTiltPose:['headTilt','z','headTiltVal'],torsoBendPose:['torso','x','torsoBendVal'],torsoTwistPose:['torso','y','torsoTwistVal'],leftArmPose:['leftArm','z','leftArmVal'],rightArmPose:['rightArm','z','rightArmVal'],leftForePose:['leftFore','z','leftForeVal'],rightForePose:['rightFore','z','rightForeVal'],leftWristPose:['leftWrist','z','leftWristVal'],rightWristPose:['rightWrist','z','rightWristVal'],leftLegPose:['leftLeg','x','leftLegVal'],rightLegPose:['rightLeg','x','rightLegVal'],leftKneePose:['leftKnee','x','leftKneeVal'],rightKneePose:['rightKnee','x','rightKneeVal']};
 Object.entries(poseMap).forEach(([id,[joint,axis,valId]])=>document.getElementById(id).addEventListener('input',e=>{if(!selected?.userData?.worker)return;const deg=Number(e.target.value);selected.userData.joints[joint].rotation[axis]=THREE.MathUtils.degToRad((joint==='rightArm'||joint==='rightFore')?-deg:deg);document.getElementById(valId).textContent=`${deg}°`}));
