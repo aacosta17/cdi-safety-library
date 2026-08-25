@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CDI Incident Scene Builder · v27</title>
+<title>CDI Incident Scene Builder · v28</title>
 <link rel="icon" href="assets/cdi-logo.jpg">
 <style>
 :root{--navy:#073b63;--blue:#0b5f9e;--cyan:#16a8d8;--bg:#eef3f7;--card:#fff;--text:#152331;--muted:#647485;--line:#d7e0e8;--danger:#b42318}
@@ -66,7 +66,7 @@ body{min-height:100vh}.topbar{background:#fff;border-bottom:1px solid var(--line
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topbar-inner"><div class="brand"><a href="index.html" aria-label="Back to CDI Field Safety Management Tool"><img src="assets/cdi-logo.jpg" alt="CDI Technology Services logo"></a><div class="brand-copy"><b>Incident Scene Builder</b><span>CDI Technology Services · Version 27</span></div></div><div class="top-actions"><a class="btn secondary" href="index.html">← Safety Tool</a><button id="saveSceneBtn" class="btn secondary" type="button">Save Scene</button><button id="loadSceneBtn" class="btn secondary" type="button">Load Scene</button><input id="loadSceneInput" class="file-input" type="file" accept="application/json,.json"><button id="resetBtn" class="btn danger" type="button">Reset Scene</button><button id="exportBtn" class="btn primary" type="button">Export PNG</button></div></div></header>
+<header class="topbar"><div class="topbar-inner"><div class="brand"><a href="index.html" aria-label="Back to CDI Field Safety Management Tool"><img src="assets/cdi-logo.jpg" alt="CDI Technology Services logo"></a><div class="brand-copy"><b>Incident Scene Builder</b><span>CDI Technology Services · Version 28</span></div></div><div class="top-actions"><a class="btn secondary" href="index.html">← Safety Tool</a><button id="saveSceneBtn" class="btn secondary" type="button">Save Scene</button><button id="loadSceneBtn" class="btn secondary" type="button">Load Scene</button><input id="loadSceneInput" class="file-input" type="file" accept="application/json,.json"><button id="resetBtn" class="btn danger" type="button">Reset Scene</button><button id="exportBtn" class="btn primary" type="button">Export PNG</button></div></div></header>
 <main class="app">
 <aside class="panel left-panel"><div class="panel-title"><b>Scene Library</b><small>Add workers and objects to the canvas.</small></div><div class="panel-body"><div class="asset-search"><input id="assetSearch" type="search" placeholder="Search assets — crowbar, van, cone..."><div id="assetEmpty" class="asset-empty">No matching assets.</div></div>
 <div class="v20-favorites"><div class="section-label">QUICK ADD</div><div class="asset-grid"><button class="asset-btn" data-add="worker" type="button"><span>◉</span>Worker</button><button class="asset-btn" data-add="crowbar" type="button"><span>⌒</span>Crowbar</button><button class="asset-btn" data-add="manholeOpen" type="button"><span>◌</span>Open Manhole</button><button class="asset-btn" data-add="cone" type="button"><span>▲</span>Cone</button></div></div><div class="separator"></div><div class="section-label">PEOPLE <span class="quality-badge">REAL GLB</span></div><div class="asset-grid"><button class="asset-btn" data-add="worker" type="button"><span>◉</span>Worker</button><button class="asset-btn" data-add="workerKneel" type="button"><span>◒</span>Kneeling Worker</button></div>
@@ -215,23 +215,33 @@ function addCylinder(group,r,h,pos,material=darkMat,rot=[0,0,0]){const m=mesh(ne
 function limb(radius,length,material=workerMat){const pivot=new THREE.Group();const part=mesh(new THREE.CapsuleGeometry(radius,length,6,10),material);part.position.y=-(length/2+radius);pivot.add(part);return pivot}
 
 const REAL_WORKER_BONES={head:'Neck',headTilt:'Head',torso:'Chest',leftArm:'UpperArm.L',rightArm:'UpperArm.R',leftFore:'LowerArm.L',rightFore:'LowerArm.R',leftWrist:'Wrist.L',rightWrist:'Wrist.R',leftLeg:'UpperLeg.L',rightLeg:'UpperLeg.R',leftKnee:'LowerLeg.L',rightKnee:'LowerLeg.R'};
+function normalizeRigName(name=''){return String(name).toLowerCase().replace(/[^a-z0-9]/g,'')}
+function buildWorkerBoneIndex(worker){
+ if(!worker?.userData?.worker)return {};
+ const model=worker.userData.realModel||worker,index={};
+ model.traverse(o=>{if(o?.name&&o?.rotation){const key=normalizeRigName(o.name);if(key&&!index[key])index[key]=o}});
+ worker.userData.boneIndex=index;return index
+}
+function findWorkerBone(worker,name){
+ if(!worker?.userData?.worker||!name)return null;
+ const index=worker.userData.boneIndex||buildWorkerBoneIndex(worker);
+ return index[normalizeRigName(name)]||null
+}
 function resolveWorkerBone(worker,key){
  if(!worker?.userData?.worker)return null;
  const existing=worker.userData.joints?.[key];if(existing?.rotation)return existing;
- const model=worker.userData.realModel||worker;
- const name=REAL_WORKER_BONES[key];
- const bone=name?model.getObjectByName(name):null;
- if(bone){worker.userData.joints=worker.userData.joints||{};worker.userData.joints[key]=bone;if(!worker.userData.baseEuler?.[key]){worker.userData.baseEuler=worker.userData.baseEuler||{};worker.userData.baseEuler[key]=bone.rotation.clone()}return bone}
+ const name=REAL_WORKER_BONES[key],bone=findWorkerBone(worker,name);
+ if(bone){worker.userData.joints=worker.userData.joints||{};worker.userData.joints[key]=bone;worker.userData.baseEuler=worker.userData.baseEuler||{};if(!worker.userData.baseEuler[key])worker.userData.baseEuler[key]=bone.rotation.clone();return bone}
  return null
 }
 function rebuildWorkerRig(worker){
  if(!worker?.userData?.worker)return false;
- const model=worker.userData.realModel||worker;worker.userData.joints=worker.userData.joints||{};worker.userData.baseEuler=worker.userData.baseEuler||{};
- Object.entries(REAL_WORKER_BONES).forEach(([key,name])=>{const bone=model.getObjectByName(name);if(bone){worker.userData.joints[key]=bone;if(!worker.userData.baseEuler[key])worker.userData.baseEuler[key]=bone.rotation.clone()}});
- const fingers=(side)=>['Index','Middle','Ring','Pinky'].map(n=>({base:model.getObjectByName(`${n}1.${side}`),tip:model.getObjectByName(`${n}2.${side}`)}));
- worker.userData.joints.leftFingers=fingers('L');worker.userData.joints.rightFingers=fingers('R');worker.userData.joints.leftThumb=model.getObjectByName('Thumb1.L');worker.userData.joints.rightThumb=model.getObjectByName('Thumb1.R');
- const expected=Object.keys(REAL_WORKER_BONES);const missing=expected.filter(k=>!worker.userData.joints[k]?.rotation);worker.userData.rigMissing=missing;worker.userData.rigReady=missing.length===0;
- worker.userData.fingerBase={left:worker.userData.joints.leftFingers.map(f=>({base:f.base?.rotation.clone(),tip:f.tip?.rotation.clone()})),right:worker.userData.joints.rightFingers.map(f=>({base:f.base?.rotation.clone(),tip:f.tip?.rotation.clone()})),leftThumb:worker.userData.joints.leftThumb?.rotation.clone(),rightThumb:worker.userData.joints.rightThumb?.rotation.clone()};
+ worker.userData.joints=worker.userData.joints||{};worker.userData.baseEuler=worker.userData.baseEuler||{};buildWorkerBoneIndex(worker);
+ Object.entries(REAL_WORKER_BONES).forEach(([key,name])=>{const bone=findWorkerBone(worker,name);if(bone){worker.userData.joints[key]=bone;if(!worker.userData.baseEuler[key])worker.userData.baseEuler[key]=bone.rotation.clone()}});
+ const fingers=(side)=>['Index','Middle','Ring','Pinky'].map(n=>({base:findWorkerBone(worker,`${n}1.${side}`),tip:findWorkerBone(worker,`${n}2.${side}`)}));
+ worker.userData.joints.leftFingers=fingers('L');worker.userData.joints.rightFingers=fingers('R');worker.userData.joints.leftThumb=findWorkerBone(worker,'Thumb1.L');worker.userData.joints.rightThumb=findWorkerBone(worker,'Thumb1.R');
+ const expected=Object.keys(REAL_WORKER_BONES),missing=expected.filter(k=>!worker.userData.joints[k]?.rotation);worker.userData.rigMissing=missing;worker.userData.rigReady=missing.length===0;
+ if(!worker.userData.fingerBase||!worker.userData.fingerBase.left?.length){worker.userData.fingerBase={left:worker.userData.joints.leftFingers.map(f=>({base:f.base?.rotation.clone(),tip:f.tip?.rotation.clone()})),right:worker.userData.joints.rightFingers.map(f=>({base:f.base?.rotation.clone(),tip:f.tip?.rotation.clone()})),leftThumb:worker.userData.joints.leftThumb?.rotation.clone(),rightThumb:worker.userData.joints.rightThumb?.rotation.clone()}}
  return worker.userData.rigReady
 }
 function setWorkerJointOffset(worker,key,axis,degrees,invert=false){
@@ -448,13 +458,13 @@ document.getElementById('resetScaleBtn').addEventListener('click',()=>{if(select
 document.getElementById('centerOriginBtn').addEventListener('click',()=>{if(selected&&!selected.userData.locked){selected.position.x=0;selected.position.z=0;dropSelectedToGround();if(selected.userData.attach)captureAttachmentFromCurrent(selected);updateAttachUI();recordHistory()}});
 
 const poseMap={headPose:['head','y','headVal'],headTiltPose:['headTilt','z','headTiltVal'],torsoBendPose:['torso','x','torsoBendVal'],torsoTwistPose:['torso','y','torsoTwistVal'],leftArmLiftPose:['leftArm','x','leftArmLiftVal'],rightArmLiftPose:['rightArm','x','rightArmLiftVal'],leftArmPose:['leftArm','z','leftArmVal'],rightArmPose:['rightArm','z','rightArmVal'],leftArmTwistPose:['leftArm','y','leftArmTwistVal'],rightArmTwistPose:['rightArm','y','rightArmTwistVal'],leftForePose:['leftFore','z','leftForeVal'],rightForePose:['rightFore','z','rightForeVal'],leftWristPose:['leftWrist','z','leftWristVal'],rightWristPose:['rightWrist','z','rightWristVal'],leftWristTwistPose:['leftWrist','y','leftWristTwistVal'],rightWristTwistPose:['rightWrist','y','rightWristTwistVal'],leftLegPose:['leftLeg','x','leftLegVal'],rightLegPose:['rightLeg','x','rightLegVal'],leftKneePose:['leftKnee','x','leftKneeVal'],rightKneePose:['rightKnee','x','rightKneeVal']};
-Object.entries(poseMap).forEach(([id,[joint,axis,valId]])=>document.getElementById(id).addEventListener('input',e=>{if(!selected?.userData?.worker)return;const deg=Number(e.target.value);const invert=(id==='rightArmPose'||id==='rightForePose');const ok=setWorkerJointOffset(selected,joint,axis,deg,invert);if(!ok){e.target.disabled=true;const out=document.getElementById(valId);if(out)out.textContent='N/A';return}document.getElementById(valId).textContent=`${deg}°`}));
+Object.entries(poseMap).forEach(([id,[joint,axis,valId]])=>document.getElementById(id).addEventListener('input',e=>{if(!selected?.userData?.worker)return;const deg=Number(e.target.value);const invert=(id==='rightArmPose'||id==='rightForePose');let ok=setWorkerJointOffset(selected,joint,axis,deg,invert);if(!ok){rebuildWorkerRig(selected);ok=setWorkerJointOffset(selected,joint,axis,deg,invert)}const out=document.getElementById(valId);if(!ok){if(out)out.textContent='Unavailable';return}if(out)out.textContent=`${deg}°`}));
 ['left','right'].forEach(side=>document.getElementById(side+'GripPose').addEventListener('input',e=>{if(!selected?.userData?.worker)return;const pct=Number(e.target.value);setHandGrip(selected,side,pct);document.getElementById(side+'GripVal').textContent=`${pct}%`}));
 document.querySelectorAll('.finger-slider').forEach(el=>el.addEventListener('input',e=>{if(!selected?.userData?.worker)return;const pct=Number(e.target.value);setFingerCurl(selected,e.target.dataset.side,Number(e.target.dataset.finger),pct);document.getElementById(e.target.dataset.val).textContent=`${pct}%`}));
 document.querySelectorAll('.thumb-slider').forEach(el=>el.addEventListener('input',e=>{if(!selected?.userData?.worker)return;const pct=Number(e.target.value);setThumbCurl(selected,e.target.dataset.side,pct);document.getElementById(e.target.dataset.val).textContent=`${pct}%`}));
 document.querySelectorAll('[data-pose]').forEach(b=>b.addEventListener('click',()=>{if(selected?.userData?.worker){applyPoseToWorker(selected,b.dataset.pose);recordHistory()}}));
 document.getElementById('workerColorSelect').addEventListener('change',e=>{if(selected?.userData?.worker){setWorkerColor(selected,e.target.value);recordHistory()}});
-function syncPoseUI(){if(!selected?.userData?.worker)return;rebuildWorkerRig(selected);Object.entries(poseMap).forEach(([id,[joint,axis,valId]])=>{const el=document.getElementById(id),j=resolveWorkerBone(selected,joint);if(!j){if(el)el.disabled=true;const out=document.getElementById(valId);if(out)out.textContent='N/A';return}if(el)el.disabled=false;const base=selected.userData.baseEuler?.[joint]?.[axis]??j.rotation[axis];let deg=Math.round(THREE.MathUtils.radToDeg(j.rotation[axis]-base));if(id==='rightArmPose'||id==='rightForePose')deg=-deg;if(el)el.value=deg;document.getElementById(valId).textContent=`${deg}°`});['left','right'].forEach(side=>{const pct=selected.userData[side+'Grip']||0;document.getElementById(side+'GripPose').value=pct;document.getElementById(side+'GripVal').textContent=`${pct}%`;for(let i=0;i<4;i++){const fp=selected.userData[side+'Finger'+i]??pct;const el=document.querySelector(`.finger-slider[data-side="${side}"][data-finger="${i}"]`);if(el){el.value=fp;document.getElementById(el.dataset.val).textContent=`${fp}%`}}const tp=selected.userData[side+'ThumbCurl']??pct;const tel=document.querySelector(`.thumb-slider[data-side="${side}"]`);if(tel){tel.value=tp;document.getElementById(tel.dataset.val).textContent=`${tp}%`}})}
+function syncPoseUI(){if(!selected?.userData?.worker)return;rebuildWorkerRig(selected);Object.entries(poseMap).forEach(([id,[joint,axis,valId]])=>{const el=document.getElementById(id),j=resolveWorkerBone(selected,joint),out=document.getElementById(valId);if(!j){if(el)el.disabled=false;if(out)out.textContent='Unavailable';return}if(el)el.disabled=false;const base=selected.userData.baseEuler?.[joint]?.[axis]??j.rotation[axis];let deg=Math.round(THREE.MathUtils.radToDeg(j.rotation[axis]-base));if(id==='rightArmPose'||id==='rightForePose')deg=-deg;if(el)el.value=deg;if(out)out.textContent=`${deg}°`});['left','right'].forEach(side=>{const pct=selected.userData[side+'Grip']||0;document.getElementById(side+'GripPose').value=pct;document.getElementById(side+'GripVal').textContent=`${pct}%`;for(let i=0;i<4;i++){const fp=selected.userData[side+'Finger'+i]??pct;const el=document.querySelector(`.finger-slider[data-side="${side}"][data-finger="${i}"]`);if(el){el.value=fp;document.getElementById(el.dataset.val).textContent=`${fp}%`}}const tp=selected.userData[side+'ThumbCurl']??pct;const tel=document.querySelector(`.thumb-slider[data-side="${side}"]`);if(tel){tel.value=tp;document.getElementById(tel.dataset.val).textContent=`${tp}%`}})}
 
 function clearEnv(){while(envGroup.children.length)envGroup.remove(envGroup.children[0]);groundMat.color.set(0xc8ced3);grid.visible=true}
 function wall(x,y,z,w,h,d,color=0xdfe5e8){const m=mesh(new THREE.BoxGeometry(w,h,d),mat(color));m.position.set(x,y,z);envGroup.add(m);return m}
@@ -537,7 +547,7 @@ document.getElementById('exportBtn').addEventListener('click',()=>{transform.det
 function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
 new ResizeObserver(resize).observe(viewport);resize();
 function animate(){requestAnimationFrame(animate);orbit.update();for(let i=0;i<2;i++)objectRoot.children.forEach(obj=>applyAttachment(obj));if(rainPoints){rainPoints.position.y-=.07;if(rainPoints.position.y<-5)rainPoints.position.y=5}renderer.render(scene,camera)}
-function validateWorkerControls(worker){if(!worker?.userData?.worker)return;const ok=rebuildWorkerRig(worker);const missing=worker.userData.rigMissing||[];if(!ok){console.error('Worker rig missing bones:',missing.join(', '));}else{console.info('Worker rig ready:',Object.keys(REAL_WORKER_BONES).length,'bones mapped');}}
+function validateWorkerControls(worker){if(!worker?.userData?.worker)return;const ok=rebuildWorkerRig(worker),missing=worker.userData.rigMissing||[];const mapped=Object.entries(REAL_WORKER_BONES).filter(([k])=>worker.userData.joints?.[k]?.rotation).map(([k])=>k);if(!ok){console.error('Worker rig mapping incomplete. Missing:',missing.join(', '),'Mapped:',mapped.join(', '));}else{console.info('Worker rig ready:',mapped.length,'core bones mapped');}}
 buildEnvironment('blank');const initialWorker=addAsset('worker');validateWorkerControls(initialWorker);updateAttachUI();initSimpleUI();recordHistory(true);animate();
 </script>
 </body>
