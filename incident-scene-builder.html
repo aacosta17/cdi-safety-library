@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CDI Incident Scene Builder · v30</title>
+<title>CDI Incident Scene Builder · v31</title>
 <link rel="icon" href="assets/cdi-logo.jpg">
 <style>
 :root{--navy:#073b63;--blue:#0b5f9e;--cyan:#16a8d8;--bg:#eef3f7;--card:#fff;--text:#152331;--muted:#647485;--line:#d7e0e8;--danger:#b42318}
@@ -66,7 +66,7 @@ body{min-height:100vh}.topbar{background:#fff;border-bottom:1px solid var(--line
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topbar-inner"><div class="brand"><a href="index.html" aria-label="Back to CDI Field Safety Management Tool"><img src="assets/cdi-logo.jpg" alt="CDI Technology Services logo"></a><div class="brand-copy"><b>Incident Scene Builder</b><span>CDI Technology Services · Version 30</span></div></div><div class="top-actions"><a class="btn secondary" href="index.html">← Safety Tool</a><button id="saveSceneBtn" class="btn secondary" type="button">Save Scene</button><button id="loadSceneBtn" class="btn secondary" type="button">Load Scene</button><input id="loadSceneInput" class="file-input" type="file" accept="application/json,.json"><button id="resetBtn" class="btn danger" type="button">Reset Scene</button><button id="exportBtn" class="btn primary" type="button">Export PNG</button></div></div></header>
+<header class="topbar"><div class="topbar-inner"><div class="brand"><a href="index.html" aria-label="Back to CDI Field Safety Management Tool"><img src="assets/cdi-logo.jpg" alt="CDI Technology Services logo"></a><div class="brand-copy"><b>Incident Scene Builder</b><span>CDI Technology Services · Version 31</span></div></div><div class="top-actions"><a class="btn secondary" href="index.html">← Safety Tool</a><button id="saveSceneBtn" class="btn secondary" type="button">Save Scene</button><button id="loadSceneBtn" class="btn secondary" type="button">Load Scene</button><input id="loadSceneInput" class="file-input" type="file" accept="application/json,.json"><button id="resetBtn" class="btn danger" type="button">Reset Scene</button><button id="exportBtn" class="btn primary" type="button">Export PNG</button></div></div></header>
 <main class="app">
 <aside class="panel left-panel"><div class="panel-title"><b>Scene Library</b><small>Add workers and objects to the canvas.</small></div><div class="panel-body"><div class="asset-search"><input id="assetSearch" type="search" placeholder="Search assets — crowbar, van, cone..."><div id="assetEmpty" class="asset-empty">No matching assets.</div></div>
 <div class="v20-favorites"><div class="section-label">QUICK ADD</div><div class="asset-grid"><button class="asset-btn" data-add="worker" type="button"><span>◉</span>Worker</button><button class="asset-btn" data-add="crowbar" type="button"><span>⌒</span>Crowbar</button><button class="asset-btn" data-add="manholeOpen" type="button"><span>◌</span>Open Manhole</button><button class="asset-btn" data-add="cone" type="button"><span>▲</span>Cone</button></div></div><div class="separator"></div><div class="section-label">PEOPLE <span class="quality-badge">REAL GLB</span></div><div class="asset-grid"><button class="asset-btn" data-add="worker" type="button"><span>◉</span>Worker</button><button class="asset-btn" data-add="workerKneel" type="button"><span>◒</span>Kneeling Worker</button></div>
@@ -164,7 +164,7 @@ body{min-height:100vh}.topbar{background:#fff;border-bottom:1px solid var(--line
 <div class="range-row"><div class="range-head"><span>Right Index</span><span id="rf0Val">0%</span></div><input class="finger-slider" data-finger="0" data-side="right" data-val="rf0Val" max="100" min="0" type="range" value="0"></div><div class="range-row"><div class="range-head"><span>Right Middle</span><span id="rf1Val">0%</span></div><input class="finger-slider" data-finger="1" data-side="right" data-val="rf1Val" max="100" min="0" type="range" value="0"></div><div class="range-row"><div class="range-head"><span>Right Ring</span><span id="rf2Val">0%</span></div><input class="finger-slider" data-finger="2" data-side="right" data-val="rf2Val" max="100" min="0" type="range" value="0"></div><div class="range-row"><div class="range-head"><span>Right Pinky</span><span id="rf3Val">0%</span></div><input class="finger-slider" data-finger="3" data-side="right" data-val="rf3Val" max="100" min="0" type="range" value="0"></div><div class="range-row"><div class="range-head"><span>Right Thumb</span><span id="rtVal">0%</span></div><input class="thumb-slider" data-side="right" data-val="rtVal" max="100" min="0" type="range" value="0"></div></details>
 </div></details>
 <details class="worker-group"><summary>Body & Head</summary><div><div class="range-row"><div class="range-head"><span>Head Turn</span><span id="headVal">0°</span></div><input id="headPose" max="80" min="-80" type="range" value="0"></div><div class="range-row"><div class="range-head"><span>Head Tilt</span><span id="headTiltVal">0°</span></div><input id="headTiltPose" max="45" min="-45" type="range" value="0"></div><div class="range-row"><div class="range-head"><span>Torso Bend</span><span id="torsoBendVal">0°</span></div><input id="torsoBendPose" max="55" min="-55" type="range" value="0"></div><div class="range-row"><div class="range-head"><span>Torso Twist</span><span id="torsoTwistVal">0°</span></div><input id="torsoTwistPose" max="75" min="-75" type="range" value="0"></div></div></details>
-<details class="worker-group"><summary>Legs</summary><div><div class="range-row"><div class="range-head"><span>Left Leg</span><span id="leftLegVal">0°</span></div><input id="leftLegPose" max="75" min="-65" type="range" value="0"></div><div class="range-row"><div class="range-head"><span>Right Leg</span><span id="rightLegVal">0°</span></div><input id="rightLegPose" max="75" min="-65" type="range" value="0"></div><div class="range-row"><div class="range-head"><span>Left Knee</span><span id="leftKneeVal">0°</span></div><input id="leftKneePose" max="125" min="0" type="range" value="0"></div><div class="range-row"><div class="range-head"><span>Right Knee</span><span id="rightKneeVal">0°</span></div><input id="rightKneePose" max="125" min="0" type="range" value="0"></div></div></details>
+<details class="worker-group"><summary>Legs</summary><div><div class="range-row"><div class="range-head"><span>Left Hip · Forward / Back</span><span id="leftLegVal">0°</span></div><input id="leftLegPose" max="70" min="-45" type="range" value="0"></div><div class="range-row"><div class="range-head"><span>Right Hip · Forward / Back</span><span id="rightLegVal">0°</span></div><input id="rightLegPose" max="70" min="-45" type="range" value="0"></div><div class="range-row"><div class="range-head"><span>Left Knee</span><span id="leftKneeVal">0°</span></div><input id="leftKneePose" max="115" min="0" type="range" value="0"></div><div class="range-row"><div class="range-head"><span>Right Knee</span><span id="rightKneeVal">0°</span></div><input id="rightKneePose" max="115" min="0" type="range" value="0"></div></div></details>
 </div><div id="workerEmpty" class="selection-box"><b>Select a worker</b><span>Tap a worker in the scene to edit arms, hands, body, legs, and gestures.</span></div></section>
 </div></div></details>
 </div></aside>
@@ -289,25 +289,57 @@ function captureWorkerControlBase(worker){
  rebuildWorkerRig(worker);worker.userData.controlBaseQuat={};worker.userData.controlBaseEuler={};Object.keys(REAL_WORKER_BONES).forEach(k=>{const b=resolveWorkerBone(worker,k);if(b){worker.userData.controlBaseQuat[k]=b.quaternion.clone();worker.userData.controlBaseEuler[k]=b.rotation.clone()}})
 }
 function initWorkerFootFollowers(worker){
- rebuildWorkerRig(worker);worker.userData.realModel?.updateMatrixWorld(true);const make=(side)=>{const anchor=resolveWorkerBone(worker,side+'LegEnd'),foot=resolveWorkerBone(worker,side+'Foot'),pt=resolveWorkerBone(worker,side+'PT');if(!anchor||!foot)return null;anchor.updateWorldMatrix(true,false);const inv=new THREE.Matrix4().copy(anchor.matrixWorld).invert();const items=[];[foot,pt].filter(Boolean).forEach(b=>{b.updateWorldMatrix(true,false);items.push({bone:b,relative:new THREE.Matrix4().multiplyMatrices(inv,b.matrixWorld)})});return {anchor,items}};worker.userData.footFollowers={left:make('left'),right:make('right')}
+ rebuildWorkerRig(worker);worker.userData.realModel?.updateMatrixWorld(true);
+ const make=(side)=>{
+  const anchor=resolveWorkerBone(worker,side+'LegEnd'),foot=resolveWorkerBone(worker,side+'Foot');if(!anchor||!foot)return null;
+  anchor.updateWorldMatrix(true,false);foot.updateWorldMatrix(true,false);
+  const wp=new THREE.Vector3();foot.getWorldPosition(wp);const localToAnchor=anchor.worldToLocal(wp.clone());
+  return {anchor,foot,localToAnchor,restQuaternion:foot.quaternion.clone(),restScale:foot.scale.clone()}
+ };
+ worker.userData.footFollowers={left:make('left'),right:make('right')}
 }
 function updateWorkerFootFollowers(worker){
- if(!worker?.userData?.manualFootFollow)return;const all=worker.userData.footFollowers||{};(worker.userData.realModel||worker).updateMatrixWorld(true);Object.values(all).filter(Boolean).forEach(f=>{f.anchor.updateWorldMatrix(true,false);f.items.forEach(item=>{const desired=new THREE.Matrix4().multiplyMatrices(f.anchor.matrixWorld,item.relative);const parentInv=new THREE.Matrix4().copy(item.bone.parent.matrixWorld).invert();const local=new THREE.Matrix4().multiplyMatrices(parentInv,desired);local.decompose(item.bone.position,item.bone.quaternion,item.bone.scale);item.bone.updateMatrix()})});worker.userData.realModel?.updateMatrixWorld(true)
+ if(!worker?.userData?.manualFootFollow)return;
+ const all=worker.userData.footFollowers||{};(worker.userData.realModel||worker).updateMatrixWorld(true);
+ Object.values(all).filter(Boolean).forEach(f=>{
+  f.anchor.updateWorldMatrix(true,false);f.foot.parent?.updateWorldMatrix(true,false);
+  const desiredWorld=f.anchor.localToWorld(f.localToAnchor.clone());
+  const desiredLocal=f.foot.parent.worldToLocal(desiredWorld.clone());
+  f.foot.position.copy(desiredLocal);
+  // Keep the imported foot's rest orientation instead of rotating it with the shin.
+  f.foot.quaternion.copy(f.restQuaternion);f.foot.scale.copy(f.restScale);f.foot.updateMatrix();
+ });
+ worker.userData.realModel?.updateMatrixWorld(true)
 }
 function workerAxisInParent(worker,joint,axis){
  worker.updateWorldMatrix(true,false);joint.parent?.updateWorldMatrix(true,false);const workerQ=new THREE.Quaternion(),parentQ=new THREE.Quaternion();worker.getWorldQuaternion(workerQ);joint.parent?.getWorldQuaternion(parentQ);return axis.clone().applyQuaternion(workerQ).applyQuaternion(parentQ.invert()).normalize()
 }
 function setWorkerSpaceAxisOffset(worker,key,axis,degrees,invert=false){
- const joint=resolveWorkerBone(worker,key);if(!joint)return false;const base=worker.userData.controlBaseQuat?.[key]||worker.userData.neutralBonePose?.[normalizeRigName(joint.name)]?.quaternion||joint.quaternion;const localAxis=workerAxisInParent(worker,joint,axis);const dq=new THREE.Quaternion().setFromAxisAngle(localAxis,THREE.MathUtils.degToRad(invert?-degrees:degrees));joint.quaternion.copy(dq.multiply(base.clone())).normalize();joint.updateMatrix();worker.userData.manualFootFollow=true;worker.userData.realModel?.updateMatrixWorld(true);updateWorkerFootFollowers(worker);return true
+ const joint=resolveWorkerBone(worker,key);if(!joint)return false;
+ const base=worker.userData.controlBaseQuat?.[key]||worker.userData.neutralBonePose?.[normalizeRigName(joint.name)]?.quaternion||joint.quaternion.clone();
+ const dq=new THREE.Quaternion().setFromAxisAngle(axis.clone().normalize(),THREE.MathUtils.degToRad(invert?-degrees:degrees));
+ joint.quaternion.copy(base).multiply(dq).normalize();joint.updateMatrix();
+ worker.userData.manualFootFollow=true;worker.userData.realModel?.updateMatrixWorld(true);updateWorkerFootFollowers(worker);return true
 }
 function groundWorker(worker){worker.updateMatrixWorld(true);const box=new THREE.Box3().setFromObject(worker);if(Number.isFinite(box.min.y)){worker.position.y-=box.min.y;worker.updateMatrixWorld(true)}}
 function bakeWorkerAnimationPose(worker,clipSuffix,phase=.25){
  if(!worker?.userData?.realModel)return false;restoreWorkerNeutralPose(worker);const clip=(worker.userData.animations||[]).find(a=>a.name.endsWith('|'+clipSuffix));if(!clip)return false;const model=worker.userData.realModel,mixer=new THREE.AnimationMixer(model),action=mixer.clipAction(clip);action.reset().play();mixer.setTime(Math.max(0,Math.min(clip.duration*.98,clip.duration*phase)));model.updateMatrixWorld(true);const baked=[];model.traverse(o=>{if(o?.isBone)baked.push([o,o.position.clone(),o.quaternion.clone(),o.scale.clone()])});mixer.stopAllAction();mixer.uncacheRoot(model);baked.forEach(([o,p,q,s])=>{o.position.copy(p);o.quaternion.copy(q);o.scale.copy(s)});model.updateMatrixWorld(true);worker.userData.manualFootFollow=false;initWorkerFootFollowers(worker);captureWorkerControlBase(worker);worker.userData.controlValues={};groundWorker(worker);return true
 }
-function applyManualWorkerPose(worker,ops=[]){restoreWorkerNeutralPose(worker);captureWorkerControlBase(worker);worker.userData.manualFootFollow=true;ops.forEach(([key,deg,invert=false])=>setWorkerSpaceAxisOffset(worker,key,new THREE.Vector3(1,0,0),deg,invert));updateWorkerFootFollowers(worker);captureWorkerControlBase(worker);worker.userData.controlValues={};groundWorker(worker)}
+function applyManualWorkerPose(worker,ops=[]){
+ restoreWorkerNeutralPose(worker);captureWorkerControlBase(worker);worker.userData.manualFootFollow=true;initWorkerFootFollowers(worker);
+ ops.forEach(([key,deg])=>{
+  if(key==='leftLeg')setWorkerSpaceAxisOffset(worker,key,new THREE.Vector3(0,0,1),deg,false);
+  else if(key==='rightLeg')setWorkerSpaceAxisOffset(worker,key,new THREE.Vector3(0,0,1),deg,true);
+  else if(key==='leftKnee'||key==='rightKnee')setWorkerSpaceAxisOffset(worker,key,new THREE.Vector3(1,0,0),deg,false);
+ });
+ updateWorkerFootFollowers(worker);captureWorkerControlBase(worker);worker.userData.controlValues={};groundWorker(worker)
+}
 function setWorkerJointOffset(worker,key,axis,degrees,invert=false){
  const joint=resolveWorkerBone(worker,key);if(!joint)return false;
- const base=worker.userData.controlBaseEuler?.[key]?.[axis]??worker.userData.baseEuler?.[key]?.[axis]??joint.rotation[axis];joint.rotation[axis]=base+THREE.MathUtils.degToRad(invert?-degrees:degrees);joint.updateMatrix();worker.userData.realModel?.updateMatrixWorld(true);return true
+ const base=worker.userData.controlBaseQuat?.[key]||worker.userData.neutralBonePose?.[normalizeRigName(joint.name)]?.quaternion||joint.quaternion.clone();
+ const axes={x:new THREE.Vector3(1,0,0),y:new THREE.Vector3(0,1,0),z:new THREE.Vector3(0,0,1)};
+ const dq=new THREE.Quaternion().setFromAxisAngle(axes[axis]||axes.x,THREE.MathUtils.degToRad(invert?-degrees:degrees));
+ joint.quaternion.copy(base).multiply(dq).normalize();joint.updateMatrix();worker.userData.realModel?.updateMatrixWorld(true);return true
 }
 function createWorker(kneel=false){
  const g=named(new THREE.Group(),'worker','Worker');g.userData.worker=true;g.userData.realGLB=true;
@@ -335,25 +367,38 @@ function setHandGrip(worker,side,pct){if(!worker?.userData?.worker)return;rebuil
 function setFingerCurl(worker,side,index,pct){if(!worker?.userData?.worker)return;rebuildWorkerRig(worker);const f=worker.userData.joints?.[side+'Fingers']?.[index];if(!f)return;const b=worker.userData.fingerBase?.[side]?.[index];const amount=THREE.MathUtils.degToRad(78*(pct/100));if(f.base)f.base.rotation.x=(b?.base?.x||0)+amount*.5;if(f.tip)f.tip.rotation.x=(b?.tip?.x||0)+amount*.82;worker.userData[side+'Finger'+index]=pct}
 function setThumbCurl(worker,side,pct){if(!worker?.userData?.worker)return;rebuildWorkerRig(worker);const t=worker.userData.joints?.[side+'Thumb'];if(!t)return;const b=worker.userData.fingerBase?.[side+'Thumb'];t.rotation.x=(b?.x||0)+THREE.MathUtils.degToRad(55*(pct/100));worker.userData[side+'ThumbCurl']=pct}
 function applyPoseToWorker(worker,preset){
- if(!worker?.userData?.worker)return;rebuildWorkerRig(worker);
- let done=false;
- if(preset==='standing')done=(restoreWorkerNeutralPose(worker),captureWorkerControlBase(worker),groundWorker(worker),true);
+ if(!worker?.userData?.worker)return;rebuildWorkerRig(worker);let done=false;
+ if(preset==='standing'){restoreWorkerNeutralPose(worker);captureWorkerControlBase(worker);initWorkerFootFollowers(worker);groundWorker(worker);done=true}
  if(preset==='reaching')done=bakeWorkerAnimationPose(worker,'Interact',.48);
  if(preset==='walking')done=bakeWorkerAnimationPose(worker,'Walk',.28);
  if(preset==='pointing')done=bakeWorkerAnimationPose(worker,'Idle_Gun_Pointing',.20);
  if(preset==='carrying')done=bakeWorkerAnimationPose(worker,'Idle_Gun',.22);
  if(preset==='spotting'||preset==='handsup')done=bakeWorkerAnimationPose(worker,'Wave',.38);
- if(preset==='kneeling'){applyManualWorkerPose(worker,[['leftLeg',38,false],['leftKnee',108,true],['rightLeg',-20,false],['rightKnee',112,true]]);done=true}
- if(preset==='crouching'){applyManualWorkerPose(worker,[['leftLeg',30,false],['rightLeg',30,false],['leftKnee',68,true],['rightKnee',68,true]]);done=true}
- if(preset==='bending'){applyManualWorkerPose(worker,[['leftLeg',12,false],['rightLeg',12,false],['leftKnee',24,true],['rightKnee',24,true]]);setWorkerJointOffset(worker,'torso','x',34,false);done=true}
- if(preset==='lifting'){applyManualWorkerPose(worker,[['leftLeg',22,false],['rightLeg',22,false],['leftKnee',42,true],['rightKnee',42,true]]);setWorkerJointOffset(worker,'torso','x',25,false);setWorkerJointOffset(worker,'leftArm','x',-30,false);setWorkerJointOffset(worker,'rightArm','x',-30,false);setWorkerJointOffset(worker,'leftFore','z',-55,false);setWorkerJointOffset(worker,'rightFore','z',55,false);setHandGrip(worker,'left',65);setHandGrip(worker,'right',65);done=true}
- if(preset==='pushing'){done=bakeWorkerAnimationPose(worker,'Interact',.72);if(done){setWorkerJointOffset(worker,'torso','x',10,false)}}
- if(preset==='pulling'){done=bakeWorkerAnimationPose(worker,'Idle_Gun',.48);if(done){setHandGrip(worker,'left',75);setHandGrip(worker,'right',75)}}
- if(preset==='radio'){done=bakeWorkerAnimationPose(worker,'Wave',.62)}
- if(preset==='overhead'){done=bakeWorkerAnimationPose(worker,'Wave',.18);if(done){setWorkerJointOffset(worker,'leftArm','x',-85,false)}}
- if(preset==='fallen'){restoreWorkerNeutralPose(worker);captureWorkerControlBase(worker);worker.rotation.z=THREE.MathUtils.degToRad(90);groundWorker(worker);done=true}
- if(!done){restoreWorkerNeutralPose(worker);captureWorkerControlBase(worker);groundWorker(worker)}
- worker.userData.controlValues={};syncPoseUI();
+ if(preset==='pushing')done=bakeWorkerAnimationPose(worker,'Interact',.72);
+ if(preset==='pulling')done=bakeWorkerAnimationPose(worker,'Idle_Gun',.48);
+ if(preset==='radio')done=bakeWorkerAnimationPose(worker,'Wave',.62);
+ if(preset==='fallen')done=bakeWorkerAnimationPose(worker,'Death',.92);
+ if(preset==='kneeling'){
+  applyManualWorkerPose(worker,[['leftLeg',58],['leftKnee',108],['rightLeg',8],['rightKnee',34]]);
+  setWorkerJointOffset(worker,'torso','x',8,false);done=true
+ }
+ if(preset==='crouching'){
+  applyManualWorkerPose(worker,[['leftLeg',38],['leftKnee',72],['rightLeg',38],['rightKnee',72]]);
+  setWorkerJointOffset(worker,'torso','x',10,false);done=true
+ }
+ if(preset==='bending'){
+  applyManualWorkerPose(worker,[['leftLeg',16],['leftKnee',20],['rightLeg',16],['rightKnee',20]]);
+  setWorkerJointOffset(worker,'torso','x',30,false);done=true
+ }
+ if(preset==='lifting'){
+  applyManualWorkerPose(worker,[['leftLeg',30],['leftKnee',48],['rightLeg',30],['rightKnee',48]]);
+  setWorkerJointOffset(worker,'torso','x',22,false);setWorkerJointOffset(worker,'leftArm','x',-28,false);setWorkerJointOffset(worker,'rightArm','x',-28,false);setHandGrip(worker,'left',65);setHandGrip(worker,'right',65);done=true
+ }
+ if(preset==='overhead'){
+  restoreWorkerNeutralPose(worker);captureWorkerControlBase(worker);setWorkerJointOffset(worker,'leftArm','x',-90,false);setWorkerJointOffset(worker,'rightArm','x',-90,false);groundWorker(worker);done=true
+ }
+ if(!done){restoreWorkerNeutralPose(worker);captureWorkerControlBase(worker);initWorkerFootFollowers(worker);groundWorker(worker)}
+ worker.userData.controlValues={};syncPoseUI()
 }
 function createPalletJack(){const g=named(new THREE.Group(),'equipment','Pallet Jack');const yellow=mat(0xe4b225,.28,.08), dark=mat(0x535b63,.28,.22);addRoundedBox(g,[.22,.08,2.06],[-.18,.10,.54],yellow,.02,2);addRoundedBox(g,[.22,.08,2.06],[.18,.10,.54],yellow,.02,2);addRoundedBox(g,[.64,.24,.42],[0,.28,-.50],yellow,.08,4);addRoundedBox(g,[.18,.06,.20],[0,.08,-.14],dark,.02,2);const handle=new THREE.Group();handle.position.set(0,.60,-.76);handle.rotation.z=.28;g.add(handle);addCylinder(handle,.05,.62,[0,.28,0],dark);addRoundedBox(handle,[.36,.06,.08],[0,.58,0],dark,.02,1);for(const x of[-.18,.18])addWheel(g,x,.88,.09,.08);for(const x of[-.12,.12])addWheel(g,x,-.10,.11,.08);return g}
 function createLadder(){const g=named(new THREE.Group(),'equipment','Ladder');const rail=mat(0xf0b324,.24,.08), rung=mat(0x8f979e,.22,.20), foot=mat(0x444a50,.26,.18);for(const x of[-.18,.18]){const s=addRoundedBox(g,[.08,2.22,.08],[x,1.12,0],rail,.02,2);s.rotation.z=x<0?.08:-.08;}for(let i=0;i<6;i++)addRoundedBox(g,[.40,.06,.08],[0,.36+i*.32,0],rung,.02,1);addRoundedBox(g,[.10,.06,.12],[-.22,.03,0],foot,.02,1);addRoundedBox(g,[.10,.06,.12],[.22,.03,0],foot,.02,1);return g}
@@ -528,7 +573,7 @@ document.getElementById('resetScaleBtn').addEventListener('click',()=>{if(select
 document.getElementById('centerOriginBtn').addEventListener('click',()=>{if(selected&&!selected.userData.locked){selected.position.x=0;selected.position.z=0;dropSelectedToGround();if(selected.userData.attach)captureAttachmentFromCurrent(selected);updateAttachUI();recordHistory()}});
 
 const poseMap={headPose:['head','y','headVal'],headTiltPose:['headTilt','z','headTiltVal'],torsoBendPose:['torso','x','torsoBendVal'],torsoTwistPose:['torso','y','torsoTwistVal'],leftArmLiftPose:['leftArm','x','leftArmLiftVal'],rightArmLiftPose:['rightArm','x','rightArmLiftVal'],leftArmPose:['leftArm','z','leftArmVal'],rightArmPose:['rightArm','z','rightArmVal'],leftArmTwistPose:['leftArm','y','leftArmTwistVal'],rightArmTwistPose:['rightArm','y','rightArmTwistVal'],leftForePose:['leftFore','z','leftForeVal'],rightForePose:['rightFore','z','rightForeVal'],leftWristPose:['leftWrist','z','leftWristVal'],rightWristPose:['rightWrist','z','rightWristVal'],leftWristTwistPose:['leftWrist','y','leftWristTwistVal'],rightWristTwistPose:['rightWrist','y','rightWristTwistVal'],leftLegPose:['leftLeg','x','leftLegVal'],rightLegPose:['rightLeg','x','rightLegVal'],leftKneePose:['leftKnee','x','leftKneeVal'],rightKneePose:['rightKnee','x','rightKneeVal']};
-function onPoseRange(e,id,joint,axis,valId){if(!selected?.userData?.worker)return;const deg=Number(e.target.value);let ok=false;if(joint==='leftLeg'||joint==='rightLeg')ok=setWorkerSpaceAxisOffset(selected,joint,new THREE.Vector3(1,0,0),deg,false);else if(joint==='leftKnee'||joint==='rightKnee')ok=setWorkerSpaceAxisOffset(selected,joint,new THREE.Vector3(1,0,0),deg,true);else{const invert=(id==='rightArmPose'||id==='rightForePose');ok=setWorkerJointOffset(selected,joint,axis,deg,invert)}if(!ok){rebuildWorkerRig(selected);if(joint==='leftLeg'||joint==='rightLeg')ok=setWorkerSpaceAxisOffset(selected,joint,new THREE.Vector3(1,0,0),deg,false);else if(joint==='leftKnee'||joint==='rightKnee')ok=setWorkerSpaceAxisOffset(selected,joint,new THREE.Vector3(1,0,0),deg,true);else{const invert=(id==='rightArmPose'||id==='rightForePose');ok=setWorkerJointOffset(selected,joint,axis,deg,invert)}}const out=document.getElementById(valId);if(!ok){if(out)out.textContent='Unavailable';showRigStatus(selected);return}selected.userData.controlValues=selected.userData.controlValues||{};selected.userData.controlValues[id]=deg;if(out)out.textContent=`${deg}°`;selected.userData.rigSelfTest=selected.userData.rigSelfTest||{ok:true};showRigStatus(selected)}
+function onPoseRange(e,id,joint,axis,valId){if(!selected?.userData?.worker)return;const deg=Number(e.target.value);let ok=false;const apply=()=>{if(joint==='leftLeg')return setWorkerSpaceAxisOffset(selected,joint,new THREE.Vector3(0,0,1),deg,false);if(joint==='rightLeg')return setWorkerSpaceAxisOffset(selected,joint,new THREE.Vector3(0,0,1),deg,true);if(joint==='leftKnee'||joint==='rightKnee')return setWorkerSpaceAxisOffset(selected,joint,new THREE.Vector3(1,0,0),deg,false);const invert=(id==='rightArmPose'||id==='rightForePose');return setWorkerJointOffset(selected,joint,axis,deg,invert)};ok=apply();if(!ok){rebuildWorkerRig(selected);captureWorkerControlBase(selected);ok=apply()}const out=document.getElementById(valId);if(!ok){if(out)out.textContent='Unavailable';showRigStatus(selected);return}selected.userData.controlValues=selected.userData.controlValues||{};selected.userData.controlValues[id]=deg;if(out)out.textContent=`${deg}°`;selected.userData.rigSelfTest=selected.userData.rigSelfTest||{ok:true};showRigStatus(selected)}
 Object.entries(poseMap).forEach(([id,[joint,axis,valId]])=>{const el=document.getElementById(id);const fn=e=>onPoseRange(e,id,joint,axis,valId);el.addEventListener('input',fn);el.addEventListener('change',fn)});
 ['left','right'].forEach(side=>{const el=document.getElementById(side+'GripPose');const fn=e=>{if(!selected?.userData?.worker)return;const pct=Number(e.target.value);setHandGrip(selected,side,pct);document.getElementById(side+'GripVal').textContent=`${pct}%`};el.addEventListener('input',fn);el.addEventListener('change',fn)});
 document.querySelectorAll('.finger-slider').forEach(el=>{const fn=e=>{if(!selected?.userData?.worker)return;const pct=Number(e.target.value);setFingerCurl(selected,e.target.dataset.side,Number(e.target.dataset.finger),pct);document.getElementById(e.target.dataset.val).textContent=`${pct}%`};el.addEventListener('input',fn);el.addEventListener('change',fn)});
