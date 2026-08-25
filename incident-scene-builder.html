@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CDI Incident Scene Builder · v22 Professional</title>
+<title>CDI Incident Scene Builder · v24 Mannequin Professional</title>
 <link rel="icon" href="assets/cdi-logo.jpg">
 <style>
 :root{--navy:#073b63;--blue:#0b5f9e;--cyan:#16a8d8;--bg:#eef3f7;--card:#fff;--text:#152331;--muted:#647485;--line:#d7e0e8;--danger:#b42318}
@@ -88,7 +88,7 @@ body{min-height:100vh}.topbar{background:#fff;border-bottom:1px solid var(--line
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topbar-inner"><div class="brand"><a href="index.html" aria-label="Back to CDI Field Safety Management Tool"><img src="assets/cdi-logo.jpg" alt="CDI Technology Services logo"></a><div class="brand-copy"><b>Incident Scene Builder</b><span>CDI Technology Services · Version 23 · Stable Professional Construction Planner</span></div></div><div class="top-actions"><a class="btn secondary" href="index.html">← Safety Tool</a><button id="saveSceneBtn" class="btn secondary" type="button">Save Scene</button><button id="loadSceneBtn" class="btn secondary" type="button">Load Scene</button><input id="loadSceneInput" class="file-input" type="file" accept="application/json,.json"><button id="exportScheduleBtn" class="btn secondary" type="button">Scene Schedule</button><button id="resetBtn" class="btn danger" type="button">Reset Scene</button><button id="exportBtn" class="btn primary" type="button">Export Drawing PNG</button></div></div></header>
+<header class="topbar"><div class="topbar-inner"><div class="brand"><a href="index.html" aria-label="Back to CDI Field Safety Management Tool"><img src="assets/cdi-logo.jpg" alt="CDI Technology Services logo"></a><div class="brand-copy"><b>Incident Scene Builder</b><span>CDI Technology Services · Version 24 · Professional Mannequin Construction Planner</span></div></div><div class="top-actions"><a class="btn secondary" href="index.html">← Safety Tool</a><button id="saveSceneBtn" class="btn secondary" type="button">Save Scene</button><button id="loadSceneBtn" class="btn secondary" type="button">Load Scene</button><input id="loadSceneInput" class="file-input" type="file" accept="application/json,.json"><button id="exportScheduleBtn" class="btn secondary" type="button">Scene Schedule</button><button id="resetBtn" class="btn danger" type="button">Reset Scene</button><button id="exportBtn" class="btn primary" type="button">Export Drawing PNG</button></div></div></header>
 <main class="app">
 <aside class="panel left-panel"><div class="panel-title"><b>Scene Library</b><small>Add workers and objects to the canvas.</small></div><div class="panel-body"><div class="asset-search"><input id="assetSearch" type="search" placeholder="Search assets — crowbar, van, cone..."><div id="assetEmpty" class="asset-empty">No matching assets.</div></div>
 <div class="v20-favorites"><div class="section-label">QUICK ADD</div><div class="asset-grid"><button class="asset-btn" data-add="worker" type="button"><span>◉</span>Worker</button><button class="asset-btn" data-add="crowbar" type="button"><span>⌒</span>Crowbar</button><button class="asset-btn" data-add="manholeOpen" type="button"><span>◌</span>Open Manhole</button><button class="asset-btn" data-add="cone" type="button"><span>▲</span>Cone</button></div></div><div class="separator"></div><div class="section-label">PEOPLE</div><div class="asset-grid"><button class="asset-btn" data-add="worker" type="button"><span>◉</span>Worker</button><button class="asset-btn" data-add="workerKneel" type="button"><span>◒</span>Kneeling Worker</button></div>
@@ -268,48 +268,75 @@ function addCylinder(group,r,h,pos,material=darkMat,rot=[0,0,0]){const m=mesh(ne
 function limb(radius,length,material=workerMat){const pivot=new THREE.Group();const part=mesh(new THREE.CapsuleGeometry(radius,length,6,10),material);part.position.y=-(length/2+radius);pivot.add(part);return pivot}
 
 function createWorker(kneel=false){
- const g=named(new THREE.Group(),'worker','Worker');g.userData.worker=true;
- const shellMat=mat(0xb8c0c6,.62,.04),shellTrim=mat(0x8f9aa2,.66,.04),jointMat=mat(0x4d5962,.62,.05),visorMat=mat(0x2d3942,.35,.15),handMat=mat(0x707b82,.65,.03),vestMat=mat(0xd5a12b,.62,.02),reflectMat=mat(0xd9e0e4,.48,.08),hardhatMat=mat(0xe0b12f,.52,.04);
- g.userData.skinMaterials=[shellMat,shellTrim];g.userData.colorName='gray';
- const capsulePart=(parent,r,len,pos,material,segments=8)=>{const m=mesh(new THREE.CapsuleGeometry(r,len,4,segments),material);m.position.set(...pos);parent.add(m);return m};
- const jointSphere=(parent,r,pos)=>{const m=mesh(new THREE.SphereGeometry(r,12,8),jointMat);m.position.set(...pos);parent.add(m);return m};
- const hips=new THREE.Group();hips.position.y=1.64;g.add(hips);
- addRoundedBox(hips,[.48,.32,.30],[0,.04,0],shellTrim,.12,3);
- const torsoPivot=new THREE.Group();torsoPivot.position.y=.23;hips.add(torsoPivot);
- const torso=mesh(new THREE.CylinderGeometry(.34,.28,.80,14),shellMat);torso.position.y=.42;torso.scale.z=.58;torsoPivot.add(torso);
- // High-visibility vest as restrained front/back panels rather than a cartoon shell.
- addRoundedBox(torsoPivot,[.48,.52,.045],[0,.43,.205],vestMat,.025,2);addRoundedBox(torsoPivot,[.48,.52,.035],[0,.43,-.205],vestMat,.025,2);
- addBox(torsoPivot,[.48,.055,.052],[0,.34,.232],reflectMat);addBox(torsoPivot,[.48,.055,.052],[0,.52,.232],reflectMat);
- const neck=new THREE.Group();neck.position.y=.86;torsoPivot.add(neck);addCylinder(neck,.085,.12,[0,.06,0],jointMat);
- const headTilt=new THREE.Group();headTilt.position.y=.13;neck.add(headTilt);
- const head=mesh(new THREE.CapsuleGeometry(.19,.16,5,12),shellTrim);head.position.y=.28;head.scale.z=.88;headTilt.add(head);
- addRoundedBox(headTilt,[.24,.055,.035],[0,.27,.185],visorMat,.012,2);
- const hatCrown=mesh(new THREE.SphereGeometry(.245,16,10,0,Math.PI*2,0,Math.PI/2),hardhatMat);hatCrown.position.y=.50;hatCrown.scale.z=.90;headTilt.add(hatCrown);
- addCylinder(headTilt,.265,.045,[0,.495,0],hardhatMat);addRoundedBox(headTilt,[.36,.025,.08],[0,.49,.19],hardhatMat,.01,2);
+ const g=named(new THREE.Group(),'worker','Worker');g.userData.worker=true;g.userData.modelStyle='reference-mannequin-v1';
+ // Neutral visualization mannequin based on the supplied professional 3D-model reference.
+ // Smooth geometry, restrained joint seams, natural proportions, and poseable hands.
+ const bodyMat=mat(0xbcc5ca,.58,.04),bodyShade=mat(0xa7b1b7,.62,.04),seamMat=mat(0x667178,.54,.08),jointMat=mat(0x8d989e,.58,.04),faceMat=bodyMat;
+ g.userData.skinMaterials=[bodyMat,bodyShade];g.userData.colorName='gray';
+ const jointSphere=(parent,r,pos,material=jointMat,seg=16)=>{const m=mesh(new THREE.SphereGeometry(r,seg,Math.max(10,Math.floor(seg*.65))),material);m.position.set(...pos);parent.add(m);return m};
+ const tapered=(parent,rTop,rBottom,len,pos,material=bodyMat,seg=18)=>{const m=mesh(new THREE.CylinderGeometry(rTop,rBottom,len,seg,1,false),material);m.position.set(...pos);parent.add(m);return m};
+ const seamBand=(parent,r,y,th=.026)=>{const m=mesh(new THREE.CylinderGeometry(r,r,th,18),seamMat);m.position.y=y;parent.add(m);return m};
+ const ellipsoid=(parent,r,pos,scale,material=bodyMat,seg=20)=>{const m=mesh(new THREE.SphereGeometry(r,seg,Math.max(12,Math.floor(seg*.7))),material);m.position.set(...pos);m.scale.set(...scale);parent.add(m);return m};
+
+ // Pelvis / torso. Overall height stays compatible with existing scenes (~5 ft 8 in at project scale).
+ const hips=new THREE.Group();hips.position.y=1.62;g.add(hips);
+ ellipsoid(hips,.31,[0,.00,0],[1.08,.72,.68],bodyShade,20);
+ seamBand(hips,.245,.19,.022);
+ const torsoPivot=new THREE.Group();torsoPivot.position.y=.18;hips.add(torsoPivot);
+ const abdomen=tapered(torsoPivot,.245,.265,.36,[0,.22,0],bodyShade,22);abdomen.scale.z=.68;
+ const chest=tapered(torsoPivot,.345,.255,.55,[0,.62,0],bodyMat,24);chest.scale.z=.60;
+ seamBand(torsoPivot,.262,.405,.022);
+
+ // Neck and head with the clean crash-test / visualization-mannequin character of the reference.
+ const neck=new THREE.Group();neck.position.y=.91;torsoPivot.add(neck);tapered(neck,.09,.105,.16,[0,.08,0],bodyShade,18);
+ const headTilt=new THREE.Group();headTilt.position.y=.16;neck.add(headTilt);
+ ellipsoid(headTilt,.235,[0,.30,0],[.84,1.10,.86],faceMat,24);
+ // Jaw / lower face and subtle nose profile; deliberately neutral rather than photorealistic.
+ ellipsoid(headTilt,.155,[0,.18,.035],[.82,.72,.92],faceMat,20);
+ const nose=ellipsoid(headTilt,.055,[0,.315,.205],[.58,.65,.85],faceMat,14);nose.rotation.x=.16;
+ // Side head discs and shallow panel seams echo the supplied mannequin reference.
+ for(const side of[-1,1]){const disc=mesh(new THREE.CylinderGeometry(.075,.075,.018,20),jointMat);disc.rotation.z=Math.PI/2;disc.position.set(side*.205,.31,0);headTilt.add(disc)}
+ const brow=mesh(new THREE.TorusGeometry(.205,.009,6,28,Math.PI*.72),seamMat);brow.rotation.set(Math.PI/2,0,.38);brow.position.set(0,.41,.02);headTilt.add(brow);
  g.userData.joints={head:neck,headTilt,torso:torsoPivot};
+
  function hand(side,forePivot){
-   const wrist=new THREE.Group();wrist.position.y=-.59;forePivot.add(wrist);jointSphere(wrist,.07,[0,0,0]);
-   const palm=addRoundedBox(wrist,[.15,.20,.10],[0,-.11,0],handMat,.045,3);
-   const fingerBase=new THREE.Group();fingerBase.position.set(0,-.19,.01);wrist.add(fingerBase);addRoundedBox(fingerBase,[.14,.11,.085],[0,-.045,0],handMat,.025,2);
-   const fingerTip=new THREE.Group();fingerTip.position.y=-.09;fingerBase.add(fingerTip);addRoundedBox(fingerTip,[.13,.07,.078],[0,-.03,0],handMat,.022,2);
-   const fingers=Array.from({length:4},()=>({base:fingerBase,tip:fingerTip}));
-   const thumb=new THREE.Group();thumb.position.set(side*.085,-.10,.02);thumb.rotation.z=side*.55;wrist.add(thumb);addRoundedBox(thumb,[.03,.10,.04],[0,-.04,0],handMat,.012,2);
+   const wrist=new THREE.Group();wrist.position.y=-.55;forePivot.add(wrist);jointSphere(wrist,.067,[0,0,0]);
+   seamBand(wrist,.077,-.025,.020);
+   const palm=ellipsoid(wrist,.105,[0,-.115,.015],[.72,.96,.48],bodyMat,16);
+   const fingers=[];
+   const xs=[-.066,-.022,.022,.066];
+   const lengths=[.145,.165,.158,.138];
+   for(let i=0;i<4;i++){
+     const fp=new THREE.Group();fp.position.set(xs[i],-.190,.035);wrist.add(fp);
+     const l=lengths[i];
+     const p1=mesh(new THREE.CapsuleGeometry(.015,l*.48,3,7),bodyMat);p1.position.y=-l*.27;fp.add(p1);
+     const tip=new THREE.Group();tip.position.y=-l*.55;fp.add(tip);
+     const p2=mesh(new THREE.CapsuleGeometry(.014,l*.35,3,7),bodyMat);p2.position.y=-l*.19;tip.add(p2);
+     fingers.push({base:fp,tip});
+   }
+   const thumb=new THREE.Group();thumb.position.set(side*.082,-.115,.035);thumb.rotation.z=side*.68;wrist.add(thumb);
+   const th=mesh(new THREE.CapsuleGeometry(.017,.095,3,7),bodyMat);th.position.y=-.055;thumb.add(th);
    return {wrist,fingers,thumb,palm};
  }
  function arm(side){
-   const shoulderMount=new THREE.Group();shoulderMount.position.set(side*.40,.68,0);torsoPivot.add(shoulderMount);jointSphere(shoulderMount,.12,[0,0,0]);
-   const shoulder=new THREE.Group();shoulderMount.add(shoulder);capsulePart(shoulder,.105,.43,[0,-.32,0],shellMat);
-   const elbow=new THREE.Group();elbow.position.y=-.63;shoulder.add(elbow);jointSphere(elbow,.085,[0,0,0]);
-   const forePivot=new THREE.Group();elbow.add(forePivot);capsulePart(forePivot,.09,.40,[0,-.30,0],shellTrim);
+   const shoulderMount=new THREE.Group();shoulderMount.position.set(side*.405,.735,0);torsoPivot.add(shoulderMount);jointSphere(shoulderMount,.125,[0,0,0],bodyMat,18);
+   const shoulder=new THREE.Group();shoulderMount.add(shoulder);
+   tapered(shoulder,.118,.100,.43,[0,-.285,0],bodyMat,18);seamBand(shoulder,.108,-.505,.021);
+   const elbow=new THREE.Group();elbow.position.y=-.555;shoulder.add(elbow);jointSphere(elbow,.086,[0,0,0],jointMat,16);
+   const forePivot=new THREE.Group();elbow.add(forePivot);tapered(forePivot,.097,.072,.39,[0,-.255,0],bodyShade,18);seamBand(forePivot,.080,-.475,.020);
    return {shoulder,elbow,forePivot,...hand(side,forePivot)};
  }
  const la=arm(-1),ra=arm(1);Object.assign(g.userData.joints,{leftArm:la.shoulder,rightArm:ra.shoulder,leftFore:la.elbow,rightFore:ra.elbow,leftWrist:la.wrist,rightWrist:ra.wrist,leftFingers:la.fingers,rightFingers:ra.fingers,leftThumb:la.thumb,rightThumb:ra.thumb});
+
  function leg(side){
-   const hipMount=new THREE.Group();hipMount.position.set(side*.18,-.16,0);hips.add(hipMount);jointSphere(hipMount,.12,[0,0,0]);
-   const hip=new THREE.Group();hipMount.add(hip);capsulePart(hip,.12,.57,[0,-.405,0],shellMat);
-   const knee=new THREE.Group();knee.position.y=-.79;hip.add(knee);jointSphere(knee,.10,[0,0,0]);
-   const shin=new THREE.Group();knee.add(shin);capsulePart(shin,.105,.55,[0,-.395,0],shellTrim);
-   addRoundedBox(shin,[.25,.13,.38],[0,-.76,.08],mat(0x4a5359,.72,.03),.045,3);
+   const hipMount=new THREE.Group();hipMount.position.set(side*.19,-.14,0);hips.add(hipMount);jointSphere(hipMount,.135,[0,0,0],bodyShade,18);
+   const hip=new THREE.Group();hipMount.add(hip);
+   tapered(hip,.145,.112,.60,[0,-.39,0],bodyMat,20);seamBand(hip,.120,-.705,.023);
+   const knee=new THREE.Group();knee.position.y=-.755;hip.add(knee);jointSphere(knee,.108,[0,0,0],jointMat,18);
+   const shin=new THREE.Group();knee.add(shin);tapered(shin,.105,.078,.56,[0,-.37,0],bodyShade,20);seamBand(shin,.086,-.675,.022);
+   // Rounded foot aligned forward (+Z), with a small ankle transition instead of a blocky boot.
+   const ankle=mesh(new THREE.CapsuleGeometry(.082,.09,4,10),bodyShade);ankle.position.set(0,-.675,.02);shin.add(ankle);
+   const foot=mesh(new THREE.CapsuleGeometry(.090,.285,4,11),bodyMat);foot.rotation.x=Math.PI/2;foot.position.set(0,-.735,.115);foot.scale.x=.92;foot.scale.z=1.12;shin.add(foot);
    return {hip,knee};
  }
  const ll=leg(-1),rl=leg(1);Object.assign(g.userData.joints,{leftLeg:ll.hip,rightLeg:rl.hip,leftKnee:ll.knee,rightKnee:rl.knee});
@@ -616,7 +643,7 @@ const historyStack=[],redoStack=[];let restoringHistory=false;
 function vectorArray(v){return [v.x,v.y,v.z]}
 function eulerArray(v){return [v.x,v.y,v.z]}
 function serializeWorker(obj){const joints={};Object.entries(obj.userData.joints||{}).forEach(([k,v])=>{if(v?.rotation&&!Array.isArray(v))joints[k]=eulerArray(v.rotation)});return {joints,colorName:obj.userData.colorName||'white',leftGrip:obj.userData.leftGrip||0,rightGrip:obj.userData.rightGrip||0,leftThumbCurl:obj.userData.leftThumbCurl||0,rightThumbCurl:obj.userData.rightThumbCurl||0,leftFingers:[0,1,2,3].map(i=>obj.userData['leftFinger'+i]||0),rightFingers:[0,1,2,3].map(i=>obj.userData['rightFinger'+i]||0)}}
-function serializeScene(){return {version:22,metadata:{project:document.getElementById('proProjectName')?.value||'',location:document.getElementById('proSceneLocation')?.value||'',figureTitle:document.getElementById('proFigureTitle')?.value||'',notes:document.getElementById('proSceneNotes')?.value||'',unitMode:document.getElementById('proUnitMode')?.value||'ftin'},environment:document.getElementById('scenePreset').value,conditions:document.getElementById('conditionPreset').value,camera:{position:vectorArray(camera.position),target:vectorArray(orbit.target),fov:camera.fov},objects:objectRoot.children.map(obj=>({sceneId:obj.userData.id,factoryType:obj.userData.factoryType||null,name:obj.name,position:vectorArray(obj.position),rotation:eulerArray(obj.rotation),scale:vectorArray(obj.scale),locked:!!obj.userData.locked,annotationText:obj.userData.annotationText||'',attach:obj.userData.attach?JSON.parse(JSON.stringify(obj.userData.attach)):null,routePoints:obj.userData.routePoints?JSON.parse(JSON.stringify(obj.userData.routePoints)):null,dimensionPoints:obj.userData.dimensionPoints?JSON.parse(JSON.stringify(obj.userData.dimensionPoints)):null,liftHeightFt:obj.userData.liftHeightFt||obj.userData.liftHeight||null,professional:{discipline:obj.userData.discipline||'',system:obj.userData.system||'',layer:obj.userData.layer||'',modelType:obj.userData.modelType||'',status:obj.userData.status||'',notes:obj.userData.notes||'',tradeSizeIn:obj.userData.tradeSizeIn||null,trayWidthIn:obj.userData.trayWidthIn||null},worker:obj.userData.worker?serializeWorker(obj):null})).filter(o=>o.factoryType)}}
+function serializeScene(){return {version:24,metadata:{project:document.getElementById('proProjectName')?.value||'',location:document.getElementById('proSceneLocation')?.value||'',figureTitle:document.getElementById('proFigureTitle')?.value||'',notes:document.getElementById('proSceneNotes')?.value||'',unitMode:document.getElementById('proUnitMode')?.value||'ftin'},environment:document.getElementById('scenePreset').value,conditions:document.getElementById('conditionPreset').value,camera:{position:vectorArray(camera.position),target:vectorArray(orbit.target),fov:camera.fov},objects:objectRoot.children.map(obj=>({sceneId:obj.userData.id,factoryType:obj.userData.factoryType||null,name:obj.name,position:vectorArray(obj.position),rotation:eulerArray(obj.rotation),scale:vectorArray(obj.scale),locked:!!obj.userData.locked,annotationText:obj.userData.annotationText||'',attach:obj.userData.attach?JSON.parse(JSON.stringify(obj.userData.attach)):null,routePoints:obj.userData.routePoints?JSON.parse(JSON.stringify(obj.userData.routePoints)):null,dimensionPoints:obj.userData.dimensionPoints?JSON.parse(JSON.stringify(obj.userData.dimensionPoints)):null,liftHeightFt:obj.userData.liftHeightFt||obj.userData.liftHeight||null,professional:{discipline:obj.userData.discipline||'',system:obj.userData.system||'',layer:obj.userData.layer||'',modelType:obj.userData.modelType||'',status:obj.userData.status||'',notes:obj.userData.notes||'',tradeSizeIn:obj.userData.tradeSizeIn||null,trayWidthIn:obj.userData.trayWidthIn||null},worker:obj.userData.worker?serializeWorker(obj):null})).filter(o=>o.factoryType)}}
 function applyTransform(obj,item){obj.position.fromArray(item.position||[0,0,0]);obj.rotation.set(...(item.rotation||[0,0,0]));obj.scale.fromArray(item.scale||[1,1,1]);obj.name=item.name||obj.name;obj.userData.locked=!!item.locked;if(item.sceneId!=null)obj.userData.id=item.sceneId;obj.userData.attach=item.attach?JSON.parse(JSON.stringify(item.attach)):null;if(item.professional)Object.assign(obj.userData,JSON.parse(JSON.stringify(item.professional)));ensureProfessionalData(obj,item.factoryType)}
 function restoreWorker(obj,data){if(!data)return;setWorkerColor(obj,data.colorName||'white');Object.entries(data.joints||{}).forEach(([k,r])=>{const j=obj.userData.joints?.[k];if(j?.rotation)j.rotation.set(...r)});setHandGrip(obj,'left',data.leftGrip||0);setHandGrip(obj,'right',data.rightGrip||0);(data.leftFingers||[]).forEach((v,i)=>setFingerCurl(obj,'left',i,v));(data.rightFingers||[]).forEach((v,i)=>setFingerCurl(obj,'right',i,v));setThumbCurl(obj,'left',data.leftThumbCurl||0);setThumbCurl(obj,'right',data.rightThumbCurl||0)}
 function loadSceneData(data,{history=true}={}){if(!data||!Array.isArray(data.objects))return;restoringHistory=true;transform.detach();objectRoot.clear();selectObject(null);document.getElementById('scenePreset').value=data.environment||'blank';document.getElementById('conditionPreset').value=data.conditions||'day';buildEnvironment(document.getElementById('scenePreset').value);applyConditions(document.getElementById('conditionPreset').value);if(data.metadata){if(document.getElementById('proProjectName'))document.getElementById('proProjectName').value=data.metadata.project||'';if(document.getElementById('proSceneLocation'))document.getElementById('proSceneLocation').value=data.metadata.location||'';if(document.getElementById('proFigureTitle'))document.getElementById('proFigureTitle').value=data.metadata.figureTitle||'Incident Scene Reconstruction';if(document.getElementById('proSceneNotes'))document.getElementById('proSceneNotes').value=data.metadata.notes||'';if(document.getElementById('proUnitMode'))document.getElementById('proUnitMode').value=data.metadata.unitMode||'ftin'}let maxSceneId=0;const loaded=[];data.objects.forEach(item=>{let obj;if(item.dimensionPoints&&item.factoryType==='dimension'){obj=makeDimensionGroup(item.dimensionPoints.map(p=>new THREE.Vector3(...p)));objectRoot.add(obj)}else if(item.routePoints&&['conduitRoute','trayRoute'].includes(item.factoryType)){const pp=item.professional||{};obj=makeRouteGroup(item.factoryType,item.routePoints.map(p=>new THREE.Vector3(...p)),{system:pp.system,tradeSizeIn:pp.tradeSizeIn,trayWidthIn:pp.trayWidthIn,status:pp.status});objectRoot.add(obj)}else if(item.factoryType==='label')obj=addAsset('label',{annotationText:item.annotationText||'Label',locked:item.locked,professional:item.professional});else obj=addAsset(item.factoryType,{locked:item.locked,professional:item.professional});if(!obj)return;obj.userData.factoryType=item.factoryType;applyTransform(obj,item);if(obj.userData.factoryType==='mewp'&&(item.liftHeightFt||item.liftHeight)){let hFt=item.liftHeightFt;if(!hFt&&item.liftHeight){hFt=Number(item.liftHeight)*3.28084;obj.scale.y=1}setMewpHeight(obj,hFt);}if(obj.userData.worker)restoreWorker(obj,item.worker);maxSceneId=Math.max(maxSceneId,Number(item.sceneId)||0);loaded.push(obj)});objectCounter=Math.max(objectCounter,maxSceneId);loaded.forEach(obj=>applyAttachment(obj));if(data.camera){camera.position.fromArray(data.camera.position||[9,7,12]);camera.fov=Number(data.camera.fov)||45;camera.updateProjectionMatrix();orbit.target.fromArray(data.camera.target||[0,1.4,0]);orbit.update()}selectObject(null);restoringHistory=false;applyLayerVisibility();if(history)recordHistory(true)}
@@ -680,7 +707,7 @@ document.getElementById('analyzeSceneBtn')?.addEventListener('click',analyzeBimS
 function exportSceneSchedule(){const meta=serializeScene().metadata||{},headers=['ID','Name','Discipline','System','Type / Size','Status','Layer','X (ft)','Elevation Y (ft)','Z (ft)','Width X (ft)','Height Y (ft)','Depth Z (ft)'];const rows=[headers];for(const o of objectRoot.children){ensureProfessionalData(o,o.userData.factoryType);const z=objectSizeFeet(o);rows.push([o.userData.id,o.name,o.userData.discipline,o.userData.system,o.userData.modelType,o.userData.status,o.userData.layer,worldToFeet(o.position.x).toFixed(2),worldToFeet(o.position.y).toFixed(2),worldToFeet(o.position.z).toFixed(2),z.x.toFixed(2),z.y.toFixed(2),z.z.toFixed(2)])}const esc=v=>'"'+String(v??'').replaceAll('"','""')+'"';const pre=[['Project',meta.project||''],['Location',meta.location||''],['Figure',meta.figureTitle||''],[]];const csv=[...pre,...rows].map(r=>r.map(esc).join(',')).join('\r\n');const blob=new Blob([csv],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`CDI-Scene-Schedule-${new Date().toISOString().slice(0,10)}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
 document.getElementById('exportScheduleBtn')?.addEventListener('click',exportSceneSchedule);
 ;['proProjectName','proSceneLocation','proFigureTitle','proSceneNotes'].forEach(id=>document.getElementById(id)?.addEventListener('change',()=>recordHistory()));
-function exportProfessionalPng(){transform.detach();selectObject(null);renderer.render(scene,camera);const source=renderer.domElement,title=document.getElementById('proFigureTitle')?.value||'Incident Scene Reconstruction',project=document.getElementById('proProjectName')?.value||'CDI Project',loc=document.getElementById('proSceneLocation')?.value||'',c=document.createElement('canvas'),tb=96;c.width=source.width;c.height=source.height+tb;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(source,0,0);x.fillStyle='#073b63';x.fillRect(0,source.height,c.width,tb);x.fillStyle='#fff';x.font='700 22px Arial';x.fillText(title,20,source.height+31);x.font='14px Arial';x.fillText(project+(loc?' · '+loc:''),20,source.height+57);x.fillText('CDI Incident Scene Builder v23 · '+document.getElementById('viewBadge').textContent+' · '+new Date().toLocaleDateString(),20,source.height+80);const a=document.createElement('a');a.download=`CDI-${title.replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'')||'Scene'}-${new Date().toISOString().slice(0,10)}.png`;a.href=c.toDataURL('image/png');a.click()}
+function exportProfessionalPng(){transform.detach();selectObject(null);renderer.render(scene,camera);const source=renderer.domElement,title=document.getElementById('proFigureTitle')?.value||'Incident Scene Reconstruction',project=document.getElementById('proProjectName')?.value||'CDI Project',loc=document.getElementById('proSceneLocation')?.value||'',c=document.createElement('canvas'),tb=96;c.width=source.width;c.height=source.height+tb;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(source,0,0);x.fillStyle='#073b63';x.fillRect(0,source.height,c.width,tb);x.fillStyle='#fff';x.font='700 22px Arial';x.fillText(title,20,source.height+31);x.font='14px Arial';x.fillText(project+(loc?' · '+loc:''),20,source.height+57);x.fillText('CDI Incident Scene Builder v24 · '+document.getElementById('viewBadge').textContent+' · '+new Date().toLocaleDateString(),20,source.height+80);const a=document.createElement('a');a.download=`CDI-${title.replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'')||'Scene'}-${new Date().toISOString().slice(0,10)}.png`;a.href=c.toDataURL('image/png');a.click()}
 document.getElementById('saveSceneBtn').addEventListener('click',saveSceneFile);
 document.getElementById('loadSceneBtn').addEventListener('click',()=>document.getElementById('loadSceneInput').click());
 document.getElementById('loadSceneInput').addEventListener('change',e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{loadSceneData(JSON.parse(r.result));}catch(err){alert('Could not load this scene file.')}};r.readAsText(f);e.target.value=''});
