@@ -69,10 +69,26 @@ body{min-height:100vh}.topbar{background:#fff;border-bottom:1px solid var(--line
 .pro-box{border:1px solid #b8d7e7;background:#f7fbfd;border-radius:10px;padding:10px;margin:10px 0}.pro-title{font-size:11px;font-weight:900;color:#557187;letter-spacing:.07em;margin:0 0 8px}.pro-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.pro-grid.three{grid-template-columns:repeat(3,1fr)}.pro-grid .btn{width:100%;min-height:38px;padding:0 6px;font-size:11px}.pro-field{margin:7px 0}.pro-field label{display:block;font-size:10px;font-weight:800;color:#63778a;margin-bottom:4px}.pro-field input,.pro-field select,.pro-select{width:100%;min-height:38px;border:1px solid #cbd7e0;border-radius:8px;background:#fff;color:var(--text);padding:0 8px;font-size:14px}.pro-field textarea{width:100%;min-height:62px;border:1px solid #cbd7e0;border-radius:8px;background:#fff;color:var(--text);padding:8px;font:inherit;resize:vertical}.pro-check{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;font-weight:750;color:#526679;margin:7px 0}.pro-check input{width:20px;height:20px}.pro-note{font-size:10px;line-height:1.4;color:var(--muted);margin-top:6px}.pro-output{font-size:11px;line-height:1.42;margin-top:7px}.pro-result{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:6px}.pro-result strong{display:block;color:var(--navy);margin-bottom:3px}.pro-result.warn{border-left:4px solid #d49b26}.pro-result.high{border-left:4px solid #b42318}.pro-result.ok{border-left:4px solid #2c7a52}.pro-readout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin:7px 0}.pro-readout div{border:1px solid #dbe4eb;background:#fff;border-radius:7px;padding:6px}.pro-readout span{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.04em}.pro-readout b{display:block;color:var(--navy);font-size:11px;margin-top:2px;overflow-wrap:anywhere}.layer-list{display:grid;grid-template-columns:1fr 1fr;gap:5px}.layer-list label{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:#526679}.layer-list input{width:17px;height:17px}.pro-active{background:#e8f6fc!important;border-color:#5bb9df!important;color:#064f7b!important}.tool-active{background:#fff6dc!important;border-color:#d59a20!important;color:#6a4a00!important}.view-badge{display:inline-flex;align-items:center;background:#eef6fb;color:#07577f;border:1px solid #c7e0ed;border-radius:999px;padding:3px 8px;font-size:10px;font-weight:800;margin-left:7px}.coordinate-strip{position:absolute;right:12px;bottom:12px;background:rgba(255,255,255,.93);border:1px solid rgba(100,120,140,.25);color:#304457;border-radius:8px;padding:6px 8px;font-size:10px;pointer-events:none;z-index:4}.measurement-label{font-weight:800}.asset-btn[data-add="lineOfFire"],.asset-btn[data-add="exclusionZone"],.asset-btn[data-add="crushZone"],.asset-btn[data-add="dropZone"]{background:#fff9f5}.asset-btn[data-add="iBeam"],.asset-btn[data-add="cableTray"],.asset-btn[data-add="conduit"],.asset-btn[data-add="steelColumn"],.asset-btn[data-add="junctionBox"]{background:#f4fbfe}.object-properties-hidden{display:none}.pro-divider{height:1px;background:var(--line);margin:9px 0}.pro-inline{display:flex;gap:6px;align-items:end}.pro-inline>*{min-width:0;flex:1}.pro-inline .btn{flex:0 0 auto;min-width:76px}.route-active{background:#fff7df!important;border-color:#e2aa32!important;color:#6f5000!important}
 @media(max-width:720px){.pro-grid.three{grid-template-columns:1fr 1fr}.pro-readout{grid-template-columns:1fr 1fr}.coordinate-strip{right:8px;bottom:52px}.layer-list{grid-template-columns:1fr 1fr}}
 
+
+/* V23 STABILITY / PROFESSIONAL VISUAL PASS */
+.asset-btn{transition:border-color .08s linear,background-color .08s linear;transform:none!important}
+.asset-btn:active{transform:none!important}
+#viewport{background:#e7ecef}
+.tip{background:rgba(37,50,61,.90);border:1px solid rgba(255,255,255,.16);font-weight:600}
+.coordinate-strip{border-radius:5px;background:rgba(250,252,253,.96);font-variant-numeric:tabular-nums}
+.v20-toast{border-radius:5px!important;box-shadow:none!important}
+.quality-badge{border:1px solid #c9d9e3;background:#f4f8fa;color:#45677d}
+.asset-btn span{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700}
+.asset-btn[data-add="worker"] span,.asset-btn[data-add="workerKneel"] span{font-size:0}
+.asset-btn[data-add="worker"] span::after,.asset-btn[data-add="workerKneel"] span::after{content:"P";font-size:18px;color:#526679}
+.asset-btn[data-add="lineOfFire"] span,.asset-btn[data-add="exclusionZone"] span,.asset-btn[data-add="crushZone"] span,.asset-btn[data-add="dropZone"] span{font-size:0}
+.asset-btn[data-add="lineOfFire"] span::after{content:"LOF";font-size:11px}.asset-btn[data-add="exclusionZone"] span::after{content:"EX";font-size:11px}.asset-btn[data-add="crushZone"] span::after{content:"CP";font-size:11px}.asset-btn[data-add="dropZone"] span::after{content:"DZ";font-size:11px}
+.fine-pose{display:none!important}
+
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topbar-inner"><div class="brand"><a href="index.html" aria-label="Back to CDI Field Safety Management Tool"><img src="assets/cdi-logo.jpg" alt="CDI Technology Services logo"></a><div class="brand-copy"><b>Incident Scene Builder</b><span>CDI Technology Services · Version 22 · Professional Construction Scene Planner</span></div></div><div class="top-actions"><a class="btn secondary" href="index.html">← Safety Tool</a><button id="saveSceneBtn" class="btn secondary" type="button">Save Scene</button><button id="loadSceneBtn" class="btn secondary" type="button">Load Scene</button><input id="loadSceneInput" class="file-input" type="file" accept="application/json,.json"><button id="exportScheduleBtn" class="btn secondary" type="button">Scene Schedule</button><button id="resetBtn" class="btn danger" type="button">Reset Scene</button><button id="exportBtn" class="btn primary" type="button">Export Drawing PNG</button></div></div></header>
+<header class="topbar"><div class="topbar-inner"><div class="brand"><a href="index.html" aria-label="Back to CDI Field Safety Management Tool"><img src="assets/cdi-logo.jpg" alt="CDI Technology Services logo"></a><div class="brand-copy"><b>Incident Scene Builder</b><span>CDI Technology Services · Version 23 · Stable Professional Construction Planner</span></div></div><div class="top-actions"><a class="btn secondary" href="index.html">← Safety Tool</a><button id="saveSceneBtn" class="btn secondary" type="button">Save Scene</button><button id="loadSceneBtn" class="btn secondary" type="button">Load Scene</button><input id="loadSceneInput" class="file-input" type="file" accept="application/json,.json"><button id="exportScheduleBtn" class="btn secondary" type="button">Scene Schedule</button><button id="resetBtn" class="btn danger" type="button">Reset Scene</button><button id="exportBtn" class="btn primary" type="button">Export Drawing PNG</button></div></div></header>
 <main class="app">
 <aside class="panel left-panel"><div class="panel-title"><b>Scene Library</b><small>Add workers and objects to the canvas.</small></div><div class="panel-body"><div class="asset-search"><input id="assetSearch" type="search" placeholder="Search assets — crowbar, van, cone..."><div id="assetEmpty" class="asset-empty">No matching assets.</div></div>
 <div class="v20-favorites"><div class="section-label">QUICK ADD</div><div class="asset-grid"><button class="asset-btn" data-add="worker" type="button"><span>◉</span>Worker</button><button class="asset-btn" data-add="crowbar" type="button"><span>⌒</span>Crowbar</button><button class="asset-btn" data-add="manholeOpen" type="button"><span>◌</span>Open Manhole</button><button class="asset-btn" data-add="cone" type="button"><span>▲</span>Cone</button></div></div><div class="separator"></div><div class="section-label">PEOPLE</div><div class="asset-grid"><button class="asset-btn" data-add="worker" type="button"><span>◉</span>Worker</button><button class="asset-btn" data-add="workerKneel" type="button"><span>◒</span>Kneeling Worker</button></div>
@@ -226,20 +242,24 @@ import { TransformControls } from 'three/addons/controls/TransformControls.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
 const viewport=document.getElementById('viewport');
-const scene=new THREE.Scene();scene.background=new THREE.Color(0xdceaf3);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0xe7ecef);
 const camera=new THREE.PerspectiveCamera(45,1,.1,1000);camera.position.set(9,7,12);
-const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.setPixelRatio(Math.min(devicePixelRatio,2));viewport.prepend(renderer.domElement);
-const orbit=new OrbitControls(camera,renderer.domElement);orbit.target.set(0,1.4,0);orbit.enableDamping=true;orbit.dampingFactor=.08;orbit.minDistance=3;orbit.maxDistance=35;
-const transform=new TransformControls(camera,renderer.domElement);transform.setSize(.78);scene.add(transform);transform.addEventListener('dragging-changed',e=>{orbit.enabled=!e.value;if(!e.value&&selected){if(selected.userData.attach)captureAttachmentFromCurrent(selected);syncObjectUI();recordHistory()}});transform.addEventListener('objectChange',()=>{if(selected){if(selected.userData.attach)captureAttachmentFromCurrent(selected);syncObjectUI()}});transform.visible=false;
-const hemi=new THREE.HemisphereLight(0xffffff,0x506070,2.4);scene.add(hemi);const sun=new THREE.DirectionalLight(0xffffff,3.2);sun.position.set(7,12,8);sun.castShadow=true;scene.add(sun);
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true,powerPreference:'high-performance',stencil:false});renderer.shadowMap.enabled=false;renderer.setPixelRatio(Math.min(devicePixelRatio,(innerWidth<=1024?1.25:1.6)));renderer.outputColorSpace=THREE.SRGBColorSpace;viewport.prepend(renderer.domElement);
+const orbit=new OrbitControls(camera,renderer.domElement);orbit.target.set(0,1.4,0);orbit.enableDamping=false;orbit.minDistance=3;orbit.maxDistance=35;
+const transform=new TransformControls(camera,renderer.domElement);transform.setSize(.70);scene.add(transform);transform.addEventListener('dragging-changed',e=>{orbit.enabled=!e.value;if(!e.value&&selected){if(selected.userData.attach)captureAttachmentFromCurrent(selected);updateAttachedObjects();syncObjectUI();recordHistory();requestSceneRender()}});transform.addEventListener('objectChange',()=>{if(selected){if(selected.userData.attach)captureAttachmentFromCurrent(selected);updateAttachedObjects();syncObjectUI();requestSceneRender()}});transform.visible=false;
+const hemi=new THREE.HemisphereLight(0xffffff,0x596670,2.15);scene.add(hemi);const sun=new THREE.DirectionalLight(0xffffff,2.7);sun.position.set(7,12,8);sun.castShadow=false;scene.add(sun);
 const groundMat=new THREE.MeshStandardMaterial({color:0xc8ced3,roughness:.95});const ground=new THREE.Mesh(new THREE.PlaneGeometry(50,50),groundMat);ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
 const grid=new THREE.GridHelper(30,30,0x78909c,0xaab7c0);grid.position.y=.006;scene.add(grid);
 const envGroup=new THREE.Group();scene.add(envGroup);const objectRoot=new THREE.Group();scene.add(objectRoot);
 let selected=null,objectCounter=0,rainPoints=null;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
+let renderQueued=false;
+function updateAttachedObjects(){for(const obj of objectRoot.children){if(obj.userData?.attach)applyAttachment(obj)}}
+function requestSceneRender(){if(renderQueued)return;renderQueued=true;requestAnimationFrame(()=>{renderQueued=false;updateAttachedObjects();renderer.render(scene,camera)})}
+
 const mat=(color,rough=.65,metal=.05)=>new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal});
 const workerMat=mat(0x236b9a),darkMat=mat(0x2d3945),metalMat=mat(0x7d8b94,.4,.55),yellowMat=mat(0xf3b61f),orangeMat=mat(0xe36b23),blackMat=mat(0x252c33),coverMat=mat(0x4d555b,.9,.15);
-function mesh(geo,material){const m=new THREE.Mesh(geo,material);m.castShadow=true;m.receiveShadow=true;return m}
+function mesh(geo,material){const m=new THREE.Mesh(geo,material);m.castShadow=false;m.receiveShadow=false;return m}
 function named(group,type,label){group.userData.selectable=true;group.userData.type=type;group.userData.label=label;group.userData.id=++objectCounter;group.name=`${label} ${objectCounter}`;return group}
 function addBox(group,size,pos,material=darkMat){const m=mesh(new THREE.BoxGeometry(...size),material);m.position.set(...pos);group.add(m);return m}
 function addRoundedBox(group,size,pos,material=darkMat,radius=.08,segments=3){const geo=new RoundedBoxGeometry(size[0],size[1],size[2],segments,Math.min(radius,Math.min(...size)/2));const m=mesh(geo,material);m.position.set(...pos);group.add(m);return m}
@@ -249,68 +269,51 @@ function limb(radius,length,material=workerMat){const pivot=new THREE.Group();co
 
 function createWorker(kneel=false){
  const g=named(new THREE.Group(),'worker','Worker');g.userData.worker=true;
- const shellMat=mat(0xf1f3f5,.36,.1), shellTrim=mat(0xcfd5db,.42,.12), jointMat=mat(0x16181d,.5,.2), visorMat=mat(0x111318,.25,.35), handMat=mat(0x111318,.55,.15); g.userData.skinMaterials=[shellMat,shellTrim]; g.userData.colorName='white';
+ const shellMat=mat(0xb8c0c6,.62,.04),shellTrim=mat(0x8f9aa2,.66,.04),jointMat=mat(0x4d5962,.62,.05),visorMat=mat(0x2d3942,.35,.15),handMat=mat(0x707b82,.65,.03),vestMat=mat(0xd5a12b,.62,.02),reflectMat=mat(0xd9e0e4,.48,.08),hardhatMat=mat(0xe0b12f,.52,.04);
+ g.userData.skinMaterials=[shellMat,shellTrim];g.userData.colorName='gray';
+ const capsulePart=(parent,r,len,pos,material,segments=8)=>{const m=mesh(new THREE.CapsuleGeometry(r,len,4,segments),material);m.position.set(...pos);parent.add(m);return m};
+ const jointSphere=(parent,r,pos)=>{const m=mesh(new THREE.SphereGeometry(r,12,8),jointMat);m.position.set(...pos);parent.add(m);return m};
  const hips=new THREE.Group();hips.position.y=1.64;g.add(hips);
- addBox(hips,[.30,.54,.22],[0,-.04,0],shellTrim);
- addBox(hips,[.50,.16,.24],[0,.22,0],shellMat);
- addBox(hips,[.16,.36,.16],[0,-.26,.12],shellTrim);
- const torsoPivot=new THREE.Group();torsoPivot.position.y=.30;hips.add(torsoPivot);
- addBox(torsoPivot,[.74,.92,.34],[0,.42,0],shellMat);
- addBox(torsoPivot,[.52,.62,.18],[0,.42,.10],shellTrim);
- addBox(torsoPivot,[.30,.28,.16],[0,.98,0],shellTrim);
- const neck=new THREE.Group();neck.position.y=1.02;torsoPivot.add(neck);
- addBox(neck,[.16,.10,.16],[0,.06,0],jointMat);
- const headTilt=new THREE.Group();headTilt.position.y=.12;neck.add(headTilt);
- addBox(headTilt,[.44,.58,.34],[0,.28,0],shellMat);
- addBox(headTilt,[.30,.16,.03],[0,.24,.18],visorMat);
-  const hardhatMat=mat(0xf0b323,.38,.08),vestMat=mat(0xe7a51a,.52,.04);addCylinder(headTilt,.26,.11,[0,.62,0],hardhatMat);addRoundedBox(headTilt,[.56,.04,.40],[0,.56,.01],hardhatMat,.02,2);addRoundedBox(torsoPivot,[.60,.56,.055],[0,.43,.20],vestMat,.025,2);
+ addRoundedBox(hips,[.48,.32,.30],[0,.04,0],shellTrim,.12,3);
+ const torsoPivot=new THREE.Group();torsoPivot.position.y=.23;hips.add(torsoPivot);
+ const torso=mesh(new THREE.CylinderGeometry(.34,.28,.80,14),shellMat);torso.position.y=.42;torso.scale.z=.58;torsoPivot.add(torso);
+ // High-visibility vest as restrained front/back panels rather than a cartoon shell.
+ addRoundedBox(torsoPivot,[.48,.52,.045],[0,.43,.205],vestMat,.025,2);addRoundedBox(torsoPivot,[.48,.52,.035],[0,.43,-.205],vestMat,.025,2);
+ addBox(torsoPivot,[.48,.055,.052],[0,.34,.232],reflectMat);addBox(torsoPivot,[.48,.055,.052],[0,.52,.232],reflectMat);
+ const neck=new THREE.Group();neck.position.y=.86;torsoPivot.add(neck);addCylinder(neck,.085,.12,[0,.06,0],jointMat);
+ const headTilt=new THREE.Group();headTilt.position.y=.13;neck.add(headTilt);
+ const head=mesh(new THREE.CapsuleGeometry(.19,.16,5,12),shellTrim);head.position.y=.28;head.scale.z=.88;headTilt.add(head);
+ addRoundedBox(headTilt,[.24,.055,.035],[0,.27,.185],visorMat,.012,2);
+ const hatCrown=mesh(new THREE.SphereGeometry(.245,16,10,0,Math.PI*2,0,Math.PI/2),hardhatMat);hatCrown.position.y=.50;hatCrown.scale.z=.90;headTilt.add(hatCrown);
+ addCylinder(headTilt,.265,.045,[0,.495,0],hardhatMat);addRoundedBox(headTilt,[.36,.025,.08],[0,.49,.19],hardhatMat,.01,2);
  g.userData.joints={head:neck,headTilt,torso:torsoPivot};
  function hand(side,forePivot){
-   const wrist=new THREE.Group();wrist.position.y=-.63;forePivot.add(wrist);
-   addBox(wrist,[.12,.12,.12],[0,0,0],jointMat);
-   addBox(wrist,[.16,.18,.12],[0,-.10,0],handMat);
-   const fingers=[];
-   const xPositions=[-.07,-.022,.022,.07];
-   for(let i=0;i<4;i++){
-     const fp=new THREE.Group();fp.position.set(xPositions[i],-.16,0);wrist.add(fp);
-     addBox(fp,[.026,.13,.04],[0,-.06,0],handMat);
-     const tip=new THREE.Group();tip.position.y=-.13;fp.add(tip);
-     addBox(tip,[.024,.10,.038],[0,-.05,0],handMat);
-     fingers.push({base:fp,tip});
-   }
-   const thumb=new THREE.Group();thumb.position.set(side*.10,-.08,.02);thumb.rotation.z=side*.65;wrist.add(thumb);
-   addBox(thumb,[.036,.12,.045],[0,-.05,0],handMat);
-   return {wrist,fingers,thumb};
+   const wrist=new THREE.Group();wrist.position.y=-.59;forePivot.add(wrist);jointSphere(wrist,.07,[0,0,0]);
+   const palm=addRoundedBox(wrist,[.15,.20,.10],[0,-.11,0],handMat,.045,3);
+   const fingerBase=new THREE.Group();fingerBase.position.set(0,-.19,.01);wrist.add(fingerBase);addRoundedBox(fingerBase,[.14,.11,.085],[0,-.045,0],handMat,.025,2);
+   const fingerTip=new THREE.Group();fingerTip.position.y=-.09;fingerBase.add(fingerTip);addRoundedBox(fingerTip,[.13,.07,.078],[0,-.03,0],handMat,.022,2);
+   const fingers=Array.from({length:4},()=>({base:fingerBase,tip:fingerTip}));
+   const thumb=new THREE.Group();thumb.position.set(side*.085,-.10,.02);thumb.rotation.z=side*.55;wrist.add(thumb);addRoundedBox(thumb,[.03,.10,.04],[0,-.04,0],handMat,.012,2);
+   return {wrist,fingers,thumb,palm};
  }
  function arm(side){
-   const shoulderMount=new THREE.Group();shoulderMount.position.set(side*.48,.76,0);torsoPivot.add(shoulderMount);
-   addBox(shoulderMount,[.14,.14,.14],[0,0,0],jointMat);
-   const shoulder=new THREE.Group();shoulderMount.add(shoulder);
-   addBox(shoulder,[.22,.22,.22],[0,-.02,0],shellTrim);
-   addBox(shoulder,[.22,.58,.20],[0,-.38,0],shellMat);
-   const elbow=new THREE.Group();elbow.position.y=-.68;shoulder.add(elbow);
-   addBox(elbow,[.12,.12,.12],[0,0,0],jointMat);
-   const forePivot=new THREE.Group();elbow.add(forePivot);
-   addBox(forePivot,[.20,.56,.18],[0,-.32,0],shellTrim);
-   const h=hand(side,forePivot);
-   return {shoulder,elbow,forePivot,...h};
+   const shoulderMount=new THREE.Group();shoulderMount.position.set(side*.40,.68,0);torsoPivot.add(shoulderMount);jointSphere(shoulderMount,.12,[0,0,0]);
+   const shoulder=new THREE.Group();shoulderMount.add(shoulder);capsulePart(shoulder,.105,.43,[0,-.32,0],shellMat);
+   const elbow=new THREE.Group();elbow.position.y=-.63;shoulder.add(elbow);jointSphere(elbow,.085,[0,0,0]);
+   const forePivot=new THREE.Group();elbow.add(forePivot);capsulePart(forePivot,.09,.40,[0,-.30,0],shellTrim);
+   return {shoulder,elbow,forePivot,...hand(side,forePivot)};
  }
  const la=arm(-1),ra=arm(1);Object.assign(g.userData.joints,{leftArm:la.shoulder,rightArm:ra.shoulder,leftFore:la.elbow,rightFore:ra.elbow,leftWrist:la.wrist,rightWrist:ra.wrist,leftFingers:la.fingers,rightFingers:ra.fingers,leftThumb:la.thumb,rightThumb:ra.thumb});
  function leg(side){
-   const hipMount=new THREE.Group();hipMount.position.set(side*.22,-.18,0);hips.add(hipMount);
-   addBox(hipMount,[.13,.13,.13],[0,0,0],jointMat);
-   const hip=new THREE.Group();hipMount.add(hip);
-   addBox(hip,[.22,.78,.22],[0,-.42,0],shellMat);
-   addBox(hip,[.18,.48,.14],[0,-.34,.08],shellTrim);
-   const knee=new THREE.Group();knee.position.y=-.84;hip.add(knee);
-   addBox(knee,[.13,.13,.13],[0,0,0],jointMat);
-   const shin=new THREE.Group();knee.add(shin);
-   addBox(shin,[.20,.76,.18],[0,-.42,0],shellTrim);
-   addBox(shin,[.26,.12,.34],[0,-.84,.08],shellMat);
+   const hipMount=new THREE.Group();hipMount.position.set(side*.18,-.16,0);hips.add(hipMount);jointSphere(hipMount,.12,[0,0,0]);
+   const hip=new THREE.Group();hipMount.add(hip);capsulePart(hip,.12,.57,[0,-.405,0],shellMat);
+   const knee=new THREE.Group();knee.position.y=-.79;hip.add(knee);jointSphere(knee,.10,[0,0,0]);
+   const shin=new THREE.Group();knee.add(shin);capsulePart(shin,.105,.55,[0,-.395,0],shellTrim);
+   addRoundedBox(shin,[.25,.13,.38],[0,-.76,.08],mat(0x4a5359,.72,.03),.045,3);
    return {hip,knee};
  }
  const ll=leg(-1),rl=leg(1);Object.assign(g.userData.joints,{leftLeg:ll.hip,rightLeg:rl.hip,leftKnee:ll.knee,rightKnee:rl.knee});
- if(kneel){applyPoseToWorker(g,'kneeling')}
+ if(kneel)applyPoseToWorker(g,'kneeling');
  g.traverse(o=>{if(o.isMesh)o.userData.owner=g});return g
 }
 function workerColorHex(name){return {white:0xf6f7f8,gray:0xbfc5cb,blue:0x6f94d6,orange:0xe39a52,red:0xd46d6d,green:0x6db392,purple:0x9a7bd4,black:0x44484d}[name]||0xf6f7f8}
@@ -321,21 +324,21 @@ function setFingerCurl(worker,side,index,pct){const f=worker?.userData?.joints?.
 function setThumbCurl(worker,side,pct){const t=worker?.userData?.joints?.[side+'Thumb'];if(!t)return;t.rotation.x=THREE.MathUtils.degToRad(65*(pct/100));worker.userData[side+'ThumbCurl']=pct}
 function applyPoseToWorker(worker,preset){if(!worker?.userData?.worker)return;const j=worker.userData.joints;Object.values(j).forEach(v=>{if(v?.rotation&&!(Array.isArray(v)))v.rotation.set(0,0,0)});worker.position.y=0;setHandGrip(worker,'left',0);setHandGrip(worker,'right',0);
  const d=THREE.MathUtils.degToRad;
- if(preset==='reaching'){j.leftArm.rotation.x=d(-78);j.leftArm.rotation.z=d(-22);j.leftFore.rotation.z=d(-20);j.torso.rotation.x=d(-8);j.head.rotation.y=d(-18)}
- if(preset==='lifting'){j.torso.rotation.x=d(32);j.leftArm.rotation.x=d(-42);j.rightArm.rotation.x=d(-42);j.leftArm.rotation.z=d(-18);j.rightArm.rotation.z=d(18);j.leftFore.rotation.z=d(-85);j.rightFore.rotation.z=d(85);j.leftLeg.rotation.x=d(-18);j.rightLeg.rotation.x=d(-18);j.leftKnee.rotation.x=d(35);j.rightKnee.rotation.x=d(35);setHandGrip(worker,'left',70);setHandGrip(worker,'right',70)}
+ if(preset==='reaching'){j.leftArm.rotation.x=d(-66);j.leftArm.rotation.z=d(-10);j.leftFore.rotation.z=d(-16);j.torso.rotation.x=d(-5);j.head.rotation.y=d(-12)}
+ if(preset==='lifting'){j.torso.rotation.x=d(20);j.leftArm.rotation.x=d(-38);j.rightArm.rotation.x=d(-38);j.leftArm.rotation.z=d(-12);j.rightArm.rotation.z=d(12);j.leftFore.rotation.z=d(-72);j.rightFore.rotation.z=d(72);j.leftLeg.rotation.x=d(-12);j.rightLeg.rotation.x=d(-12);j.leftKnee.rotation.x=d(28);j.rightKnee.rotation.x=d(28);setHandGrip(worker,'left',70);setHandGrip(worker,'right',70)}
  if(preset==='kneeling'){j.leftLeg.rotation.x=d(-45);j.leftKnee.rotation.x=d(115);j.rightLeg.rotation.x=d(12);j.rightKnee.rotation.x=d(90);worker.position.y=.18}
  if(preset==='crouching'){j.torso.rotation.x=d(18);j.leftLeg.rotation.x=d(-25);j.rightLeg.rotation.x=d(-25);j.leftKnee.rotation.x=d(70);j.rightKnee.rotation.x=d(70);worker.position.y=.05}
  if(preset==='walking'){j.leftLeg.rotation.x=d(-28);j.rightLeg.rotation.x=d(28);j.leftArm.rotation.x=d(18);j.rightArm.rotation.x=d(-18);j.leftArm.rotation.z=d(18);j.rightArm.rotation.z=d(-18);j.leftKnee.rotation.x=d(20);j.rightKnee.rotation.x=d(5)}
  if(preset==='pointing'){j.rightArm.rotation.x=d(-88);j.rightFore.rotation.z=d(5);j.leftArm.rotation.z=d(15);j.head.rotation.y=d(18);setFingerCurl(worker,'right',1,0);setFingerCurl(worker,'right',2,0);setFingerCurl(worker,'right',0,65);setFingerCurl(worker,'right',3,65);setThumbCurl(worker,'right',25)}
- if(preset==='pushing'){j.torso.rotation.x=d(16);j.leftArm.rotation.x=d(-70);j.rightArm.rotation.x=d(-70);j.leftFore.rotation.z=d(-15);j.rightFore.rotation.z=d(15);j.leftLeg.rotation.x=d(-12);j.rightLeg.rotation.x=d(-12);setHandGrip(worker,'left',45);setHandGrip(worker,'right',45)}
- if(preset==='pulling'){j.torso.rotation.x=d(-10);j.leftArm.rotation.x=d(-45);j.rightArm.rotation.x=d(-45);j.leftFore.rotation.z=d(-98);j.rightFore.rotation.z=d(98);j.leftLeg.rotation.x=d(10);j.rightLeg.rotation.x=d(10);setHandGrip(worker,'left',80);setHandGrip(worker,'right',80)}
+ if(preset==='pushing'){j.torso.rotation.x=d(10);j.leftArm.rotation.x=d(-58);j.rightArm.rotation.x=d(-58);j.leftFore.rotation.z=d(-12);j.rightFore.rotation.z=d(12);j.leftLeg.rotation.x=d(-8);j.rightLeg.rotation.x=d(-8);setHandGrip(worker,'left',45);setHandGrip(worker,'right',45)}
+ if(preset==='pulling'){j.torso.rotation.x=d(-6);j.leftArm.rotation.x=d(-40);j.rightArm.rotation.x=d(-40);j.leftFore.rotation.z=d(-82);j.rightFore.rotation.z=d(82);j.leftLeg.rotation.x=d(7);j.rightLeg.rotation.x=d(7);setHandGrip(worker,'left',80);setHandGrip(worker,'right',80)}
  if(preset==='carrying'){j.leftArm.rotation.x=d(-28);j.rightArm.rotation.x=d(-28);j.leftFore.rotation.z=d(-92);j.rightFore.rotation.z=d(92);j.leftLeg.rotation.x=d(-10);j.rightLeg.rotation.x=d(12);j.leftKnee.rotation.x=d(8);j.rightKnee.rotation.x=d(12);setHandGrip(worker,'left',75);setHandGrip(worker,'right',75)}
  if(preset==='spotting'){j.leftArm.rotation.x=d(-80);j.leftArm.rotation.z=d(-15);j.rightArm.rotation.x=d(-35);j.rightFore.rotation.z=d(55);j.head.rotation.y=d(-10);setHandGrip(worker,'right',35)}
  if(preset==='radio'){j.rightArm.rotation.x=d(-18);j.rightFore.rotation.z=d(108);j.leftArm.rotation.z=d(12);j.head.rotation.y=d(12);setHandGrip(worker,'right',28)}
- if(preset==='overhead'){j.leftArm.rotation.x=d(-155);j.rightArm.rotation.x=d(-155);j.leftArm.rotation.z=d(-10);j.rightArm.rotation.z=d(10);j.leftFore.rotation.z=d(-15);j.rightFore.rotation.z=d(15);j.headTilt.rotation.z=d(-8);setHandGrip(worker,'left',35);setHandGrip(worker,'right',35)}
- if(preset==='bending'){j.torso.rotation.x=d(52);j.leftLeg.rotation.x=d(-12);j.rightLeg.rotation.x=d(-12);j.leftKnee.rotation.x=d(22);j.rightKnee.rotation.x=d(22);j.leftArm.rotation.x=d(-38);j.rightArm.rotation.x=d(-38)}
+ if(preset==='overhead'){j.leftArm.rotation.x=d(-136);j.rightArm.rotation.x=d(-136);j.leftArm.rotation.z=d(-7);j.rightArm.rotation.z=d(7);j.leftFore.rotation.z=d(-12);j.rightFore.rotation.z=d(12);j.headTilt.rotation.z=d(-5);setHandGrip(worker,'left',35);setHandGrip(worker,'right',35)}
+ if(preset==='bending'){j.torso.rotation.x=d(36);j.leftLeg.rotation.x=d(-10);j.rightLeg.rotation.x=d(-10);j.leftKnee.rotation.x=d(18);j.rightKnee.rotation.x=d(18);j.leftArm.rotation.x=d(-30);j.rightArm.rotation.x=d(-30)}
  if(preset==='fallen'){j.torso.rotation.z=d(82);j.leftArm.rotation.z=d(-38);j.rightArm.rotation.z=d(28);j.leftLeg.rotation.x=d(-20);j.rightLeg.rotation.x=d(30);j.leftKnee.rotation.x=d(35);j.rightKnee.rotation.x=d(18);worker.position.y=.28}
- if(preset==='handsup'){j.leftArm.rotation.x=d(-145);j.rightArm.rotation.x=d(-145);j.leftArm.rotation.z=d(-18);j.rightArm.rotation.z=d(18);j.leftFore.rotation.z=d(-22);j.rightFore.rotation.z=d(22);setHandGrip(worker,'left',0);setHandGrip(worker,'right',0)}
+ if(preset==='handsup'){j.leftArm.rotation.x=d(-122);j.rightArm.rotation.x=d(-122);j.leftArm.rotation.z=d(-12);j.rightArm.rotation.z=d(12);j.leftFore.rotation.z=d(-18);j.rightFore.rotation.z=d(18);setHandGrip(worker,'left',0);setHandGrip(worker,'right',0)}
  syncPoseUI()
 }
 function createPalletJack(){const g=named(new THREE.Group(),'equipment','Pallet Jack');addBox(g,[.38,.12,2.4],[-.32,.16,.65],yellowMat);addBox(g,[.38,.12,2.4],[.32,.16,.65],yellowMat);addBox(g,[.85,.45,.55],[0,.37,-.72],yellowMat);addCylinder(g,.09,.9,[0,1.0,-.92],metalMat,[0,0,.35]);return g}
@@ -496,7 +499,7 @@ function selectObject(obj){
  const meta=document.getElementById('objectMeta'), ann=document.getElementById('annotationEditor');
  if(selected){document.getElementById('selectedName').textContent=selected.name;document.getElementById('selectedType').textContent=selected.userData.worker?'Poseable worker · use the controls below':(selected.userData.label||'Scene object')+' · use the controls below';document.getElementById('objectActions').style.display='block';meta.style.display='block';document.getElementById('objectNameInput').value=selected.name;document.getElementById('objectLockToggle').checked=!!selected.userData.locked;ann.classList.toggle('visible',selected.userData.type==='annotation');if(selected.userData.type==='annotation')document.getElementById('annotationTextInput').value=selected.userData.annotationText||''}
  else{document.getElementById('selectedName').textContent='Nothing selected';document.getElementById('selectedType').textContent='Tap an object in the scene, then use the controls below.';document.getElementById('objectActions').style.display='none';meta.style.display='none';ann.classList.remove('visible')}
- document.getElementById('poseControls').classList.toggle('visible',!!selected?.userData?.worker);document.getElementById('workerEmpty').style.display=selected?.userData?.worker?'none':'block';document.getElementById('workerTabBtn').disabled=!selected?.userData?.worker;if(selected?.userData?.worker){document.getElementById('workerColorSelect').value=selected.userData.colorName||'white';showControlTab('worker')}else if(selected){showControlTab('object')}syncObjectUI();syncPoseUI();updateAttachUI()
+ document.getElementById('poseControls').classList.toggle('visible',!!selected?.userData?.worker);document.getElementById('workerEmpty').style.display=selected?.userData?.worker?'none':'block';document.getElementById('workerTabBtn').disabled=!selected?.userData?.worker;if(selected?.userData?.worker){document.getElementById('workerColorSelect').value=selected.userData.colorName||'gray';showControlTab('worker')}else if(selected){showControlTab('object')}syncObjectUI();syncPoseUI();updateAttachUI();requestSceneRender()
 }
 renderer.domElement.addEventListener('pointerdown',e=>{if(transform.dragging)return;const r=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-((e.clientY-r.top)/r.height)*2+1;raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(objectRoot.children,true);const hit=hits.length?rootSelectable(hits[0].object):null;if(simpleAttachSource){if(hit&&hit!==simpleAttachSource){simpleAttachTarget=hit;showSimpleAttachChoices(hit);return}showSimpleToast('Tap the worker or object you want to attach to.');return}if(hit)selectObject(hit);else selectObject(null)});
 
@@ -597,11 +600,7 @@ function applyConditions(kind){
   case'late':scene.background=new THREE.Color(0xe8b18b);sun.color.set(0xffa45c);sun.intensity=2;break;
   case'night':scene.background=new THREE.Color(0x101b29);hemi.intensity=.7;sun.intensity=.6;break;
   case'cloudy':scene.background=new THREE.Color(0x9eabb4);hemi.intensity=1.8;sun.intensity=1.2;scene.fog=new THREE.Fog(0x9eabb4,18,42);break;
-  case'rain':
-   scene.background=new THREE.Color(0x7e8d99);hemi.intensity=1.5;sun.intensity=.9;scene.fog=new THREE.Fog(0x7e8d99,16,38);
-   const pts=[];for(let i=0;i<700;i++)pts.push((Math.random()-.5)*24,Math.random()*12,(Math.random()-.5)*24);
-   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pts,3));
-   rainPoints=new THREE.Points(geo,new THREE.PointsMaterial({color:0xb9d8ec,size:.035,transparent:true,opacity:.75}));scene.add(rainPoints);break;
+  case'rain':scene.background=new THREE.Color(0x87939c);hemi.intensity=1.55;sun.intensity=.95;groundMat.color.set(0x858e94);scene.fog=new THREE.Fog(0x87939c,18,42);break;
   case'wind':scene.background=new THREE.Color(0xb7c5cf);sun.intensity=1.6;scene.fog=new THREE.Fog(0xb7c5cf,22,48);break;
   case'cold':scene.background=new THREE.Color(0xe5eef5);groundMat.color.set(0xe1e7ea);sun.color.set(0xd8ecff);sun.intensity=1.7;break;
   default:scene.background=new THREE.Color(0xdceaf3)
@@ -681,7 +680,7 @@ document.getElementById('analyzeSceneBtn')?.addEventListener('click',analyzeBimS
 function exportSceneSchedule(){const meta=serializeScene().metadata||{},headers=['ID','Name','Discipline','System','Type / Size','Status','Layer','X (ft)','Elevation Y (ft)','Z (ft)','Width X (ft)','Height Y (ft)','Depth Z (ft)'];const rows=[headers];for(const o of objectRoot.children){ensureProfessionalData(o,o.userData.factoryType);const z=objectSizeFeet(o);rows.push([o.userData.id,o.name,o.userData.discipline,o.userData.system,o.userData.modelType,o.userData.status,o.userData.layer,worldToFeet(o.position.x).toFixed(2),worldToFeet(o.position.y).toFixed(2),worldToFeet(o.position.z).toFixed(2),z.x.toFixed(2),z.y.toFixed(2),z.z.toFixed(2)])}const esc=v=>'"'+String(v??'').replaceAll('"','""')+'"';const pre=[['Project',meta.project||''],['Location',meta.location||''],['Figure',meta.figureTitle||''],[]];const csv=[...pre,...rows].map(r=>r.map(esc).join(',')).join('\r\n');const blob=new Blob([csv],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`CDI-Scene-Schedule-${new Date().toISOString().slice(0,10)}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
 document.getElementById('exportScheduleBtn')?.addEventListener('click',exportSceneSchedule);
 ;['proProjectName','proSceneLocation','proFigureTitle','proSceneNotes'].forEach(id=>document.getElementById(id)?.addEventListener('change',()=>recordHistory()));
-function exportProfessionalPng(){transform.detach();selectObject(null);renderer.render(scene,camera);const source=renderer.domElement,title=document.getElementById('proFigureTitle')?.value||'Incident Scene Reconstruction',project=document.getElementById('proProjectName')?.value||'CDI Project',loc=document.getElementById('proSceneLocation')?.value||'',c=document.createElement('canvas'),tb=96;c.width=source.width;c.height=source.height+tb;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(source,0,0);x.fillStyle='#073b63';x.fillRect(0,source.height,c.width,tb);x.fillStyle='#fff';x.font='700 22px Arial';x.fillText(title,20,source.height+31);x.font='14px Arial';x.fillText(project+(loc?' · '+loc:''),20,source.height+57);x.fillText('CDI Incident Scene Builder v22 · '+document.getElementById('viewBadge').textContent+' · '+new Date().toLocaleDateString(),20,source.height+80);const a=document.createElement('a');a.download=`CDI-${title.replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'')||'Scene'}-${new Date().toISOString().slice(0,10)}.png`;a.href=c.toDataURL('image/png');a.click()}
+function exportProfessionalPng(){transform.detach();selectObject(null);renderer.render(scene,camera);const source=renderer.domElement,title=document.getElementById('proFigureTitle')?.value||'Incident Scene Reconstruction',project=document.getElementById('proProjectName')?.value||'CDI Project',loc=document.getElementById('proSceneLocation')?.value||'',c=document.createElement('canvas'),tb=96;c.width=source.width;c.height=source.height+tb;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(source,0,0);x.fillStyle='#073b63';x.fillRect(0,source.height,c.width,tb);x.fillStyle='#fff';x.font='700 22px Arial';x.fillText(title,20,source.height+31);x.font='14px Arial';x.fillText(project+(loc?' · '+loc:''),20,source.height+57);x.fillText('CDI Incident Scene Builder v23 · '+document.getElementById('viewBadge').textContent+' · '+new Date().toLocaleDateString(),20,source.height+80);const a=document.createElement('a');a.download=`CDI-${title.replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'')||'Scene'}-${new Date().toISOString().slice(0,10)}.png`;a.href=c.toDataURL('image/png');a.click()}
 document.getElementById('saveSceneBtn').addEventListener('click',saveSceneFile);
 document.getElementById('loadSceneBtn').addEventListener('click',()=>document.getElementById('loadSceneInput').click());
 document.getElementById('loadSceneInput').addEventListener('change',e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{loadSceneData(JSON.parse(r.result));}catch(err){alert('Could not load this scene file.')}};r.readAsText(f);e.target.value=''});
@@ -698,10 +697,16 @@ document.getElementById('updateAnnotationBtn').addEventListener('click',()=>{if(
 document.getElementById('resetBtn').addEventListener('click',()=>{if(!confirm('Clear all modeled objects from this scene?'))return;transform.detach();objectRoot.clear();selectObject(null);buildEnvironment(document.getElementById('scenePreset').value);recordHistory(true)});
 document.getElementById('exportBtn').addEventListener('click',exportProfessionalPng);
 
-function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
-new ResizeObserver(resize).observe(viewport);resize();
-function animate(){requestAnimationFrame(animate);orbit.update();for(let i=0;i<2;i++)objectRoot.children.forEach(obj=>applyAttachment(obj));if(rainPoints){rainPoints.position.y-=.07;if(rainPoints.position.y<-5)rainPoints.position.y=5}renderer.render(scene,camera)}
-buildEnvironment('blank');addAsset('worker');updateAttachUI();initSimpleUI();applyLayerVisibility();syncProfessionalSelection();recordHistory(true);animate();
+function resize(){const w=Math.max(1,viewport.clientWidth),h=Math.max(1,viewport.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();requestSceneRender()}
+new ResizeObserver(resize).observe(viewport);
+orbit.addEventListener('change',requestSceneRender);
+transform.addEventListener('change',requestSceneRender);
+renderer.domElement.addEventListener('pointerup',requestSceneRender);
+document.addEventListener('input',()=>requestSceneRender(),true);
+document.addEventListener('change',()=>requestSceneRender(),true);
+document.addEventListener('click',()=>setTimeout(requestSceneRender,0),true);
+resize();
+buildEnvironment('blank');addAsset('worker');updateAttachUI();initSimpleUI();applyLayerVisibility();syncProfessionalSelection();recordHistory(true);requestSceneRender();
 </script>
 </body>
 </html>
