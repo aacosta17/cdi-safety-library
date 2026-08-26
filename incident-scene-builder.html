@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CDI Incident Scene Builder · v24 Mannequin Professional</title>
+<title>CDI Incident Scene Builder · v22 Professional</title>
 <link rel="icon" href="assets/cdi-logo.jpg">
 <style>
 :root{--navy:#073b63;--blue:#0b5f9e;--cyan:#16a8d8;--bg:#eef3f7;--card:#fff;--text:#152331;--muted:#647485;--line:#d7e0e8;--danger:#b42318}
@@ -67,30 +67,20 @@ body{min-height:100vh}.topbar{background:#fff;border-bottom:1px solid var(--line
 
 /* V22 PROFESSIONAL CONSTRUCTION / VDC PASS */
 .pro-box{border:1px solid #b8d7e7;background:#f7fbfd;border-radius:10px;padding:10px;margin:10px 0}.pro-title{font-size:11px;font-weight:900;color:#557187;letter-spacing:.07em;margin:0 0 8px}.pro-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.pro-grid.three{grid-template-columns:repeat(3,1fr)}.pro-grid .btn{width:100%;min-height:38px;padding:0 6px;font-size:11px}.pro-field{margin:7px 0}.pro-field label{display:block;font-size:10px;font-weight:800;color:#63778a;margin-bottom:4px}.pro-field input,.pro-field select,.pro-select{width:100%;min-height:38px;border:1px solid #cbd7e0;border-radius:8px;background:#fff;color:var(--text);padding:0 8px;font-size:14px}.pro-field textarea{width:100%;min-height:62px;border:1px solid #cbd7e0;border-radius:8px;background:#fff;color:var(--text);padding:8px;font:inherit;resize:vertical}.pro-check{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;font-weight:750;color:#526679;margin:7px 0}.pro-check input{width:20px;height:20px}.pro-note{font-size:10px;line-height:1.4;color:var(--muted);margin-top:6px}.pro-output{font-size:11px;line-height:1.42;margin-top:7px}.pro-result{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:6px}.pro-result strong{display:block;color:var(--navy);margin-bottom:3px}.pro-result.warn{border-left:4px solid #d49b26}.pro-result.high{border-left:4px solid #b42318}.pro-result.ok{border-left:4px solid #2c7a52}.pro-readout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin:7px 0}.pro-readout div{border:1px solid #dbe4eb;background:#fff;border-radius:7px;padding:6px}.pro-readout span{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.04em}.pro-readout b{display:block;color:var(--navy);font-size:11px;margin-top:2px;overflow-wrap:anywhere}.layer-list{display:grid;grid-template-columns:1fr 1fr;gap:5px}.layer-list label{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:#526679}.layer-list input{width:17px;height:17px}.pro-active{background:#e8f6fc!important;border-color:#5bb9df!important;color:#064f7b!important}.tool-active{background:#fff6dc!important;border-color:#d59a20!important;color:#6a4a00!important}.view-badge{display:inline-flex;align-items:center;background:#eef6fb;color:#07577f;border:1px solid #c7e0ed;border-radius:999px;padding:3px 8px;font-size:10px;font-weight:800;margin-left:7px}.coordinate-strip{position:absolute;right:12px;bottom:12px;background:rgba(255,255,255,.93);border:1px solid rgba(100,120,140,.25);color:#304457;border-radius:8px;padding:6px 8px;font-size:10px;pointer-events:none;z-index:4}.measurement-label{font-weight:800}.asset-btn[data-add="lineOfFire"],.asset-btn[data-add="exclusionZone"],.asset-btn[data-add="crushZone"],.asset-btn[data-add="dropZone"]{background:#fff9f5}.asset-btn[data-add="iBeam"],.asset-btn[data-add="cableTray"],.asset-btn[data-add="conduit"],.asset-btn[data-add="steelColumn"],.asset-btn[data-add="junctionBox"]{background:#f4fbfe}.object-properties-hidden{display:none}.pro-divider{height:1px;background:var(--line);margin:9px 0}.pro-inline{display:flex;gap:6px;align-items:end}.pro-inline>*{min-width:0;flex:1}.pro-inline .btn{flex:0 0 auto;min-width:76px}.route-active{background:#fff7df!important;border-color:#e2aa32!important;color:#6f5000!important}
+.pro-tools-disclosure{margin:12px 0;border:1px solid #b8d7e7;border-radius:11px;background:#f7fbfd}.pro-tools-disclosure>summary{list-style:none;cursor:pointer;padding:12px 13px;font-size:12px;font-weight:900;color:var(--navy);display:flex;justify-content:space-between;align-items:center;gap:10px}.pro-tools-disclosure>summary::-webkit-details-marker{display:none}.pro-tools-disclosure>summary:after{content:'Open';font-size:10px;color:#0b5f9e;border:1px solid #9fcce2;background:#fff;border-radius:999px;padding:4px 8px}.pro-tools-disclosure[open]>summary:after{content:'Close'}.pro-tools-content{padding:0 10px 10px}.webgl-fallback{display:none;position:absolute;inset:18px;z-index:8;align-items:center;justify-content:center;text-align:left}.webgl-fallback-card{max-width:560px;background:#fff;border:1px solid #b8cad7;border-left:5px solid var(--cyan);border-radius:12px;padding:20px;box-shadow:0 12px 32px rgba(7,59,99,.12)}.webgl-fallback-card h2{font-size:18px;color:var(--navy);margin:0 0 7px}.webgl-fallback-card p{font-size:13px;line-height:1.55;color:#526679;margin:0 0 9px}.webgl-fallback-card ul{padding-left:18px;margin:8px 0 0;color:#526679;font-size:12px;line-height:1.55}.webgl-unavailable .webgl-fallback{display:flex}.webgl-unavailable #runtimeError{display:none!important}.webgl-unavailable .canvas-toolbar .mode-row,.webgl-unavailable .left-panel .asset-btn,.webgl-unavailable .right-panel button,.webgl-unavailable .right-panel input,.webgl-unavailable .right-panel select{pointer-events:none;opacity:.48}
 @media(max-width:720px){.pro-grid.three{grid-template-columns:1fr 1fr}.pro-readout{grid-template-columns:1fr 1fr}.coordinate-strip{right:8px;bottom:52px}.layer-list{grid-template-columns:1fr 1fr}}
 
-
-/* V23 STABILITY / PROFESSIONAL VISUAL PASS */
-.asset-btn{transition:border-color .08s linear,background-color .08s linear;transform:none!important}
-.asset-btn:active{transform:none!important}
-#viewport{background:#e7ecef}
-.tip{background:rgba(37,50,61,.90);border:1px solid rgba(255,255,255,.16);font-weight:600}
-.coordinate-strip{border-radius:5px;background:rgba(250,252,253,.96);font-variant-numeric:tabular-nums}
-.v20-toast{border-radius:5px!important;box-shadow:none!important}
-.quality-badge{border:1px solid #c9d9e3;background:#f4f8fa;color:#45677d}
-.asset-btn span{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:700}
-.asset-btn[data-add="worker"] span,.asset-btn[data-add="workerKneel"] span{font-size:0}
-.asset-btn[data-add="worker"] span::after,.asset-btn[data-add="workerKneel"] span::after{content:"P";font-size:18px;color:#526679}
-.asset-btn[data-add="lineOfFire"] span,.asset-btn[data-add="exclusionZone"] span,.asset-btn[data-add="crushZone"] span,.asset-btn[data-add="dropZone"] span{font-size:0}
-.asset-btn[data-add="lineOfFire"] span::after{content:"LOF";font-size:11px}.asset-btn[data-add="exclusionZone"] span::after{content:"EX";font-size:11px}.asset-btn[data-add="crushZone"] span::after{content:"CP";font-size:11px}.asset-btn[data-add="dropZone"] span::after{content:"DZ";font-size:11px}
-.fine-pose{display:none!important}
-
+/* V22 professional shell refinement */
+.topbar{border-bottom-color:#cbd8e2;box-shadow:0 3px 14px rgba(7,59,99,.06)}.topbar-inner{gap:18px;padding:9px 16px}.top-actions{align-items:center;justify-content:flex-end}.top-action-group{display:flex;align-items:center;gap:6px;padding:4px;border:1px solid #d8e2e9;background:#f7fafc;border-radius:11px}.top-action-group .btn{min-height:38px;padding:0 11px;font-size:12px}.top-actions .back-link{border-color:transparent;background:transparent;color:#526679}.top-actions .export-primary{box-shadow:0 5px 12px rgba(11,95,158,.18)}
+.panel{border-color:#ccd9e2;box-shadow:0 5px 18px rgba(7,59,99,.045)}.panel-title{padding:13px 14px 11px;background:linear-gradient(180deg,#fff,#fbfdfe)}
+.section-label{font-size:10px;font-weight:850}.asset-grid{gap:6px}.asset-btn{border-color:#d4dfe7;border-radius:8px;padding:9px 8px;min-height:45px;font-weight:750;font-size:11px;line-height:1.25;text-align:left;display:flex;align-items:center;transition:border-color .12s ease,background .12s ease,box-shadow .12s ease}.asset-btn span{display:none}.asset-btn:hover{border-color:#67afd3;box-shadow:0 2px 8px rgba(7,59,99,.08)}.separator{margin:12px 0}.asset-search input{min-height:42px;background:#f9fbfc;border-color:#c3d2dc;font-size:13px}.asset-search input:focus{outline:2px solid rgba(22,168,216,.25);border-color:#55aad0}
+@media(max-width:720px){.top-action-group{display:contents}.top-actions .back-link{display:none}.asset-btn{min-height:44px}.asset-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topbar-inner"><div class="brand"><a href="index.html" aria-label="Back to CDI Field Safety Management Tool"><img src="assets/cdi-logo.jpg" alt="CDI Technology Services logo"></a><div class="brand-copy"><b>Incident Scene Builder</b><span>CDI Technology Services · Version 24 · Professional Mannequin Construction Planner</span></div></div><div class="top-actions"><a class="btn secondary" href="index.html">← Safety Tool</a><button id="saveSceneBtn" class="btn secondary" type="button">Save Scene</button><button id="loadSceneBtn" class="btn secondary" type="button">Load Scene</button><input id="loadSceneInput" class="file-input" type="file" accept="application/json,.json"><button id="exportScheduleBtn" class="btn secondary" type="button">Scene Schedule</button><button id="resetBtn" class="btn danger" type="button">Reset Scene</button><button id="exportBtn" class="btn primary" type="button">Export Drawing PNG</button></div></div></header>
+<header class="topbar"><div class="topbar-inner"><div class="brand"><a href="index.html" aria-label="Back to CDI Field Safety Management Tool"><img src="assets/cdi-logo.jpg" alt="CDI Technology Services logo"></a><div class="brand-copy"><b>Incident Scene Builder</b><span>CDI Technology Services · Version 22 · Professional Construction Scene Planner</span></div></div><div class="top-actions"><a class="btn back-link" href="index.html">← Back to Safety Tool</a><div class="top-action-group" aria-label="Scene file controls"><button id="saveSceneBtn" class="btn secondary" type="button">Save</button><button id="loadSceneBtn" class="btn secondary" type="button">Open</button><input id="loadSceneInput" class="file-input" type="file" accept="application/json,.json"></div><div class="top-action-group" aria-label="Drawing export controls"><button id="exportScheduleBtn" class="btn secondary" type="button">Schedule</button><button id="exportBtn" class="btn primary export-primary" type="button">Export PNG</button></div><button id="resetBtn" class="btn danger" type="button">Reset</button></div></div></header>
 <main class="app">
-<aside class="panel left-panel"><div class="panel-title"><b>Scene Library</b><small>Add workers and objects to the canvas.</small></div><div class="panel-body"><div class="asset-search"><input id="assetSearch" type="search" placeholder="Search assets — crowbar, van, cone..."><div id="assetEmpty" class="asset-empty">No matching assets.</div></div>
+<aside class="panel left-panel"><div class="panel-title"><b>Scene Library</b><small>Choose an asset to place in the scene.</small></div><div class="panel-body"><div class="asset-search"><input id="assetSearch" type="search" placeholder="Search scene assets"><div id="assetEmpty" class="asset-empty">No matching assets.</div></div>
 <div class="v20-favorites"><div class="section-label">QUICK ADD</div><div class="asset-grid"><button class="asset-btn" data-add="worker" type="button"><span>◉</span>Worker</button><button class="asset-btn" data-add="crowbar" type="button"><span>⌒</span>Crowbar</button><button class="asset-btn" data-add="manholeOpen" type="button"><span>◌</span>Open Manhole</button><button class="asset-btn" data-add="cone" type="button"><span>▲</span>Cone</button></div></div><div class="separator"></div><div class="section-label">PEOPLE</div><div class="asset-grid"><button class="asset-btn" data-add="worker" type="button"><span>◉</span>Worker</button><button class="asset-btn" data-add="workerKneel" type="button"><span>◒</span>Kneeling Worker</button></div>
 <div class="separator"></div><div class="section-label">CORE EQUIPMENT <span class="quality-badge">UPGRADED</span></div><div class="asset-grid">
 <button class="asset-btn" data-add="palletJack" type="button"><span>⌁</span>Pallet Jack</button><button class="asset-btn" data-add="ladder" type="button"><span>╱</span>Ladder</button><button class="asset-btn" data-add="liftGate" type="button"><span>▰</span>Truck / Lift Gate</button><button class="asset-btn" data-add="cart" type="button"><span>▣</span>Cart</button><button class="asset-btn" data-add="mewp" type="button"><span>▤</span>MEWP</button><button class="asset-btn" data-add="forklift" type="button"><span>▥</span>Forklift</button><button class="asset-btn" data-add="boomLift" type="button"><span>⌜</span>Boom Lift</button><button class="asset-btn" data-add="workbench" type="button"><span>▱</span>Workbench</button><button class="asset-btn" data-add="panel" type="button"><span>▦</span>Electrical Panel</button><button class="asset-btn" data-add="pipeRack" type="button"><span>≡</span>Pipe / Conduit</button></div><div class="separator"></div><div class="section-label">BIM / BUILDING SYSTEMS <span class="quality-badge">NEW</span></div><div class="asset-grid"><button class="asset-btn" data-add="iBeam" type="button"><span>═</span>I-Beam</button><button class="asset-btn" data-add="steelColumn" type="button"><span>║</span>Steel Column</button><button class="asset-btn" data-add="wall" type="button"><span>▰</span>Wall</button><button class="asset-btn" data-add="floorSlab" type="button"><span>▱</span>Floor Slab</button><button class="asset-btn" data-add="unistrut" type="button"><span>⊏</span>Unistrut</button><button class="asset-btn" data-add="cableTray" type="button"><span>≣</span>Cable Tray</button><button class="asset-btn" data-add="conduit" type="button"><span>─</span>Conduit</button><button class="asset-btn" data-add="junctionBox" type="button"><span>□</span>Junction Box</button><button class="asset-btn" data-add="monitor" type="button"><span>▣</span>Monitor</button><button class="asset-btn" data-add="securityCamera" type="button"><span>◉</span>Camera</button><button class="asset-btn" data-add="floorOpening" type="button"><span>▢</span>Floor Opening</button></div>
@@ -104,7 +94,7 @@ body{min-height:100vh}.topbar{background:#fff;border-bottom:1px solid var(--line
 <button class="asset-btn" data-add="tree" type="button"><span>♣</span>Tree</button><button class="asset-btn" data-add="bush" type="button"><span>✿</span>Bush</button><button class="asset-btn" data-add="lightPole" type="button"><span>│</span>Light Pole</button></div>
 <div class="separator"></div><div class="section-label">ANNOTATIONS</div><div class="asset-grid"><button class="asset-btn" id="addLabelBtn" type="button"><span>TXT</span>Label</button><button class="asset-btn" id="addArrowBtn" type="button"><span>➜</span>Arrow</button></div><div class="separator"></div><div class="section-label">MANHOLE / OPENING</div><div class="asset-grid"><button class="asset-btn" data-add="manholeClosed" type="button"><span>●</span>Closed Cover</button><button class="asset-btn" data-add="manholeOpen" type="button"><span>◌</span>Open Manhole</button><button class="asset-btn" data-add="manholeSet" type="button"><span>◍</span>Cover Beside Hole</button><button class="asset-btn" data-add="holeZone" type="button"><span>⚠</span>Open-Hole Zone</button></div><div class="separator"></div><div class="section-label">INCIDENT / HAZARD GRAPHICS <span class="quality-badge">PRO</span></div><div class="asset-grid"><button class="asset-btn" data-add="lineOfFire" type="button"><span>➜</span>Line of Fire</button><button class="asset-btn" data-add="exclusionZone" type="button"><span>◎</span>Exclusion Zone</button><button class="asset-btn" data-add="crushZone" type="button"><span>▧</span>Crush Zone</button><button class="asset-btn" data-add="dropZone" type="button"><span>◉</span>Drop Zone</button></div>
 </div></aside>
-<section class="panel canvas-panel"><div class="canvas-toolbar"><div><b id="sceneName">Blank Scene</b><span id="viewBadge" class="view-badge">3D PERSPECTIVE</span><div class="status">Construction scale: 1 model unit = 2 ft · use exact controls for documented positioning.</div></div><div class="mode-row"><button id="translateBtn" class="btn secondary active" type="button">↔ Move</button><button id="rotateBtn" class="btn secondary" type="button">↻ Turn</button><button id="scaleBtn" class="btn secondary" type="button">↗ Size</button></div></div><div id="viewport"><div id="v20Toast" class="v20-toast"></div><div id="coordinateStrip" class="coordinate-strip">X — · Y — · Z —</div><div class="tip">Field mode: tap an object and drag handles. Professional mode: use exact coordinates, dimensions, alignment, layers, and drawing views on the right.</div></div></section>
+<section class="panel canvas-panel"><div class="canvas-toolbar"><div><b id="sceneName">Blank Scene</b><span id="viewBadge" class="view-badge">3D PERSPECTIVE</span><div class="status">Construction scale: 1 model unit = 2 ft · use exact controls for documented positioning.</div></div><div class="mode-row"><button id="translateBtn" class="btn secondary active" type="button">↔ Move</button><button id="rotateBtn" class="btn secondary" type="button">↻ Turn</button><button id="scaleBtn" class="btn secondary" type="button">↗ Size</button></div></div><div id="viewport"><div id="webglFallback" class="webgl-fallback" role="status"><div class="webgl-fallback-card"><h2>3D workspace unavailable</h2><p>Your browser could not start the graphics engine. Your scene file has not been changed.</p><ul><li>Close other graphics-heavy apps or browser tabs.</li><li>Make sure browser hardware acceleration is enabled.</li><li>Reload this page, or try the latest version of Chrome or Edge.</li></ul></div></div><div id="v20Toast" class="v20-toast"></div><div id="coordinateStrip" class="coordinate-strip">X — · Y — · Z —</div><div class="tip">Field mode: tap an object and drag handles. Professional mode: use exact coordinates, dimensions, alignment, layers, and drawing views on the right.</div></div></section>
 <aside class="panel right-panel"><div class="panel-title"><b>Easy Controls</b><small>Tap an item, then drag it on the scene.</small></div>
 <div class="simple-panel">
 <div class="simple-history"><button id="simpleUndoBtn" class="btn secondary" type="button">↶ Undo</button><button id="simpleRedoBtn" class="btn secondary" type="button">↷ Redo</button></div>
@@ -126,7 +116,7 @@ body{min-height:100vh}.topbar{background:#fff;border-bottom:1px solid var(--line
  <div class="simple-actions" style="margin-top:10px"><button id="simpleWorkerDuplicate" class="btn secondary" type="button">Duplicate</button><button id="simpleWorkerFocus" class="btn secondary" type="button">Focus</button><button id="simpleWorkerDelete" class="btn danger" type="button">Delete</button></div>
  <div class="simple-help">Need exact arm or leg adjustments? Open <b>Advanced</b> below. Most scenes should only need a pose and the on-screen arrows.</div>
 </div>
-<div class="simple-label">PROFESSIONAL / VDC TOOLS</div>
+<details id="proToolsDisclosure" class="pro-tools-disclosure"><summary>Professional / VDC Tools</summary><div class="pro-tools-content">
 <div class="pro-box">
  <div class="pro-title">DRAWING VIEW & UNITS</div>
  <div class="pro-grid three"><button id="proView3d" class="btn secondary pro-active" type="button">3D</button><button id="proViewPlan" class="btn secondary" type="button">Plan</button><button id="proViewFront" class="btn secondary" type="button">Front</button><button id="proViewRight" class="btn secondary" type="button">Right</button><button id="proFitModel" class="btn secondary" type="button">Fit Model</button><button id="proMeasureBtn" class="btn secondary" type="button">Measure 2 Points</button></div>
@@ -160,7 +150,7 @@ body{min-height:100vh}.topbar{background:#fff;border-bottom:1px solid var(--line
 <div id="bimLiftBox" class="pro-box" style="display:none"><div class="pro-title">MEWP PLATFORM</div><div class="pro-field"><label for="bimLiftHeight">Platform height (ft)</label><input id="bimLiftHeight" type="range" min="4" max="20" step="0.5" value="6"><div class="range-head"><span>Platform</span><span id="bimLiftHeightVal">6'-0\"</span></div></div></div>
 <details class="pro-box"><summary class="pro-title" style="cursor:pointer;margin:0">LAYERS / VISIBILITY</summary><div class="layer-list" style="margin-top:9px"><label><input class="pro-layer-toggle" data-layer="people" type="checkbox" checked>People</label><label><input class="pro-layer-toggle" data-layer="structure" type="checkbox" checked>Structure</label><label><input class="pro-layer-toggle" data-layer="mep" type="checkbox" checked>MEP / Systems</label><label><input class="pro-layer-toggle" data-layer="equipment" type="checkbox" checked>Equipment</label><label><input class="pro-layer-toggle" data-layer="vehicles" type="checkbox" checked>Vehicles</label><label><input class="pro-layer-toggle" data-layer="safety" type="checkbox" checked>Safety / Hazards</label><label><input class="pro-layer-toggle" data-layer="site" type="checkbox" checked>Site</label><label><input class="pro-layer-toggle" data-layer="annotations" type="checkbox" checked>Annotations</label></div></details>
 <details class="pro-box"><summary class="pro-title" style="cursor:pointer;margin:0">SCENE / DRAWING INFORMATION</summary><div style="margin-top:9px"><div class="pro-field"><label for="proProjectName">Project</label><input id="proProjectName" type="text" placeholder="Project name"></div><div class="pro-field"><label for="proSceneLocation">Area / Location</label><input id="proSceneLocation" type="text" placeholder="Building, room, grid, work area..."></div><div class="pro-field"><label for="proFigureTitle">Figure / Scene Title</label><input id="proFigureTitle" type="text" value="Incident Scene Reconstruction"></div><div class="pro-field"><label for="proSceneNotes">Scene Notes</label><textarea id="proSceneNotes" placeholder="Brief scene description or assumptions"></textarea></div></div></details>
-<div class="pro-box"><div class="pro-title">SAFETY / MODEL REVIEW</div><div class="pro-grid"><button id="analyzeSceneBtn" class="btn primary" type="button">Analyze Hazards</button><button id="generateJsaBtn" class="btn secondary" type="button">Generate JSA / PTP</button></div><div id="bimOutput" class="pro-output" aria-live="polite"></div></div>
+<div class="pro-box"><div class="pro-title">SAFETY / MODEL REVIEW</div><div class="pro-grid"><button id="analyzeSceneBtn" class="btn primary" type="button">Analyze Hazards</button><button id="generateJsaBtn" class="btn secondary" type="button">Generate JSA / PTP</button></div><div id="bimOutput" class="pro-output" aria-live="polite"></div></div></div></details>
 <details class="legacy-advanced" id="simpleAdvanced"><summary>Advanced</summary><div class="legacy-wrap"><div class="control-tabs"><button id="sceneTabBtn" class="control-tab active" type="button" data-control-tab="scene">Scene</button><button id="objectTabBtn" class="control-tab" type="button" data-control-tab="object">Object</button><button id="workerTabBtn" class="control-tab" type="button" data-control-tab="worker">Worker</button></div><div class="global-history"><button id="undoBtn" class="btn secondary" type="button">↶ Undo</button><button id="redoBtn" class="btn secondary" type="button">↷ Redo</button></div>
 <div class="panel-body">
 <section id="sceneControlPane" class="control-pane active" data-pane="scene">
@@ -234,7 +224,7 @@ body{min-height:100vh}.topbar{background:#fff;border-bottom:1px solid var(--line
 }
 </script>
 <div id="runtimeError" style="display:none;position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;background:#fff3f2;border:1px solid #d9534f;color:#7a1d18;border-radius:10px;padding:10px 12px;font:600 12px/1.4 system-ui">Scene Builder error: <span id="runtimeErrorText"></span></div>
-<script>window.addEventListener('error',function(e){var box=document.getElementById('runtimeError'),txt=document.getElementById('runtimeErrorText');if(box&&txt){txt.textContent=e.message||'Unknown error';box.style.display='block';}});window.addEventListener('unhandledrejection',function(e){var box=document.getElementById('runtimeError'),txt=document.getElementById('runtimeErrorText');if(box&&txt){txt.textContent=(e.reason&&e.reason.message)||String(e.reason||'Unknown promise error');box.style.display='block';}});</script>
+<script>(function(){var test=document.createElement('canvas'),gl=null;try{gl=test.getContext('webgl2',{failIfMajorPerformanceCaveat:true})||test.getContext('webgl',{failIfMajorPerformanceCaveat:true});}catch(_){}if(!gl)document.body.classList.add('webgl-unavailable');})();window.addEventListener('error',function(e){if(document.body.classList.contains('webgl-unavailable')&&/webgl|graphics context/i.test(e.message||''))return;var box=document.getElementById('runtimeError'),txt=document.getElementById('runtimeErrorText');if(box&&txt){txt.textContent='The scene could not finish loading. Reload the page and try again.';box.style.display='block';}});window.addEventListener('unhandledrejection',function(e){var message=(e.reason&&e.reason.message)||String(e.reason||'');if(document.body.classList.contains('webgl-unavailable')&&/webgl|graphics context/i.test(message))return;var box=document.getElementById('runtimeError'),txt=document.getElementById('runtimeErrorText');if(box&&txt){txt.textContent='The scene could not finish loading. Reload the page and try again.';box.style.display='block';}});</script>
 <script type="module">
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -242,24 +232,20 @@ import { TransformControls } from 'three/addons/controls/TransformControls.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
 const viewport=document.getElementById('viewport');
-const scene=new THREE.Scene();scene.background=new THREE.Color(0xe7ecef);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0xdceaf3);
 const camera=new THREE.PerspectiveCamera(45,1,.1,1000);camera.position.set(9,7,12);
-const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true,powerPreference:'high-performance',stencil:false});renderer.shadowMap.enabled=false;renderer.setPixelRatio(Math.min(devicePixelRatio,(innerWidth<=1024?1.25:1.6)));renderer.outputColorSpace=THREE.SRGBColorSpace;viewport.prepend(renderer.domElement);
-const orbit=new OrbitControls(camera,renderer.domElement);orbit.target.set(0,1.4,0);orbit.enableDamping=false;orbit.minDistance=3;orbit.maxDistance=35;
-const transform=new TransformControls(camera,renderer.domElement);transform.setSize(.70);scene.add(transform);transform.addEventListener('dragging-changed',e=>{orbit.enabled=!e.value;if(!e.value&&selected){if(selected.userData.attach)captureAttachmentFromCurrent(selected);updateAttachedObjects();syncObjectUI();recordHistory();requestSceneRender()}});transform.addEventListener('objectChange',()=>{if(selected){if(selected.userData.attach)captureAttachmentFromCurrent(selected);updateAttachedObjects();syncObjectUI();requestSceneRender()}});transform.visible=false;
-const hemi=new THREE.HemisphereLight(0xffffff,0x596670,2.15);scene.add(hemi);const sun=new THREE.DirectionalLight(0xffffff,2.7);sun.position.set(7,12,8);sun.castShadow=false;scene.add(sun);
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true,powerPreference:'high-performance'});renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));viewport.prepend(renderer.domElement);
+const orbit=new OrbitControls(camera,renderer.domElement);orbit.target.set(0,1.4,0);orbit.enableDamping=true;orbit.dampingFactor=.08;orbit.minDistance=3;orbit.maxDistance=35;
+const transform=new TransformControls(camera,renderer.domElement);transform.setSize(.78);scene.add(transform);transform.addEventListener('dragging-changed',e=>{orbit.enabled=!e.value;if(!e.value&&selected){if(selected.userData.attach)captureAttachmentFromCurrent(selected);syncObjectUI();recordHistory()}});transform.addEventListener('objectChange',()=>{if(selected){if(selected.userData.attach)captureAttachmentFromCurrent(selected);syncObjectUI()}});transform.visible=false;
+const hemi=new THREE.HemisphereLight(0xffffff,0x506070,2.4);scene.add(hemi);const sun=new THREE.DirectionalLight(0xffffff,3.2);sun.position.set(7,12,8);sun.castShadow=true;scene.add(sun);
 const groundMat=new THREE.MeshStandardMaterial({color:0xc8ced3,roughness:.95});const ground=new THREE.Mesh(new THREE.PlaneGeometry(50,50),groundMat);ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
 const grid=new THREE.GridHelper(30,30,0x78909c,0xaab7c0);grid.position.y=.006;scene.add(grid);
 const envGroup=new THREE.Group();scene.add(envGroup);const objectRoot=new THREE.Group();scene.add(objectRoot);
 let selected=null,objectCounter=0,rainPoints=null;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
-let renderQueued=false;
-function updateAttachedObjects(){for(const obj of objectRoot.children){if(obj.userData?.attach)applyAttachment(obj)}}
-function requestSceneRender(){if(renderQueued)return;renderQueued=true;requestAnimationFrame(()=>{renderQueued=false;updateAttachedObjects();renderer.render(scene,camera)})}
-
 const mat=(color,rough=.65,metal=.05)=>new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal});
 const workerMat=mat(0x236b9a),darkMat=mat(0x2d3945),metalMat=mat(0x7d8b94,.4,.55),yellowMat=mat(0xf3b61f),orangeMat=mat(0xe36b23),blackMat=mat(0x252c33),coverMat=mat(0x4d555b,.9,.15);
-function mesh(geo,material){const m=new THREE.Mesh(geo,material);m.castShadow=false;m.receiveShadow=false;return m}
+function mesh(geo,material){const m=new THREE.Mesh(geo,material);m.castShadow=true;m.receiveShadow=true;return m}
 function named(group,type,label){group.userData.selectable=true;group.userData.type=type;group.userData.label=label;group.userData.id=++objectCounter;group.name=`${label} ${objectCounter}`;return group}
 function addBox(group,size,pos,material=darkMat){const m=mesh(new THREE.BoxGeometry(...size),material);m.position.set(...pos);group.add(m);return m}
 function addRoundedBox(group,size,pos,material=darkMat,radius=.08,segments=3){const geo=new RoundedBoxGeometry(size[0],size[1],size[2],segments,Math.min(radius,Math.min(...size)/2));const m=mesh(geo,material);m.position.set(...pos);group.add(m);return m}
@@ -268,79 +254,69 @@ function addCylinder(group,r,h,pos,material=darkMat,rot=[0,0,0]){const m=mesh(ne
 function limb(radius,length,material=workerMat){const pivot=new THREE.Group();const part=mesh(new THREE.CapsuleGeometry(radius,length,6,10),material);part.position.y=-(length/2+radius);pivot.add(part);return pivot}
 
 function createWorker(kneel=false){
- const g=named(new THREE.Group(),'worker','Worker');g.userData.worker=true;g.userData.modelStyle='reference-mannequin-v1';
- // Neutral visualization mannequin based on the supplied professional 3D-model reference.
- // Smooth geometry, restrained joint seams, natural proportions, and poseable hands.
- const bodyMat=mat(0xbcc5ca,.58,.04),bodyShade=mat(0xa7b1b7,.62,.04),seamMat=mat(0x667178,.54,.08),jointMat=mat(0x8d989e,.58,.04),faceMat=bodyMat;
- g.userData.skinMaterials=[bodyMat,bodyShade];g.userData.colorName='gray';
- const jointSphere=(parent,r,pos,material=jointMat,seg=16)=>{const m=mesh(new THREE.SphereGeometry(r,seg,Math.max(10,Math.floor(seg*.65))),material);m.position.set(...pos);parent.add(m);return m};
- const tapered=(parent,rTop,rBottom,len,pos,material=bodyMat,seg=18)=>{const m=mesh(new THREE.CylinderGeometry(rTop,rBottom,len,seg,1,false),material);m.position.set(...pos);parent.add(m);return m};
- const seamBand=(parent,r,y,th=.026)=>{const m=mesh(new THREE.CylinderGeometry(r,r,th,18),seamMat);m.position.y=y;parent.add(m);return m};
- const ellipsoid=(parent,r,pos,scale,material=bodyMat,seg=20)=>{const m=mesh(new THREE.SphereGeometry(r,seg,Math.max(12,Math.floor(seg*.7))),material);m.position.set(...pos);m.scale.set(...scale);parent.add(m);return m};
-
- // Pelvis / torso. Overall height stays compatible with existing scenes (~5 ft 8 in at project scale).
- const hips=new THREE.Group();hips.position.y=1.62;g.add(hips);
- ellipsoid(hips,.31,[0,.00,0],[1.08,.72,.68],bodyShade,20);
- seamBand(hips,.245,.19,.022);
- const torsoPivot=new THREE.Group();torsoPivot.position.y=.18;hips.add(torsoPivot);
- const abdomen=tapered(torsoPivot,.245,.265,.36,[0,.22,0],bodyShade,22);abdomen.scale.z=.68;
- const chest=tapered(torsoPivot,.345,.255,.55,[0,.62,0],bodyMat,24);chest.scale.z=.60;
- seamBand(torsoPivot,.262,.405,.022);
-
- // Neck and head with the clean crash-test / visualization-mannequin character of the reference.
- const neck=new THREE.Group();neck.position.y=.91;torsoPivot.add(neck);tapered(neck,.09,.105,.16,[0,.08,0],bodyShade,18);
- const headTilt=new THREE.Group();headTilt.position.y=.16;neck.add(headTilt);
- ellipsoid(headTilt,.235,[0,.30,0],[.84,1.10,.86],faceMat,24);
- // Jaw / lower face and subtle nose profile; deliberately neutral rather than photorealistic.
- ellipsoid(headTilt,.155,[0,.18,.035],[.82,.72,.92],faceMat,20);
- const nose=ellipsoid(headTilt,.055,[0,.315,.205],[.58,.65,.85],faceMat,14);nose.rotation.x=.16;
- // Side head discs and shallow panel seams echo the supplied mannequin reference.
- for(const side of[-1,1]){const disc=mesh(new THREE.CylinderGeometry(.075,.075,.018,20),jointMat);disc.rotation.z=Math.PI/2;disc.position.set(side*.205,.31,0);headTilt.add(disc)}
- const brow=mesh(new THREE.TorusGeometry(.205,.009,6,28,Math.PI*.72),seamMat);brow.rotation.set(Math.PI/2,0,.38);brow.position.set(0,.41,.02);headTilt.add(brow);
+ const g=named(new THREE.Group(),'worker','Worker');g.userData.worker=true;
+ const shellMat=mat(0xf1f3f5,.36,.1), shellTrim=mat(0xcfd5db,.42,.12), jointMat=mat(0x16181d,.5,.2), visorMat=mat(0x111318,.25,.35), handMat=mat(0x111318,.55,.15); g.userData.skinMaterials=[shellMat,shellTrim]; g.userData.colorName='white';
+ const hips=new THREE.Group();hips.position.y=1.64;g.add(hips);
+ addBox(hips,[.30,.54,.22],[0,-.04,0],shellTrim);
+ addBox(hips,[.50,.16,.24],[0,.22,0],shellMat);
+ addBox(hips,[.16,.36,.16],[0,-.26,.12],shellTrim);
+ const torsoPivot=new THREE.Group();torsoPivot.position.y=.30;hips.add(torsoPivot);
+ addBox(torsoPivot,[.74,.92,.34],[0,.42,0],shellMat);
+ addBox(torsoPivot,[.52,.62,.18],[0,.42,.10],shellTrim);
+ addBox(torsoPivot,[.30,.28,.16],[0,.98,0],shellTrim);
+ const neck=new THREE.Group();neck.position.y=1.02;torsoPivot.add(neck);
+ addBox(neck,[.16,.10,.16],[0,.06,0],jointMat);
+ const headTilt=new THREE.Group();headTilt.position.y=.12;neck.add(headTilt);
+ addBox(headTilt,[.44,.58,.34],[0,.28,0],shellMat);
+ addBox(headTilt,[.30,.16,.03],[0,.24,.18],visorMat);
+  const hardhatMat=mat(0xf0b323,.38,.08),vestMat=mat(0xe7a51a,.52,.04);addCylinder(headTilt,.26,.11,[0,.62,0],hardhatMat);addRoundedBox(headTilt,[.56,.04,.40],[0,.56,.01],hardhatMat,.02,2);addRoundedBox(torsoPivot,[.60,.56,.055],[0,.43,.20],vestMat,.025,2);
  g.userData.joints={head:neck,headTilt,torso:torsoPivot};
-
  function hand(side,forePivot){
-   const wrist=new THREE.Group();wrist.position.y=-.55;forePivot.add(wrist);jointSphere(wrist,.067,[0,0,0]);
-   seamBand(wrist,.077,-.025,.020);
-   const palm=ellipsoid(wrist,.105,[0,-.115,.015],[.72,.96,.48],bodyMat,16);
+   const wrist=new THREE.Group();wrist.position.y=-.63;forePivot.add(wrist);
+   addBox(wrist,[.12,.12,.12],[0,0,0],jointMat);
+   addBox(wrist,[.16,.18,.12],[0,-.10,0],handMat);
    const fingers=[];
-   const xs=[-.066,-.022,.022,.066];
-   const lengths=[.145,.165,.158,.138];
+   const xPositions=[-.07,-.022,.022,.07];
    for(let i=0;i<4;i++){
-     const fp=new THREE.Group();fp.position.set(xs[i],-.190,.035);wrist.add(fp);
-     const l=lengths[i];
-     const p1=mesh(new THREE.CapsuleGeometry(.015,l*.48,3,7),bodyMat);p1.position.y=-l*.27;fp.add(p1);
-     const tip=new THREE.Group();tip.position.y=-l*.55;fp.add(tip);
-     const p2=mesh(new THREE.CapsuleGeometry(.014,l*.35,3,7),bodyMat);p2.position.y=-l*.19;tip.add(p2);
+     const fp=new THREE.Group();fp.position.set(xPositions[i],-.16,0);wrist.add(fp);
+     addBox(fp,[.026,.13,.04],[0,-.06,0],handMat);
+     const tip=new THREE.Group();tip.position.y=-.13;fp.add(tip);
+     addBox(tip,[.024,.10,.038],[0,-.05,0],handMat);
      fingers.push({base:fp,tip});
    }
-   const thumb=new THREE.Group();thumb.position.set(side*.082,-.115,.035);thumb.rotation.z=side*.68;wrist.add(thumb);
-   const th=mesh(new THREE.CapsuleGeometry(.017,.095,3,7),bodyMat);th.position.y=-.055;thumb.add(th);
-   return {wrist,fingers,thumb,palm};
+   const thumb=new THREE.Group();thumb.position.set(side*.10,-.08,.02);thumb.rotation.z=side*.65;wrist.add(thumb);
+   addBox(thumb,[.036,.12,.045],[0,-.05,0],handMat);
+   return {wrist,fingers,thumb};
  }
  function arm(side){
-   const shoulderMount=new THREE.Group();shoulderMount.position.set(side*.405,.735,0);torsoPivot.add(shoulderMount);jointSphere(shoulderMount,.125,[0,0,0],bodyMat,18);
+   const shoulderMount=new THREE.Group();shoulderMount.position.set(side*.48,.76,0);torsoPivot.add(shoulderMount);
+   addBox(shoulderMount,[.14,.14,.14],[0,0,0],jointMat);
    const shoulder=new THREE.Group();shoulderMount.add(shoulder);
-   tapered(shoulder,.118,.100,.43,[0,-.285,0],bodyMat,18);seamBand(shoulder,.108,-.505,.021);
-   const elbow=new THREE.Group();elbow.position.y=-.555;shoulder.add(elbow);jointSphere(elbow,.086,[0,0,0],jointMat,16);
-   const forePivot=new THREE.Group();elbow.add(forePivot);tapered(forePivot,.097,.072,.39,[0,-.255,0],bodyShade,18);seamBand(forePivot,.080,-.475,.020);
-   return {shoulder,elbow,forePivot,...hand(side,forePivot)};
+   addBox(shoulder,[.22,.22,.22],[0,-.02,0],shellTrim);
+   addBox(shoulder,[.22,.58,.20],[0,-.38,0],shellMat);
+   const elbow=new THREE.Group();elbow.position.y=-.68;shoulder.add(elbow);
+   addBox(elbow,[.12,.12,.12],[0,0,0],jointMat);
+   const forePivot=new THREE.Group();elbow.add(forePivot);
+   addBox(forePivot,[.20,.56,.18],[0,-.32,0],shellTrim);
+   const h=hand(side,forePivot);
+   return {shoulder,elbow,forePivot,...h};
  }
  const la=arm(-1),ra=arm(1);Object.assign(g.userData.joints,{leftArm:la.shoulder,rightArm:ra.shoulder,leftFore:la.elbow,rightFore:ra.elbow,leftWrist:la.wrist,rightWrist:ra.wrist,leftFingers:la.fingers,rightFingers:ra.fingers,leftThumb:la.thumb,rightThumb:ra.thumb});
-
  function leg(side){
-   const hipMount=new THREE.Group();hipMount.position.set(side*.19,-.14,0);hips.add(hipMount);jointSphere(hipMount,.135,[0,0,0],bodyShade,18);
+   const hipMount=new THREE.Group();hipMount.position.set(side*.22,-.18,0);hips.add(hipMount);
+   addBox(hipMount,[.13,.13,.13],[0,0,0],jointMat);
    const hip=new THREE.Group();hipMount.add(hip);
-   tapered(hip,.145,.112,.60,[0,-.39,0],bodyMat,20);seamBand(hip,.120,-.705,.023);
-   const knee=new THREE.Group();knee.position.y=-.755;hip.add(knee);jointSphere(knee,.108,[0,0,0],jointMat,18);
-   const shin=new THREE.Group();knee.add(shin);tapered(shin,.105,.078,.56,[0,-.37,0],bodyShade,20);seamBand(shin,.086,-.675,.022);
-   // Rounded foot aligned forward (+Z), with a small ankle transition instead of a blocky boot.
-   const ankle=mesh(new THREE.CapsuleGeometry(.082,.09,4,10),bodyShade);ankle.position.set(0,-.675,.02);shin.add(ankle);
-   const foot=mesh(new THREE.CapsuleGeometry(.090,.285,4,11),bodyMat);foot.rotation.x=Math.PI/2;foot.position.set(0,-.735,.115);foot.scale.x=.92;foot.scale.z=1.12;shin.add(foot);
+   addBox(hip,[.22,.78,.22],[0,-.42,0],shellMat);
+   addBox(hip,[.18,.48,.14],[0,-.34,.08],shellTrim);
+   const knee=new THREE.Group();knee.position.y=-.84;hip.add(knee);
+   addBox(knee,[.13,.13,.13],[0,0,0],jointMat);
+   const shin=new THREE.Group();knee.add(shin);
+   addBox(shin,[.20,.76,.18],[0,-.42,0],shellTrim);
+   addBox(shin,[.26,.12,.34],[0,-.84,.08],shellMat);
    return {hip,knee};
  }
  const ll=leg(-1),rl=leg(1);Object.assign(g.userData.joints,{leftLeg:ll.hip,rightLeg:rl.hip,leftKnee:ll.knee,rightKnee:rl.knee});
- if(kneel)applyPoseToWorker(g,'kneeling');
+ if(kneel){applyPoseToWorker(g,'kneeling')}
  g.traverse(o=>{if(o.isMesh)o.userData.owner=g});return g
 }
 function workerColorHex(name){return {white:0xf6f7f8,gray:0xbfc5cb,blue:0x6f94d6,orange:0xe39a52,red:0xd46d6d,green:0x6db392,purple:0x9a7bd4,black:0x44484d}[name]||0xf6f7f8}
@@ -351,21 +327,21 @@ function setFingerCurl(worker,side,index,pct){const f=worker?.userData?.joints?.
 function setThumbCurl(worker,side,pct){const t=worker?.userData?.joints?.[side+'Thumb'];if(!t)return;t.rotation.x=THREE.MathUtils.degToRad(65*(pct/100));worker.userData[side+'ThumbCurl']=pct}
 function applyPoseToWorker(worker,preset){if(!worker?.userData?.worker)return;const j=worker.userData.joints;Object.values(j).forEach(v=>{if(v?.rotation&&!(Array.isArray(v)))v.rotation.set(0,0,0)});worker.position.y=0;setHandGrip(worker,'left',0);setHandGrip(worker,'right',0);
  const d=THREE.MathUtils.degToRad;
- if(preset==='reaching'){j.leftArm.rotation.x=d(-66);j.leftArm.rotation.z=d(-10);j.leftFore.rotation.z=d(-16);j.torso.rotation.x=d(-5);j.head.rotation.y=d(-12)}
- if(preset==='lifting'){j.torso.rotation.x=d(20);j.leftArm.rotation.x=d(-38);j.rightArm.rotation.x=d(-38);j.leftArm.rotation.z=d(-12);j.rightArm.rotation.z=d(12);j.leftFore.rotation.z=d(-72);j.rightFore.rotation.z=d(72);j.leftLeg.rotation.x=d(-12);j.rightLeg.rotation.x=d(-12);j.leftKnee.rotation.x=d(28);j.rightKnee.rotation.x=d(28);setHandGrip(worker,'left',70);setHandGrip(worker,'right',70)}
+ if(preset==='reaching'){j.leftArm.rotation.x=d(-78);j.leftArm.rotation.z=d(-22);j.leftFore.rotation.z=d(-20);j.torso.rotation.x=d(-8);j.head.rotation.y=d(-18)}
+ if(preset==='lifting'){j.torso.rotation.x=d(32);j.leftArm.rotation.x=d(-42);j.rightArm.rotation.x=d(-42);j.leftArm.rotation.z=d(-18);j.rightArm.rotation.z=d(18);j.leftFore.rotation.z=d(-85);j.rightFore.rotation.z=d(85);j.leftLeg.rotation.x=d(-18);j.rightLeg.rotation.x=d(-18);j.leftKnee.rotation.x=d(35);j.rightKnee.rotation.x=d(35);setHandGrip(worker,'left',70);setHandGrip(worker,'right',70)}
  if(preset==='kneeling'){j.leftLeg.rotation.x=d(-45);j.leftKnee.rotation.x=d(115);j.rightLeg.rotation.x=d(12);j.rightKnee.rotation.x=d(90);worker.position.y=.18}
  if(preset==='crouching'){j.torso.rotation.x=d(18);j.leftLeg.rotation.x=d(-25);j.rightLeg.rotation.x=d(-25);j.leftKnee.rotation.x=d(70);j.rightKnee.rotation.x=d(70);worker.position.y=.05}
  if(preset==='walking'){j.leftLeg.rotation.x=d(-28);j.rightLeg.rotation.x=d(28);j.leftArm.rotation.x=d(18);j.rightArm.rotation.x=d(-18);j.leftArm.rotation.z=d(18);j.rightArm.rotation.z=d(-18);j.leftKnee.rotation.x=d(20);j.rightKnee.rotation.x=d(5)}
  if(preset==='pointing'){j.rightArm.rotation.x=d(-88);j.rightFore.rotation.z=d(5);j.leftArm.rotation.z=d(15);j.head.rotation.y=d(18);setFingerCurl(worker,'right',1,0);setFingerCurl(worker,'right',2,0);setFingerCurl(worker,'right',0,65);setFingerCurl(worker,'right',3,65);setThumbCurl(worker,'right',25)}
- if(preset==='pushing'){j.torso.rotation.x=d(10);j.leftArm.rotation.x=d(-58);j.rightArm.rotation.x=d(-58);j.leftFore.rotation.z=d(-12);j.rightFore.rotation.z=d(12);j.leftLeg.rotation.x=d(-8);j.rightLeg.rotation.x=d(-8);setHandGrip(worker,'left',45);setHandGrip(worker,'right',45)}
- if(preset==='pulling'){j.torso.rotation.x=d(-6);j.leftArm.rotation.x=d(-40);j.rightArm.rotation.x=d(-40);j.leftFore.rotation.z=d(-82);j.rightFore.rotation.z=d(82);j.leftLeg.rotation.x=d(7);j.rightLeg.rotation.x=d(7);setHandGrip(worker,'left',80);setHandGrip(worker,'right',80)}
+ if(preset==='pushing'){j.torso.rotation.x=d(16);j.leftArm.rotation.x=d(-70);j.rightArm.rotation.x=d(-70);j.leftFore.rotation.z=d(-15);j.rightFore.rotation.z=d(15);j.leftLeg.rotation.x=d(-12);j.rightLeg.rotation.x=d(-12);setHandGrip(worker,'left',45);setHandGrip(worker,'right',45)}
+ if(preset==='pulling'){j.torso.rotation.x=d(-10);j.leftArm.rotation.x=d(-45);j.rightArm.rotation.x=d(-45);j.leftFore.rotation.z=d(-98);j.rightFore.rotation.z=d(98);j.leftLeg.rotation.x=d(10);j.rightLeg.rotation.x=d(10);setHandGrip(worker,'left',80);setHandGrip(worker,'right',80)}
  if(preset==='carrying'){j.leftArm.rotation.x=d(-28);j.rightArm.rotation.x=d(-28);j.leftFore.rotation.z=d(-92);j.rightFore.rotation.z=d(92);j.leftLeg.rotation.x=d(-10);j.rightLeg.rotation.x=d(12);j.leftKnee.rotation.x=d(8);j.rightKnee.rotation.x=d(12);setHandGrip(worker,'left',75);setHandGrip(worker,'right',75)}
  if(preset==='spotting'){j.leftArm.rotation.x=d(-80);j.leftArm.rotation.z=d(-15);j.rightArm.rotation.x=d(-35);j.rightFore.rotation.z=d(55);j.head.rotation.y=d(-10);setHandGrip(worker,'right',35)}
  if(preset==='radio'){j.rightArm.rotation.x=d(-18);j.rightFore.rotation.z=d(108);j.leftArm.rotation.z=d(12);j.head.rotation.y=d(12);setHandGrip(worker,'right',28)}
- if(preset==='overhead'){j.leftArm.rotation.x=d(-136);j.rightArm.rotation.x=d(-136);j.leftArm.rotation.z=d(-7);j.rightArm.rotation.z=d(7);j.leftFore.rotation.z=d(-12);j.rightFore.rotation.z=d(12);j.headTilt.rotation.z=d(-5);setHandGrip(worker,'left',35);setHandGrip(worker,'right',35)}
- if(preset==='bending'){j.torso.rotation.x=d(36);j.leftLeg.rotation.x=d(-10);j.rightLeg.rotation.x=d(-10);j.leftKnee.rotation.x=d(18);j.rightKnee.rotation.x=d(18);j.leftArm.rotation.x=d(-30);j.rightArm.rotation.x=d(-30)}
+ if(preset==='overhead'){j.leftArm.rotation.x=d(-155);j.rightArm.rotation.x=d(-155);j.leftArm.rotation.z=d(-10);j.rightArm.rotation.z=d(10);j.leftFore.rotation.z=d(-15);j.rightFore.rotation.z=d(15);j.headTilt.rotation.z=d(-8);setHandGrip(worker,'left',35);setHandGrip(worker,'right',35)}
+ if(preset==='bending'){j.torso.rotation.x=d(52);j.leftLeg.rotation.x=d(-12);j.rightLeg.rotation.x=d(-12);j.leftKnee.rotation.x=d(22);j.rightKnee.rotation.x=d(22);j.leftArm.rotation.x=d(-38);j.rightArm.rotation.x=d(-38)}
  if(preset==='fallen'){j.torso.rotation.z=d(82);j.leftArm.rotation.z=d(-38);j.rightArm.rotation.z=d(28);j.leftLeg.rotation.x=d(-20);j.rightLeg.rotation.x=d(30);j.leftKnee.rotation.x=d(35);j.rightKnee.rotation.x=d(18);worker.position.y=.28}
- if(preset==='handsup'){j.leftArm.rotation.x=d(-122);j.rightArm.rotation.x=d(-122);j.leftArm.rotation.z=d(-12);j.rightArm.rotation.z=d(12);j.leftFore.rotation.z=d(-18);j.rightFore.rotation.z=d(18);setHandGrip(worker,'left',0);setHandGrip(worker,'right',0)}
+ if(preset==='handsup'){j.leftArm.rotation.x=d(-145);j.rightArm.rotation.x=d(-145);j.leftArm.rotation.z=d(-18);j.rightArm.rotation.z=d(18);j.leftFore.rotation.z=d(-22);j.rightFore.rotation.z=d(22);setHandGrip(worker,'left',0);setHandGrip(worker,'right',0)}
  syncPoseUI()
 }
 function createPalletJack(){const g=named(new THREE.Group(),'equipment','Pallet Jack');addBox(g,[.38,.12,2.4],[-.32,.16,.65],yellowMat);addBox(g,[.38,.12,2.4],[.32,.16,.65],yellowMat);addBox(g,[.85,.45,.55],[0,.37,-.72],yellowMat);addCylinder(g,.09,.9,[0,1.0,-.92],metalMat,[0,0,.35]);return g}
@@ -526,7 +502,7 @@ function selectObject(obj){
  const meta=document.getElementById('objectMeta'), ann=document.getElementById('annotationEditor');
  if(selected){document.getElementById('selectedName').textContent=selected.name;document.getElementById('selectedType').textContent=selected.userData.worker?'Poseable worker · use the controls below':(selected.userData.label||'Scene object')+' · use the controls below';document.getElementById('objectActions').style.display='block';meta.style.display='block';document.getElementById('objectNameInput').value=selected.name;document.getElementById('objectLockToggle').checked=!!selected.userData.locked;ann.classList.toggle('visible',selected.userData.type==='annotation');if(selected.userData.type==='annotation')document.getElementById('annotationTextInput').value=selected.userData.annotationText||''}
  else{document.getElementById('selectedName').textContent='Nothing selected';document.getElementById('selectedType').textContent='Tap an object in the scene, then use the controls below.';document.getElementById('objectActions').style.display='none';meta.style.display='none';ann.classList.remove('visible')}
- document.getElementById('poseControls').classList.toggle('visible',!!selected?.userData?.worker);document.getElementById('workerEmpty').style.display=selected?.userData?.worker?'none':'block';document.getElementById('workerTabBtn').disabled=!selected?.userData?.worker;if(selected?.userData?.worker){document.getElementById('workerColorSelect').value=selected.userData.colorName||'gray';showControlTab('worker')}else if(selected){showControlTab('object')}syncObjectUI();syncPoseUI();updateAttachUI();requestSceneRender()
+ document.getElementById('poseControls').classList.toggle('visible',!!selected?.userData?.worker);document.getElementById('workerEmpty').style.display=selected?.userData?.worker?'none':'block';document.getElementById('workerTabBtn').disabled=!selected?.userData?.worker;if(selected?.userData?.worker){document.getElementById('workerColorSelect').value=selected.userData.colorName||'white';showControlTab('worker')}else if(selected){showControlTab('object')}syncObjectUI();syncPoseUI();updateAttachUI()
 }
 renderer.domElement.addEventListener('pointerdown',e=>{if(transform.dragging)return;const r=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-((e.clientY-r.top)/r.height)*2+1;raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(objectRoot.children,true);const hit=hits.length?rootSelectable(hits[0].object):null;if(simpleAttachSource){if(hit&&hit!==simpleAttachSource){simpleAttachTarget=hit;showSimpleAttachChoices(hit);return}showSimpleToast('Tap the worker or object you want to attach to.');return}if(hit)selectObject(hit);else selectObject(null)});
 
@@ -627,7 +603,11 @@ function applyConditions(kind){
   case'late':scene.background=new THREE.Color(0xe8b18b);sun.color.set(0xffa45c);sun.intensity=2;break;
   case'night':scene.background=new THREE.Color(0x101b29);hemi.intensity=.7;sun.intensity=.6;break;
   case'cloudy':scene.background=new THREE.Color(0x9eabb4);hemi.intensity=1.8;sun.intensity=1.2;scene.fog=new THREE.Fog(0x9eabb4,18,42);break;
-  case'rain':scene.background=new THREE.Color(0x87939c);hemi.intensity=1.55;sun.intensity=.95;groundMat.color.set(0x858e94);scene.fog=new THREE.Fog(0x87939c,18,42);break;
+  case'rain':
+   scene.background=new THREE.Color(0x7e8d99);hemi.intensity=1.5;sun.intensity=.9;scene.fog=new THREE.Fog(0x7e8d99,16,38);
+   const pts=[];for(let i=0;i<700;i++)pts.push((Math.random()-.5)*24,Math.random()*12,(Math.random()-.5)*24);
+   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pts,3));
+   rainPoints=new THREE.Points(geo,new THREE.PointsMaterial({color:0xb9d8ec,size:.035,transparent:true,opacity:.75}));scene.add(rainPoints);break;
   case'wind':scene.background=new THREE.Color(0xb7c5cf);sun.intensity=1.6;scene.fog=new THREE.Fog(0xb7c5cf,22,48);break;
   case'cold':scene.background=new THREE.Color(0xe5eef5);groundMat.color.set(0xe1e7ea);sun.color.set(0xd8ecff);sun.intensity=1.7;break;
   default:scene.background=new THREE.Color(0xdceaf3)
@@ -643,7 +623,7 @@ const historyStack=[],redoStack=[];let restoringHistory=false;
 function vectorArray(v){return [v.x,v.y,v.z]}
 function eulerArray(v){return [v.x,v.y,v.z]}
 function serializeWorker(obj){const joints={};Object.entries(obj.userData.joints||{}).forEach(([k,v])=>{if(v?.rotation&&!Array.isArray(v))joints[k]=eulerArray(v.rotation)});return {joints,colorName:obj.userData.colorName||'white',leftGrip:obj.userData.leftGrip||0,rightGrip:obj.userData.rightGrip||0,leftThumbCurl:obj.userData.leftThumbCurl||0,rightThumbCurl:obj.userData.rightThumbCurl||0,leftFingers:[0,1,2,3].map(i=>obj.userData['leftFinger'+i]||0),rightFingers:[0,1,2,3].map(i=>obj.userData['rightFinger'+i]||0)}}
-function serializeScene(){return {version:24,metadata:{project:document.getElementById('proProjectName')?.value||'',location:document.getElementById('proSceneLocation')?.value||'',figureTitle:document.getElementById('proFigureTitle')?.value||'',notes:document.getElementById('proSceneNotes')?.value||'',unitMode:document.getElementById('proUnitMode')?.value||'ftin'},environment:document.getElementById('scenePreset').value,conditions:document.getElementById('conditionPreset').value,camera:{position:vectorArray(camera.position),target:vectorArray(orbit.target),fov:camera.fov},objects:objectRoot.children.map(obj=>({sceneId:obj.userData.id,factoryType:obj.userData.factoryType||null,name:obj.name,position:vectorArray(obj.position),rotation:eulerArray(obj.rotation),scale:vectorArray(obj.scale),locked:!!obj.userData.locked,annotationText:obj.userData.annotationText||'',attach:obj.userData.attach?JSON.parse(JSON.stringify(obj.userData.attach)):null,routePoints:obj.userData.routePoints?JSON.parse(JSON.stringify(obj.userData.routePoints)):null,dimensionPoints:obj.userData.dimensionPoints?JSON.parse(JSON.stringify(obj.userData.dimensionPoints)):null,liftHeightFt:obj.userData.liftHeightFt||obj.userData.liftHeight||null,professional:{discipline:obj.userData.discipline||'',system:obj.userData.system||'',layer:obj.userData.layer||'',modelType:obj.userData.modelType||'',status:obj.userData.status||'',notes:obj.userData.notes||'',tradeSizeIn:obj.userData.tradeSizeIn||null,trayWidthIn:obj.userData.trayWidthIn||null},worker:obj.userData.worker?serializeWorker(obj):null})).filter(o=>o.factoryType)}}
+function serializeScene(){return {version:22,metadata:{project:document.getElementById('proProjectName')?.value||'',location:document.getElementById('proSceneLocation')?.value||'',figureTitle:document.getElementById('proFigureTitle')?.value||'',notes:document.getElementById('proSceneNotes')?.value||'',unitMode:document.getElementById('proUnitMode')?.value||'ftin'},environment:document.getElementById('scenePreset').value,conditions:document.getElementById('conditionPreset').value,camera:{position:vectorArray(camera.position),target:vectorArray(orbit.target),fov:camera.fov},objects:objectRoot.children.map(obj=>({sceneId:obj.userData.id,factoryType:obj.userData.factoryType||null,name:obj.name,position:vectorArray(obj.position),rotation:eulerArray(obj.rotation),scale:vectorArray(obj.scale),locked:!!obj.userData.locked,annotationText:obj.userData.annotationText||'',attach:obj.userData.attach?JSON.parse(JSON.stringify(obj.userData.attach)):null,routePoints:obj.userData.routePoints?JSON.parse(JSON.stringify(obj.userData.routePoints)):null,dimensionPoints:obj.userData.dimensionPoints?JSON.parse(JSON.stringify(obj.userData.dimensionPoints)):null,liftHeightFt:obj.userData.liftHeightFt||obj.userData.liftHeight||null,professional:{discipline:obj.userData.discipline||'',system:obj.userData.system||'',layer:obj.userData.layer||'',modelType:obj.userData.modelType||'',status:obj.userData.status||'',notes:obj.userData.notes||'',tradeSizeIn:obj.userData.tradeSizeIn||null,trayWidthIn:obj.userData.trayWidthIn||null},worker:obj.userData.worker?serializeWorker(obj):null})).filter(o=>o.factoryType)}}
 function applyTransform(obj,item){obj.position.fromArray(item.position||[0,0,0]);obj.rotation.set(...(item.rotation||[0,0,0]));obj.scale.fromArray(item.scale||[1,1,1]);obj.name=item.name||obj.name;obj.userData.locked=!!item.locked;if(item.sceneId!=null)obj.userData.id=item.sceneId;obj.userData.attach=item.attach?JSON.parse(JSON.stringify(item.attach)):null;if(item.professional)Object.assign(obj.userData,JSON.parse(JSON.stringify(item.professional)));ensureProfessionalData(obj,item.factoryType)}
 function restoreWorker(obj,data){if(!data)return;setWorkerColor(obj,data.colorName||'white');Object.entries(data.joints||{}).forEach(([k,r])=>{const j=obj.userData.joints?.[k];if(j?.rotation)j.rotation.set(...r)});setHandGrip(obj,'left',data.leftGrip||0);setHandGrip(obj,'right',data.rightGrip||0);(data.leftFingers||[]).forEach((v,i)=>setFingerCurl(obj,'left',i,v));(data.rightFingers||[]).forEach((v,i)=>setFingerCurl(obj,'right',i,v));setThumbCurl(obj,'left',data.leftThumbCurl||0);setThumbCurl(obj,'right',data.rightThumbCurl||0)}
 function loadSceneData(data,{history=true}={}){if(!data||!Array.isArray(data.objects))return;restoringHistory=true;transform.detach();objectRoot.clear();selectObject(null);document.getElementById('scenePreset').value=data.environment||'blank';document.getElementById('conditionPreset').value=data.conditions||'day';buildEnvironment(document.getElementById('scenePreset').value);applyConditions(document.getElementById('conditionPreset').value);if(data.metadata){if(document.getElementById('proProjectName'))document.getElementById('proProjectName').value=data.metadata.project||'';if(document.getElementById('proSceneLocation'))document.getElementById('proSceneLocation').value=data.metadata.location||'';if(document.getElementById('proFigureTitle'))document.getElementById('proFigureTitle').value=data.metadata.figureTitle||'Incident Scene Reconstruction';if(document.getElementById('proSceneNotes'))document.getElementById('proSceneNotes').value=data.metadata.notes||'';if(document.getElementById('proUnitMode'))document.getElementById('proUnitMode').value=data.metadata.unitMode||'ftin'}let maxSceneId=0;const loaded=[];data.objects.forEach(item=>{let obj;if(item.dimensionPoints&&item.factoryType==='dimension'){obj=makeDimensionGroup(item.dimensionPoints.map(p=>new THREE.Vector3(...p)));objectRoot.add(obj)}else if(item.routePoints&&['conduitRoute','trayRoute'].includes(item.factoryType)){const pp=item.professional||{};obj=makeRouteGroup(item.factoryType,item.routePoints.map(p=>new THREE.Vector3(...p)),{system:pp.system,tradeSizeIn:pp.tradeSizeIn,trayWidthIn:pp.trayWidthIn,status:pp.status});objectRoot.add(obj)}else if(item.factoryType==='label')obj=addAsset('label',{annotationText:item.annotationText||'Label',locked:item.locked,professional:item.professional});else obj=addAsset(item.factoryType,{locked:item.locked,professional:item.professional});if(!obj)return;obj.userData.factoryType=item.factoryType;applyTransform(obj,item);if(obj.userData.factoryType==='mewp'&&(item.liftHeightFt||item.liftHeight)){let hFt=item.liftHeightFt;if(!hFt&&item.liftHeight){hFt=Number(item.liftHeight)*3.28084;obj.scale.y=1}setMewpHeight(obj,hFt);}if(obj.userData.worker)restoreWorker(obj,item.worker);maxSceneId=Math.max(maxSceneId,Number(item.sceneId)||0);loaded.push(obj)});objectCounter=Math.max(objectCounter,maxSceneId);loaded.forEach(obj=>applyAttachment(obj));if(data.camera){camera.position.fromArray(data.camera.position||[9,7,12]);camera.fov=Number(data.camera.fov)||45;camera.updateProjectionMatrix();orbit.target.fromArray(data.camera.target||[0,1.4,0]);orbit.update()}selectObject(null);restoringHistory=false;applyLayerVisibility();if(history)recordHistory(true)}
@@ -707,7 +687,7 @@ document.getElementById('analyzeSceneBtn')?.addEventListener('click',analyzeBimS
 function exportSceneSchedule(){const meta=serializeScene().metadata||{},headers=['ID','Name','Discipline','System','Type / Size','Status','Layer','X (ft)','Elevation Y (ft)','Z (ft)','Width X (ft)','Height Y (ft)','Depth Z (ft)'];const rows=[headers];for(const o of objectRoot.children){ensureProfessionalData(o,o.userData.factoryType);const z=objectSizeFeet(o);rows.push([o.userData.id,o.name,o.userData.discipline,o.userData.system,o.userData.modelType,o.userData.status,o.userData.layer,worldToFeet(o.position.x).toFixed(2),worldToFeet(o.position.y).toFixed(2),worldToFeet(o.position.z).toFixed(2),z.x.toFixed(2),z.y.toFixed(2),z.z.toFixed(2)])}const esc=v=>'"'+String(v??'').replaceAll('"','""')+'"';const pre=[['Project',meta.project||''],['Location',meta.location||''],['Figure',meta.figureTitle||''],[]];const csv=[...pre,...rows].map(r=>r.map(esc).join(',')).join('\r\n');const blob=new Blob([csv],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`CDI-Scene-Schedule-${new Date().toISOString().slice(0,10)}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
 document.getElementById('exportScheduleBtn')?.addEventListener('click',exportSceneSchedule);
 ;['proProjectName','proSceneLocation','proFigureTitle','proSceneNotes'].forEach(id=>document.getElementById(id)?.addEventListener('change',()=>recordHistory()));
-function exportProfessionalPng(){transform.detach();selectObject(null);renderer.render(scene,camera);const source=renderer.domElement,title=document.getElementById('proFigureTitle')?.value||'Incident Scene Reconstruction',project=document.getElementById('proProjectName')?.value||'CDI Project',loc=document.getElementById('proSceneLocation')?.value||'',c=document.createElement('canvas'),tb=96;c.width=source.width;c.height=source.height+tb;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(source,0,0);x.fillStyle='#073b63';x.fillRect(0,source.height,c.width,tb);x.fillStyle='#fff';x.font='700 22px Arial';x.fillText(title,20,source.height+31);x.font='14px Arial';x.fillText(project+(loc?' · '+loc:''),20,source.height+57);x.fillText('CDI Incident Scene Builder v24 · '+document.getElementById('viewBadge').textContent+' · '+new Date().toLocaleDateString(),20,source.height+80);const a=document.createElement('a');a.download=`CDI-${title.replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'')||'Scene'}-${new Date().toISOString().slice(0,10)}.png`;a.href=c.toDataURL('image/png');a.click()}
+function exportProfessionalPng(){transform.detach();selectObject(null);renderer.render(scene,camera);const source=renderer.domElement,title=document.getElementById('proFigureTitle')?.value||'Incident Scene Reconstruction',project=document.getElementById('proProjectName')?.value||'CDI Project',loc=document.getElementById('proSceneLocation')?.value||'',c=document.createElement('canvas'),tb=96;c.width=source.width;c.height=source.height+tb;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(source,0,0);x.fillStyle='#073b63';x.fillRect(0,source.height,c.width,tb);x.fillStyle='#fff';x.font='700 22px Arial';x.fillText(title,20,source.height+31);x.font='14px Arial';x.fillText(project+(loc?' · '+loc:''),20,source.height+57);x.fillText('CDI Incident Scene Builder v22 · '+document.getElementById('viewBadge').textContent+' · '+new Date().toLocaleDateString(),20,source.height+80);const a=document.createElement('a');a.download=`CDI-${title.replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'')||'Scene'}-${new Date().toISOString().slice(0,10)}.png`;a.href=c.toDataURL('image/png');a.click()}
 document.getElementById('saveSceneBtn').addEventListener('click',saveSceneFile);
 document.getElementById('loadSceneBtn').addEventListener('click',()=>document.getElementById('loadSceneInput').click());
 document.getElementById('loadSceneInput').addEventListener('change',e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{loadSceneData(JSON.parse(r.result));}catch(err){alert('Could not load this scene file.')}};r.readAsText(f);e.target.value=''});
@@ -724,16 +704,12 @@ document.getElementById('updateAnnotationBtn').addEventListener('click',()=>{if(
 document.getElementById('resetBtn').addEventListener('click',()=>{if(!confirm('Clear all modeled objects from this scene?'))return;transform.detach();objectRoot.clear();selectObject(null);buildEnvironment(document.getElementById('scenePreset').value);recordHistory(true)});
 document.getElementById('exportBtn').addEventListener('click',exportProfessionalPng);
 
-function resize(){const w=Math.max(1,viewport.clientWidth),h=Math.max(1,viewport.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();requestSceneRender()}
-new ResizeObserver(resize).observe(viewport);
-orbit.addEventListener('change',requestSceneRender);
-transform.addEventListener('change',requestSceneRender);
-renderer.domElement.addEventListener('pointerup',requestSceneRender);
-document.addEventListener('input',()=>requestSceneRender(),true);
-document.addEventListener('change',()=>requestSceneRender(),true);
-document.addEventListener('click',()=>setTimeout(requestSceneRender,0),true);
-resize();
-buildEnvironment('blank');addAsset('worker');updateAttachUI();initSimpleUI();applyLayerVisibility();syncProfessionalSelection();recordHistory(true);requestSceneRender();
+function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+new ResizeObserver(resize).observe(viewport);resize();
+let animationFrameId=0;
+function animate(){animationFrameId=requestAnimationFrame(animate);if(document.hidden)return;orbit.update();objectRoot.children.forEach(obj=>applyAttachment(obj));if(rainPoints){rainPoints.position.y-=.07;if(rainPoints.position.y<-5)rainPoints.position.y=5}renderer.render(scene,camera)}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!animationFrameId)animate()});
+buildEnvironment('blank');addAsset('worker');updateAttachUI();initSimpleUI();applyLayerVisibility();syncProfessionalSelection();recordHistory(true);animate();
 </script>
 </body>
 </html>
