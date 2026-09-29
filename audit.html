@@ -21,7 +21,14 @@ details.section>summary::-webkit-details-marker{display:none}details.section>sum
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.span2{grid-column:1/-1}.field>span{display:block;font-weight:800;font-size:12px;margin:0 0 5px;color:#30475a}
 input,select,textarea{width:100%;border:1px solid #c7d5df;border-radius:10px;background:#fff;color:#1f2f3c;padding:10px 11px;font:inherit}textarea{min-height:84px;resize:vertical}
 .activities{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.activity{display:flex;gap:9px;align-items:center;padding:11px;border:1px solid var(--line);border-radius:11px;background:#fafcfd;cursor:pointer;font-weight:700}.activity input{width:19px;height:19px;accent-color:var(--blue)}.activity:has(input:checked){background:#edf7fc;border-color:#7aafd0}
-.conditional-wrap{display:none}.conditional-wrap.active{display:block}.q-list{display:grid}.qrow{padding:10px 0;border-bottom:1px solid #edf1f4}.qrow:last-child{border-bottom:0}.qmain{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:12px;align-items:center}.qtext{font-weight:670;color:#344b5d}.response.noncompliant{border-color:#c96060;background:#fff7f6;color:#8e2222}.response.corrected{border-color:#d9ae4a;background:#fff9e8;color:#785600}.response.compliant{border-color:#70b68f;background:#f2fbf5;color:#17653c}
+.conditional-wrap{display:none}.conditional-wrap.active{display:block}.q-list{display:grid}.qrow{padding:10px 0;border-bottom:1px solid #edf1f4}.qrow:last-child{border-bottom:0}.qmain{display:grid;grid-template-columns:minmax(0,1fr) minmax(330px,430px);gap:12px;align-items:center}.qtext{font-weight:670;color:#344b5d}
+.audit-seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.audit-choice{appearance:none;border:1px solid #c8d4dd;background:#fff;color:#425667;border-radius:9px;padding:9px 7px;font-size:11px;font-weight:900;cursor:pointer;min-height:38px}
+.audit-choice:hover{background:#f5f8fa}
+.audit-choice.good.active{background:#eaf8f0;border-color:#65b486;color:#17663d}
+.audit-choice.issue.active{background:#fff0ef;border-color:#dc6a63;color:#982a24}
+.audit-choice.fixed.active{background:#fff7df;border-color:#d9ad42;color:#795700}
+.audit-choice.na.active{background:#eef2f5;border-color:#aebbc5;color:#53636f}
 .inline-ca{display:none;margin:10px 0 2px;padding:12px;border:1px solid #efc0bc;background:var(--badbg);border-radius:11px}.inline-ca.open{display:block}.inline-ca h4{margin:0 0 9px;color:#8d2626}.ca-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 .section-extra{margin-top:14px;padding-top:13px;border-top:1px dashed #d9e3ea}.section-extra h4{margin:0 0 9px;color:#3c5568}
 .photo-block{margin-top:12px}.photo-block .field{margin-bottom:7px}.photo-preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:9px}.photo-card{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#f7fafc}.photo-card img{display:block;width:100%;height:220px;object-fit:contain;background:#13202a;cursor:zoom-in}.photo-card small{display:block;padding:7px 9px;color:#5f7180;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -30,7 +37,7 @@ input,select,textarea{width:100%;border:1px solid #c7d5df;border-radius:10px;bac
 .footer-actions{position:sticky;bottom:9px;z-index:30;display:flex;justify-content:flex-end;gap:8px;padding:10px;border:1px solid var(--line);background:rgba(243,246,248,.94);backdrop-filter:blur(7px);border-radius:13px}
 .lightbox{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;padding:22px}.lightbox.open{display:flex}.lightbox img{max-width:96vw;max-height:90vh;object-fit:contain;border-radius:8px}.lightbox button{position:absolute;right:20px;top:18px;width:44px;height:44px;border:0;border-radius:50%;background:#fff;color:#111;font-size:22px;cursor:pointer}
 .help{color:var(--muted);font-size:12px;margin:5px 0 0}.subhead{margin:0 0 10px;color:var(--navy);font-size:17px}
-@media(max-width:780px){.grid2,.activities,.summary,.ca-grid{grid-template-columns:1fr}.qmain{grid-template-columns:1fr}.brand img{width:82px}.head{align-items:flex-start}.actions{justify-content:flex-end}.photo-preview{grid-template-columns:1fr}.photo-card img{height:280px}.footer-actions{flex-direction:column}.footer-actions .btn{width:100%}}
+@media(max-width:780px){.grid2,.activities,.summary,.ca-grid{grid-template-columns:1fr}.qmain{grid-template-columns:1fr}.audit-seg{grid-template-columns:repeat(4,1fr)}.audit-choice{padding:11px 4px;font-size:10px}.brand img{width:82px}.head{align-items:flex-start}.actions{justify-content:flex-end}.photo-preview{grid-template-columns:1fr}.photo-card img{height:280px}.footer-actions{flex-direction:column}.footer-actions .btn{width:100%}}
 @media print{header,.no-print,.footer-actions,.lightbox{display:none!important}body{background:#fff}main{max-width:none;margin:0;padding:0}.card,details.section{box-shadow:none;break-inside:avoid}.conditional-wrap:not(.active){display:none!important}details.section>summary:after{display:none}.section-body{display:block!important}.photo-preview{grid-template-columns:repeat(2,1fr)}.photo-card img{height:240px;object-fit:contain;background:#fff}.photo-card small{white-space:normal}input,select,textarea{border:0!important;padding:0!important;appearance:none;background:transparent!important}.inline-ca{display:block!important}.activity-card{display:none!important}}
 </style>
 </head>
@@ -38,7 +45,7 @@ input,select,textarea{width:100%;border:1px solid #c7d5df;border-radius:10px;bac
 <header class="no-print"><div class="head"><div class="brand"><img src="assets/cdi-logo.jpg" alt="CDI Technology Services logo"><div><b>Safety Audit</b><small>CDI Technology Services · Field Safety Management Tool</small></div></div><div class="actions"><a class="back" href="index.html">← Home</a><button class="btn primary" type="button" onclick="window.print()">Print / Save PDF</button></div></div></header>
 <main>
 <section class="hero"><h1>Jobsite Safety Audit</h1><p>Core safety review plus conditional task-specific inspections. Select only the work that applies to the visit.</p></section>
-<div class="notice no-print"><b>How it works:</b> Core sections are always shown. Select activities/hazards to reveal specialty sections. Choosing <b>Non-Compliant</b> automatically opens a corrective-action record directly under that question.</div>
+<div class="notice no-print"><b>How it works:</b> Core sections are always shown. Select activities/hazards to reveal specialty sections. Tap <b>GOOD</b>, <b>ISSUE</b>, <b>FIXED</b>, or <b>N/A</b>. ISSUE opens a corrective-action record automatically; FIXED opens it and marks the item corrected on site.</div>
 
 <details class="section" open>
 <summary><span>1. Audit / Job Information</span><span class="tag">ALWAYS</span></summary>
@@ -122,10 +129,9 @@ input,select,textarea{width:100%;border:1px solid #c7d5df;border-radius:10px;bac
 
 <script>
 const sections = [{"id": "ptp", "title": "2. Pre-Task Planning / DTA-PTP", "always": true, "questions": ["Is a current DTA/PTP or required pre-task plan completed for today's work?", "Does the DTA/PTP accurately describe the work currently being performed?", "Are the hazards associated with the task identified?", "Are appropriate controls listed for the identified hazards?", "Have affected employees reviewed/acknowledged the plan?", "Has the plan been updated if conditions, scope, personnel, or hazards changed?", "Are special PPE requirements documented?", "Are required permits identified?", "Are deviations from normal work practices documented?", "Does actual field activity match the plan?"], "photos": ["DTA / PTP Photo (optional)"]}, {"id": "training", "title": "3. Employee Readiness / Training", "always": true, "questions": ["Do employees appear fit and ready to safely perform their assigned work?", "Are employees demonstrating awareness of the hazards associated with their work?", "Does the task require specialized training?", "If specialized training is required, are affected employees properly trained?", "Is proof of required training/certification available when required?", "Are employees only operating equipment/tools they are authorized or qualified to use?", "Are new/inexperienced employees receiving appropriate supervision?", "Are employees following the instructions of the Job Lead/Foreman?"]}, {"id": "ppe", "title": "4. Personal Protective Equipment", "always": true, "questions": ["Is required PPE available to all employees?", "Is required PPE actually being worn?", "Are hard hats being worn when required?", "Are safety glasses being worn when required?", "Is appropriate hand protection being used?", "Is appropriate footwear being worn?", "Is high-visibility clothing/vest being worn when required?", "Is hearing protection being used when required?", "Is respiratory protection being used when required?", "Is task-specific PPE being used when required?", "Is PPE in serviceable condition?", "Does PPE properly fit the employee?", "Is damaged/expired PPE removed from service?"], "photos": ["PPE / Crew Photo (optional)"]}, {"id": "workarea", "title": "5. General Work Area", "always": true, "questions": ["Is the work area adequately illuminated?", "Are work surfaces reasonably clean and orderly?", "Are walking/working surfaces free of slip hazards?", "Are walking/working surfaces free of trip hazards?", "Are access routes clear?", "Are means of egress unobstructed?", "Are emergency exits accessible?", "Are materials stored in an orderly and stable manner?", "Are cords, cables, materials, and tools positioned to minimize trip hazards?", "Is debris being removed from the work area?", "Are sharp objects/materials properly controlled?", "Are overhead hazards controlled?", "Are floor/wall openings properly protected where applicable?", "Are employees protected from falling objects?", "Are nearby trades creating hazards affecting CDI employees?", "Are CDI employees creating hazards affecting other trades?"], "photos": ["Work Area / Housekeeping Photo"]}, {"id": "environment", "title": "6. Environmental Conditions", "always": true, "questions": ["Have environmental conditions affecting the work been evaluated?", "Are extreme heat conditions adequately controlled?", "Are extreme cold conditions adequately controlled?", "Are rain/water/wet-surface hazards adequately controlled?", "Are mud/uneven-ground conditions adequately controlled?", "Are high-wind hazards adequately controlled?", "Is lighting adequate for the task?", "Are excessive dust conditions adequately controlled?", "Is excessive noise controlled?", "Do employees have access to sufficient clean/cool drinking water?", "Is shade/cooling/rest available when required?", "Is hearing protection available when noise levels warrant it?", "Are weather conditions acceptable for the task being performed?"]}, {"id": "barricades", "title": "7. Barricades / Signage / Public Protection", "label": "Barricades / Signage", "questions": ["Does this work require a barricaded/restricted area?", "Is the barricade correctly installed?", "Is the barricade large enough to protect the actual hazard area?", "Is the barricade maintained and intact?", "Are required warning signs posted?", "Does signage accurately identify the hazard?", "Is required contact information current?", "Does barricade tape correspond with the warning level/signage (Caution / Danger)?", "Are unauthorized individuals being kept outside the restricted area?", "Are pedestrian routes safely maintained around the work?", "Are doors/walkways/egress routes affected by the barricade and, if so, safely controlled?"], "photos": ["Wide Photo of Barricaded Area", "Close-Up Photo of Signage"]}, {"id": "tools", "title": "8. Hand Tools / Power Tools / Equipment", "label": "Hand / Power Tools", "questions": ["Are tools appropriate for the task?", "Have tools/equipment been inspected before use?", "Is required inspection/color coding current?", "Are guards and safety devices installed and functional?", "Are tools free from visible damage?", "Are employees using tools according to their intended purpose?", "Are employees trained/qualified to use the tools involved?", "Are defective tools immediately removed from service?", "Are defective tools tagged or otherwise clearly identified?", "Are battery-powered tools/batteries in good condition?", "Are cords/plugs free from damage?", "Are corded tools properly grounded or double-insulated as applicable?", "Are extension cords appropriate for the environment/use?", "Are temporary power connections protected?", "Are tools stored safely when not being used?", "Are cutting/drilling operations controlled for flying debris?", "Is dust collection/control being used where applicable?"], "photos": ["Tool / Equipment Deficiency Photo (optional)"]}, {"id": "electrical", "title": "9. Electrical Exposure", "label": "Electrical Exposure", "questions": ["Are employees exposed to energized electrical components?", "Has equipment been de-energized where required?", "Is appropriate lockout/tagout being used where applicable?", "Are panels/cabinets kept closed when appropriate?", "Are open electrical boxes/panels protected?", "Are temporary electrical installations protected from damage?", "Are appropriate clearances maintained around electrical equipment?", "Are cords protected from water, sharp edges, traffic, and pinch points?", "Are GFCIs being used where required?", "Is electrical PPE being used when required?", "Are employees performing electrical work properly qualified?"]}, {"id": "ladder", "title": "10. Ladder Work", "label": "Ladder Work", "fields": [["Ladder Type", "text"], ["Ladder Size / Height", "text"], ["Ladder Permit Required?", "select_yesno"]], "questions": ["Is a ladder required for the task?", "Is the selected ladder appropriate for the work?", "Has the ladder been inspected before use?", "Is the ladder free from visible damage?", "Are required labels present and readable?", "Is the ladder on a stable/level surface?", "Is the ladder positioned correctly?", "Is the ladder secured where required?", "Are employees maintaining proper contact while climbing/working?", "Are employees staying within the manufacturer's working position/limits?", "Are employees avoiding overreaching?", "Are employees using the top/platform correctly?", "Are employees trained in ladder use?", "Is the area around the ladder controlled from traffic/other hazards?", "Is ladder use allowed by the project/GC for this task?", "If a ladder permit is required, is it complete?"], "photos": ["Ladder Photo", "Ladder Permit Photo (if applicable)"]}, {"id": "fall", "title": "11. Work at Height / Fall Protection", "label": "Work at Height / Fall Protection", "fields": [["Approximate Working Height", "text"], ["Fall Protection System", "text"], ["Anchor Point Description", "text"]], "questions": ["Are employees exposed to a fall hazard?", "Is fall protection required?", "Are affected employees trained in fall protection?", "Is proof of training available where required?", "Has fall-protection equipment been inspected before use?", "Is fall-protection equipment in acceptable condition?", "Is equipment within required inspection/service life?", "Is the correct harness/lanyard/SRL being used?", "Is the connection method appropriate?", "Is an acceptable anchor point being used?", "Is the anchor point rated/designed for its intended fall-protection application?", "Is tie-off maintained as required?", "Are swing-fall hazards addressed?", "Is adequate fall clearance available?", "Is a rescue plan needed/available?"], "photos": ["Fall Protection Equipment Photo", "Anchor Point Photo", "Fall Protection Training Card Photo (if applicable)"]}, {"id": "mewp", "title": "12. MEWP / Aerial Lift", "label": "MEWP / Aerial Lift", "fields": [["MEWP Type", "text"], ["Unit Number / Equipment ID", "text"]], "questions": ["Is a MEWP being used?", "Has the required pre-use inspection been completed?", "Is the inspection documented?", "Is the MEWP free from obvious defects?", "Are controls functioning correctly?", "Are safety devices functional?", "Is the equipment being operated within manufacturer limits?", "Are operators currently trained/authorized?", "Is required certification/documentation available?", "Are occupants using required fall protection?", "Is the correct attachment point being used?", "Are gates/chains closed while elevated?", "Is the travel/work surface suitable?", "Are drop-offs, holes, slopes, and obstructions controlled?", "Are overhead obstructions present and controlled?", "Are electrical/overhead power hazards controlled?", "Is the area below/around the MEWP controlled when necessary?", "Is a spotter required?", "If a spotter is required, is one being used?", "Is a secondary guarding/containment/protection system required?", "If required, is the secondary guarding/containment/protection system installed and functional?"], "photos": ["Completed MEWP Inspection Sheet", "Operator Certification Photo", "MEWP In-Use Photo"]}, {"id": "material", "title": "13. Material Handling / Lifting", "label": "Material Handling / Lifting", "questions": ["Are employees manually lifting or moving material?", "Are loads within reasonable manual-handling capability?", "Are team lifts being used when necessary?", "Are carts/dollies/material-handling devices being used where appropriate?", "Are materials secured against shifting/falling?", "Are employees using appropriate lifting/body-positioning techniques?", "Are hands/fingers protected from pinch points?", "Are suspended loads involved?", "Are employees kept clear of suspended loads?", "Is mechanical lifting equipment being used?", "If mechanical lifting equipment is used, is it inspected and appropriate?"]}, {"id": "rigging", "title": "14. Rigging / Hoisting", "label": "Rigging / Hoisting", "questions": ["Is rigging/hoisting being performed?", "Are slings/rigging components inspected before use?", "Are tags/identification legible?", "Is rigging free from visible damage?", "Is rigging appropriate for the load?", "Is load capacity adequate?", "Are qualified personnel performing the rigging?", "Is the load properly balanced/secured?", "Is the area beneath the load controlled?", "Are tag lines used where appropriate?", "Are employees clear of pinch/crush zones?"]}, {"id": "hotwork", "title": "15. Hot Work", "label": "Hot Work", "fields": [["Hot Work Permit Number / Reference", "text"]], "questions": ["Is welding, cutting, grinding, brazing, or other hot work occurring?", "Is a hot-work permit required?", "Is the permit available/current?", "Have combustible materials been removed/protected?", "Is appropriate fire-extinguishing equipment immediately available?", "Is a fire watch required?", "If a fire watch is required, is one present?", "Are sparks/slag controlled?", "Is appropriate PPE being used?", "Is ventilation adequate?", "Are gas cylinders stored/secured properly where applicable?"], "photos": ["Hot Work Permit / Work Area Photo (optional)"]}, {"id": "excavation", "title": "16. Excavations / Trenches", "label": "Excavation / Trench", "fields": [["Approximate Depth", "text"]], "questions": ["Is CDI work occurring in or near an excavation/trench?", "Is safe access/egress provided?", "Is spoil/material kept an appropriate distance from the edge?", "Are employees protected from cave-in hazards when required?", "Are protective systems in place where required?", "Are underground utilities identified?", "Is water accumulation present and controlled?", "Are vehicles/equipment operating near the edge and safely controlled?", "Is the excavation inspected by the appropriate competent person where required?"]}, {"id": "confined", "title": "17. Confined Space", "label": "Confined Space", "questions": ["Does the work involve entry into a confined space?", "Has the space been evaluated?", "Is it a permit-required confined space?", "Is an entry permit required/current?", "Are entrants authorized/trained?", "Is atmospheric testing required?", "If atmospheric testing is required, has testing been completed?", "Is ventilation required/provided?", "Is an attendant required/present?", "Is communication maintained?", "Is rescue planning addressed?"], "photos": ["Confined Space Permit / Entry Setup Photo (optional)"]}, {"id": "mobile", "title": "18. Mobile Equipment / Vehicle Interaction", "label": "Vehicle / Mobile Equipment", "questions": ["Are employees working around vehicles/heavy/mobile equipment?", "Are designated pedestrian routes being used?", "Are employees visible to equipment operators?", "Is high-visibility PPE being used when required?", "Are backing/reversing hazards controlled?", "Is a spotter required?", "If a spotter is required, is one being used?", "Are equipment swing-radius/crush zones controlled?", "Are employees staying clear of operating equipment?"]}, {"id": "chemical", "title": "19. Chemical / Hazard Communication", "label": "Chemicals / HazCom", "questions": ["Are chemicals/hazardous products being used?", "Are containers properly labeled?", "Are secondary containers labeled?", "Are SDSs accessible?", "Are employees trained regarding the materials being used?", "Is required chemical PPE available/used?", "Are chemicals stored properly?", "Are incompatible materials separated where appropriate?", "Is spill-response equipment available when needed?"]}, {"id": "dust", "title": "20. Silica / Dust / Respiratory Hazards", "label": "Silica / Dust / Respiratory", "questions": ["Does the task generate silica, dust, fumes, vapors, or other airborne contaminants?", "Has an appropriate exposure-control method been selected?", "Is wet cutting/drilling being used where appropriate?", "Is local dust extraction/vacuum being used?", "Is the correct vacuum/filter being used?", "Is respiratory protection required?", "If respiratory protection is required, are affected employees authorized/trained/fit-tested as applicable?", "Are nearby employees protected from exposure?"]}, {"id": "emergency", "title": "21. Fire Protection / Emergency Preparedness", "always": true, "questions": ["Are employees aware of emergency procedures?", "Are emergency exits/routes accessible?", "Are fire extinguishers accessible where required?", "Is emergency contact information available?", "Is first-aid capability/access available?", "Are employees aware of the project's emergency muster/location?", "Is anything currently obstructing emergency response/access?"]}, {"id": "unsafe", "title": "22. Unsafe Acts / Unsafe Conditions", "always": true, "questions": ["Were any unsafe acts observed?", "Were any unsafe conditions observed?", "Were any CDI policy violations observed?", "Was immediate intervention required?", "Was work stopped?", "Was the Job Lead/Foreman notified?", "Was the issue corrected before the auditor left?"], "fields": [["Description of Observation", "textarea"], ["Immediate Corrective Action Taken", "textarea"], ["Employee / Crew Involved (if documentation is necessary)", "text"]], "photos": ["Supporting Observation Photo(s)"]}, {"id": "other", "title": "Other Activity / Hazard", "label": "Other Activity / Hazard", "fields": [["Describe Other Activity / Hazard", "textarea"]], "questions": ["Has the hazard been identified?", "Are appropriate controls in place?", "Are affected employees aware of the controls?"]}];
-const RESPONSE_OPTIONS = ["","Compliant","Non-Compliant","Corrected On Site","N/A"];
+const RESPONSE_OPTIONS = ["Good","Issue","Fixed","N/A"];
 
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));}
-function responseOptions(){return RESPONSE_OPTIONS.map(v=>`<option value="${esc(v)}">${v||"Select"}</option>`).join("");}
 
 function renderExtraFields(fields=[]){
   if(!fields.length) return "";
@@ -143,8 +149,16 @@ function renderPhotoBlocks(labels=[]){
 
 function renderQuestion(text, sectionId, index){
   const qid=`${sectionId}-q${index}`;
-  return `<div class="qrow" data-question="${esc(text)}">
-    <div class="qmain"><div class="qtext">${esc(text)}</div><select class="response" data-qid="${qid}">${responseOptions()}</select></div>
+  return `<div class="qrow" data-question="${esc(text)}" data-status="">
+    <div class="qmain">
+      <div class="qtext">${esc(text)}</div>
+      <div class="audit-seg" role="group" aria-label="Audit result">
+        <button type="button" class="audit-choice good" data-status="Good" data-qid="${qid}">✓ GOOD</button>
+        <button type="button" class="audit-choice issue" data-status="Issue" data-qid="${qid}">! ISSUE</button>
+        <button type="button" class="audit-choice fixed" data-status="Fixed" data-qid="${qid}">✓ FIXED</button>
+        <button type="button" class="audit-choice na" data-status="N/A" data-qid="${qid}">N/A</button>
+      </div>
+    </div>
     <div class="inline-ca" id="ca-${qid}">
       <h4>Corrective Action Required</h4>
       <div class="ca-grid">
@@ -184,30 +198,38 @@ document.getElementById("activityGrid").addEventListener("change",e=>{
   if(e.target.checked && details) details.open=true;
 });
 
-function styleResponse(select){
-  select.classList.remove("noncompliant","corrected","compliant");
-  if(select.value==="Non-Compliant") select.classList.add("noncompliant");
-  if(select.value==="Corrected On Site") select.classList.add("corrected");
-  if(select.value==="Compliant") select.classList.add("compliant");
-}
+document.addEventListener("click",e=>{
+  const btn=e.target.closest(".audit-choice");
+  if(!btn) return;
+  const row=btn.closest(".qrow");
+  const qid=btn.dataset.qid;
+  const status=btn.dataset.status;
+  row.dataset.status=status;
+  row.querySelectorAll(".audit-choice").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+
+  const panel=document.getElementById(`ca-${qid}`);
+  if(panel){
+    const open=status==="Issue" || status==="Fixed";
+    panel.classList.toggle("open",open);
+
+    if(open && !panel.querySelector(".ca-observation").value){
+      panel.querySelector(".ca-observation").value=row.dataset.question;
+    }
+
+    if(status==="Fixed"){
+      panel.querySelector(".ca-onsite").value="Yes";
+      panel.querySelector(".ca-status").value="Corrected";
+      panel.querySelector(".ca-followup").value="No";
+    } else if(status==="Issue"){
+      if(panel.querySelector(".ca-onsite").value==="Yes") panel.querySelector(".ca-onsite").value="No";
+      if(panel.querySelector(".ca-status").value==="Corrected") panel.querySelector(".ca-status").value="Open";
+    }
+  }
+  updateMetrics();
+});
 
 document.addEventListener("change",e=>{
-  if(e.target.classList.contains("response")){
-    styleResponse(e.target);
-    const panel=document.getElementById(`ca-${e.target.dataset.qid}`);
-    if(panel){
-      const open=e.target.value==="Non-Compliant" || e.target.value==="Corrected On Site";
-      panel.classList.toggle("open",open);
-      if(open && !panel.querySelector(".ca-observation").value){
-        panel.querySelector(".ca-observation").value=e.target.closest(".qrow").dataset.question;
-      }
-      if(e.target.value==="Corrected On Site"){
-        panel.querySelector(".ca-onsite").value="Yes";
-        panel.querySelector(".ca-status").value="Corrected";
-      }
-    }
-    updateMetrics();
-  }
   if(e.target.matches(".ca-priority,.ca-status,.ca-followup,.ca-onsite,.finding select,#seriousHazard")) updateMetrics();
 });
 
@@ -283,17 +305,18 @@ document.getElementById("manualFindings").addEventListener("click",e=>{
 });
 
 function updateMetrics(){
-  const responses=[...document.querySelectorAll(".response")];
-  const noncompliant=responses.filter(x=>x.value==="Non-Compliant");
-  const correctedResponses=responses.filter(x=>x.value==="Corrected On Site");
+  const rows=[...document.querySelectorAll(".qrow")];
+  const issues=rows.filter(x=>x.dataset.status==="Issue");
+  const fixed=rows.filter(x=>x.dataset.status==="Fixed");
   const openInline=[...document.querySelectorAll(".inline-ca.open")];
   const manual=[...document.querySelectorAll(".finding")];
   const immediateInline=openInline.filter(x=>x.querySelector(".ca-priority")?.value==="Immediate");
   const immediateManual=manual.filter(x=>x.querySelector(".finding-priority")?.value==="Immediate");
   const serious=document.getElementById("seriousHazard").value==="Yes"?1:0;
-  document.getElementById("metricFindings").textContent=noncompliant.length+correctedResponses.length+manual.length;
-  document.getElementById("metricCorrected").textContent=correctedResponses.length+
-    openInline.filter(x=>x.querySelector(".ca-onsite")?.value==="Yes").length+
+
+  document.getElementById("metricFindings").textContent=issues.length+fixed.length+manual.length;
+  document.getElementById("metricCorrected").textContent=fixed.length+
+    openInline.filter(x=>x.querySelector(".ca-onsite")?.value==="Yes" && x.closest(".qrow")?.dataset.status!=="Fixed").length+
     manual.filter(x=>x.querySelector(".finding-onsite")?.value==="Yes").length;
   document.getElementById("metricOpen").textContent=
     openInline.filter(x=>x.querySelector(".ca-followup")?.value==="Yes" && x.querySelector(".ca-status")?.value==="Open").length+
