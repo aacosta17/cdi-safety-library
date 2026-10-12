@@ -614,6 +614,7 @@
 #weatherCalendar .calendar-day:not(.empty){cursor:pointer}
 #weatherCalendar .calendar-day:not(.empty):focus-visible{outline:3px solid #526dea;outline-offset:2px}
 </style>
+<style id="auditNavigationIsolation">main > section.audit-suspended{display:none!important}#auditWorkspaceLayer .audit-workspace-topbar{display:none!important}main > section#auditWorkspaceLayer #auditWorkspaceFrame{border-top:1px solid #e1e7f0;border-radius:17px}</style>
 <!-- Safety Audit is bundled directly into this index.html as a self-contained document. -->
 
 
@@ -629,28 +630,33 @@ const auditHTML="<!DOCTYPE html>\n<html lang=\"en\"><head><meta charset=\"utf-8\
 frame.addEventListener('load',()=>{layer.classList.remove('audit-loading');});
 window.openAuditWorkspace=function(){
  lastFocus=document.activeElement;
- document.querySelectorAll('main > section').forEach(el=>{if(el!==layer){el.dataset.auditPreviousDisplay=el.style.display;el.style.display='none';}});
+ // Hide other panels without altering the inline display state managed by the app router.
+ document.querySelectorAll('main > section').forEach(el=>{if(el!==layer)el.classList.add('audit-suspended');});
  layer.classList.remove('hidden');layer.classList.add('audit-loading');
  document.querySelectorAll('main > .nav button,main > .nav a.portal-link').forEach(el=>el.classList.toggle('active',el.id==='nAudit'));
  window.scrollTo({top:0,behavior:'instant'});
- if(!frame.hasAttribute('srcdoc'))frame.srcdoc=auditHTML.replace('</head>','<style>body>header{display:none!important}body>main{margin-top:12px!important}body{background:#f5f7fb!important} .hero{border-radius:17px!important} .sticky-nav{position:sticky!important;bottom:0!important} @media print{body>header{display:none!important}}</style></head>');
+ if(!frame.hasAttribute('srcdoc'))frame.srcdoc=auditHTML.replace('</head>','<style>body>header{display:none!important}body>main{margin-top:12px!important}body{background:#f5f7fb!important}.hero{border-radius:17px!important;background:linear-gradient(120deg,#1c2c4c,#3656a5)!important;padding:26px!important}.hero h1,.hero .eyebrow{color:white!important}.hero p{color:#d5e0f2!important}.home-link{display:none!important}.report-brand img{display:none!important}</style></head>');
  else layer.classList.remove('audit-loading');
- back.focus({preventScroll:true});
 };
 window.closeAuditWorkspace=function(options={}){
  layer.classList.add('hidden');layer.classList.remove('audit-loading');
- document.querySelectorAll('main > section').forEach(el=>{if(el!==layer){el.style.display=el.dataset.auditPreviousDisplay||'';delete el.dataset.auditPreviousDisplay;}});
- window.scrollTo({top:0,behavior:'instant'});
+ document.querySelectorAll('main > section.audit-suspended').forEach(el=>el.classList.remove('audit-suspended'));
  try{frame.contentWindow?.saveDraft?.();}catch(e){}
  if(options.restoreFocus!==false&&lastFocus&&typeof lastFocus.focus==='function')lastFocus.focus({preventScroll:true});
 };
-// Capture sidebar navigation before inline showView handlers run. Restore the
-// previous section display state first, then let the normal router do its job.
-document.addEventListener('click',e=>{
- const nav=e.target.closest('main > .nav button, main > .nav a.portal-link');
- if(!nav || layer.classList.contains('hidden') || nav.id==='nAudit')return;
- window.closeAuditWorkspace({restoreFocus:false});
-},true);
+// Run the ordinary app router only after the audit's display isolation is removed.
+// Using a direct navigation listener avoids depending on which script defined showView.
+document.querySelectorAll('main > .nav button').forEach(nav=>{
+ nav.addEventListener('click',()=>{
+  if(nav.id==='nAudit'||layer.classList.contains('hidden'))return;
+  window.closeAuditWorkspace({restoreFocus:false});
+  // The existing inline onclick handler already ran; invoke the requested view
+  // again now that all workspace panels are available to the router.
+  const views={nHome:'home',nPTP:'ptp',nLibrary:'library',nForms:'forms'};
+  if(views[nav.id]&&typeof window.showView==='function')window.showView(views[nav.id]);
+  else if(nav.id==='nManpower'&&typeof window.showManpowerView==='function')window.showManpowerView();
+ },false);
+});
 document.addEventListener('click',e=>{
  const link=e.target.closest('a[href="#safety-audit"]');
  if(!link||e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;
