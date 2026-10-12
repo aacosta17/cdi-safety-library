@@ -631,19 +631,26 @@ window.openAuditWorkspace=function(){
  lastFocus=document.activeElement;
  document.querySelectorAll('main > section').forEach(el=>{if(el!==layer){el.dataset.auditPreviousDisplay=el.style.display;el.style.display='none';}});
  layer.classList.remove('hidden');layer.classList.add('audit-loading');
- document.querySelectorAll('main > .nav button').forEach(el=>el.classList.toggle('active',el.textContent.trim()==='Safety Audit'));
+ document.querySelectorAll('main > .nav button,main > .nav a.portal-link').forEach(el=>el.classList.toggle('active',el.id==='nAudit'));
  window.scrollTo({top:0,behavior:'instant'});
- if(!frame.hasAttribute('srcdoc'))frame.srcdoc=auditHTML;
+ if(!frame.hasAttribute('srcdoc'))frame.srcdoc=auditHTML.replace('</head>','<style>body>header{display:none!important}body>main{margin-top:12px!important}body{background:#f5f7fb!important} .hero{border-radius:17px!important} .sticky-nav{position:sticky!important;bottom:0!important} @media print{body>header{display:none!important}}</style></head>');
  else layer.classList.remove('audit-loading');
  back.focus({preventScroll:true});
 };
-window.closeAuditWorkspace=function(){
+window.closeAuditWorkspace=function(options={}){
  layer.classList.add('hidden');layer.classList.remove('audit-loading');
  document.querySelectorAll('main > section').forEach(el=>{if(el!==layer){el.style.display=el.dataset.auditPreviousDisplay||'';delete el.dataset.auditPreviousDisplay;}});
  window.scrollTo({top:0,behavior:'instant'});
  try{frame.contentWindow?.saveDraft?.();}catch(e){}
- if(lastFocus&&typeof lastFocus.focus==='function')lastFocus.focus({preventScroll:true});
+ if(options.restoreFocus!==false&&lastFocus&&typeof lastFocus.focus==='function')lastFocus.focus({preventScroll:true});
 };
+// Capture sidebar navigation before inline showView handlers run. Restore the
+// previous section display state first, then let the normal router do its job.
+document.addEventListener('click',e=>{
+ const nav=e.target.closest('main > .nav button, main > .nav a.portal-link');
+ if(!nav || layer.classList.contains('hidden') || nav.id==='nAudit')return;
+ window.closeAuditWorkspace({restoreFocus:false});
+},true);
 document.addEventListener('click',e=>{
  const link=e.target.closest('a[href="#safety-audit"]');
  if(!link||e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;
