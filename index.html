@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>Field Operations | Safety Workspace</title>
+<title>Field Management Workspace Tool</title>
 <meta name="theme-color" content="#141e31">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23141e31'/%3E%3Cpath d='M17 32h30M32 17v30' stroke='%23a4c4ff' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
 
@@ -51,6 +51,7 @@
   .brand-symbol svg{width:24px;height:24px;display:block}
   .brandtext{padding:0;border:0;line-height:1.15}
   .brandtext b{font-family:'Manrope','DM Sans',sans-serif;font-size:15px;font-weight:800;letter-spacing:-.045em;color:#17233a;text-transform:none}
+  .brandtext b{display:block;line-height:1.19;white-space:nowrap}
   .brandtext small{display:block;font-size:10px;font-weight:750;letter-spacing:.13em;text-transform:uppercase;color:#7f8ba0;margin-top:4px}
   .buildbadge{display:none!important}
   .header-tools{display:flex;min-width:0;flex:1;overflow:hidden}
@@ -80,7 +81,7 @@
   .hero{background:linear-gradient(125deg,#182847,#253f71 65%,#3656a5);border:1px solid rgba(255,255,255,.12);border-radius:19px;padding:31px 34px;box-shadow:0 18px 35px rgba(17,33,69,.075);margin-bottom:20px}
   .hero:after{background:radial-gradient(circle,rgba(130,170,252,.25) 0%,transparent 70%);height:350px;width:350px;right:-95px;top:-190px}
   .hero h1,h1,h2,h3{font-family:'Manrope','DM Sans',sans-serif;letter-spacing:-.045em}
-  .hero h1{font-size:28px;font-weight:800}.hero p{color:#cbd7e9}
+  .hero h1{font-size:28px;font-weight:800;color:#ffffff!important;text-shadow:0 1px 2px rgba(0,0,0,.08)}.hero p{color:#cbd7e9}
   .card{border:1px solid #e1e7f0;border-radius:18px;padding:23px;background:#fff;box-shadow:var(--shadow);margin-bottom:18px}
   h1{font-size:26px;font-weight:800;color:#1c2d46}h2{font-weight:800;color:#1b2c46}h3{font-weight:750;color:#273953}
   .help{color:#778398;font-size:13px;line-height:1.65}
@@ -164,7 +165,7 @@
 @media screen and (max-width:1370px){.headerin{gap:18px}.brand{min-width:225px;flex-basis:225px}.wxitem{min-width:75px;padding:7px 9px}.wxitem.wide{min-width:125px}}
 @media screen and (max-width:1080px){main{grid-template-columns:210px minmax(0,1fr)}main>.nav{padding-left:10px;padding-right:10px}.brand{min-width:194px;flex-basis:194px}.wxitem.wide{display:none!important}.wxitem.tomorrow{display:none!important}.app-tool-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.app-tool{min-height:163px}}
 @media screen and (max-width:850px){
-  .headerin{min-height:72px;padding:10px 18px;gap:14px}.brand{min-width:175px;flex-basis:175px}.brand-symbol{width:37px;height:37px;flex-basis:37px}.brand-symbol svg{width:22px;height:22px}.brandtext b{font-size:13px}.brandtext small{font-size:8px}.wxitem.wind,.wxitem.heat{display:none!important}.wxitem.alert{min-width:99px}
+  .headerin{min-height:72px;padding:10px 18px;gap:14px}.brand{min-width:202px;flex-basis:202px}.brand-symbol{width:37px;height:37px;flex-basis:37px}.brand-symbol svg{width:22px;height:22px}.brandtext b{font-size:13px}.brandtext small{font-size:8px}.wxitem.wind,.wxitem.heat{display:none!important}.wxitem.alert{min-width:99px}
   main{grid-template-columns:1fr;display:flex;flex-direction:column;min-height:calc(100vh - 73px)}
   main>.nav{position:sticky;top:72px;z-index:26;display:flex;flex-direction:row;flex-wrap:nowrap!important;align-items:center;gap:6px;width:100%;height:auto;min-height:0;flex-shrink:0;overflow-x:auto;overflow-y:hidden;white-space:nowrap;background:#131e32;padding:9px 13px;margin:0;border:0;scrollbar-width:none}
   main>.nav::-webkit-scrollbar{display:none}main>.nav .app-nav-label,main>.nav .app-nav-note{display:none!important}
@@ -176,7 +177,7 @@
   .weather-calendar{padding:18px 16px 13px!important}.calendar-day{min-height:74px!important;padding:7px!important}
 }
 @media screen and (max-width:600px){
-  html{scroll-padding-top:126px}.headerin{padding:9px 13px;min-height:63px;gap:8px}.brand{min-width:148px;flex-basis:148px;gap:8px}.brand-symbol{width:32px;height:32px;flex-basis:32px;border-radius:10px}.brand-symbol svg{width:20px;height:20px}.brandtext b{font-size:11px;letter-spacing:-.04em}.brandtext small{font-size:7px;letter-spacing:.08em}
+  html{scroll-padding-top:126px}.headerin{padding:9px 13px;min-height:63px;gap:8px}.brand{min-width:187px;flex-basis:187px;gap:8px}.brand-symbol{width:32px;height:32px;flex-basis:32px;border-radius:10px}.brand-symbol svg{width:20px;height:20px}.brandtext b{font-size:11px;letter-spacing:-.04em}.brandtext small{font-size:7px;letter-spacing:.08em}
   .weatherbar,.weather-link .weatherbar{min-height:40px!important;border-radius:10px!important}.wxitem{min-width:0!important;padding:6px 7px;flex:1}.wxitem.alert,.wxitem.wind,.wxitem.heat,.wxitem.tomorrow,.wxitem.wide{display:none!important}.wxlabel{font-size:7px;letter-spacing:.04em}.wxvalue{font-size:12px}.wxsub{font-size:8px;margin-top:2px}
   main>.nav{top:63px;padding:7px 10px}main>section{padding:18px 13px 45px}main>section#manpower{padding:9px}
   .manpower-shell{height:calc(100dvh - 117px)!important;min-height:610px!important;border-radius:12px}
@@ -200,7 +201,7 @@
 </style>
 </head>
 <body>
-<header><div class="headerin"><div class="brand"><span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2" fill="#88a7ff"/><rect x="14" y="3" width="7" height="7" rx="2" fill="#e5ecff"/><rect x="3" y="14" width="7" height="7" rx="2" fill="#e5ecff"/><rect x="14" y="14" width="7" height="7" rx="2" fill="#69d5cd"/></svg></span><div class="brandtext"><b>Field Operations</b><small>Safety workspace</small></div></div><div class="header-tools"><a class="weather-link" href="https://forecast.weather.gov/MapClick.php?lat=29.4241&lon=-98.4936" target="_blank" rel="noopener" aria-label="Open National Weather Service San Antonio forecast"><div id="weatherBar" class="weatherbar" title="San Antonio safety weather · NOAA/NWS"><div id="wxTempCell" class="wxitem"><span class="wxlabel">SAN ANTONIO, TX</span><span id="wxTemp" class="wxvalue">--°F</span><span id="wxCond" class="wxsub">Loading…</span><span id="wxTempAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxHeatCell" class="wxitem heat"><span class="wxlabel">HEAT INDEX</span><span id="wxHeat" class="wxvalue">--°F</span><span id="wxHeatSub" class="wxsub">Field heat</span><span id="wxHeatAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxWindCell" class="wxitem wind"><span class="wxlabel">WIND</span><span id="wxWind" class="wxvalue">-- mph</span><span id="wxWindDir" class="wxsub">--</span><span id="wxWindAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxLightningCell" class="wxitem alert"><span class="wxlabel">⚡ LIGHTNING</span><span id="wxLightning" class="wxvalue"><span class="wx-dot"></span>Checking</span><span id="wxLightningSub" class="wxsub">NWS thunder risk</span><span id="wxLightningAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxAlertCell" class="wxitem alert wide"><span class="wxlabel">SEVERE WEATHER</span><span id="wxAlert" class="wxvalue">Checking alerts</span><span id="wxAlertSub" class="wxsub">Official NWS alerts</span><span id="wxAlertAdvice" class="wxadvice" aria-live="polite"></span></div><div class="wxitem tomorrow"><span class="wxlabel">TOMORROW</span><span id="wxTomorrow" class="wxvalue">--°F</span><span id="wxTomorrowSub" class="wxsub">Forecast</span></div></div></a></div></div></header>
+<header><div class="headerin"><div class="brand"><span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2" fill="#88a7ff"/><rect x="14" y="3" width="7" height="7" rx="2" fill="#e5ecff"/><rect x="3" y="14" width="7" height="7" rx="2" fill="#e5ecff"/><rect x="14" y="14" width="7" height="7" rx="2" fill="#69d5cd"/></svg></span><div class="brandtext"><b>Field Management<br>Workspace Tool</b><small>Operations · Safety · Planning</small></div></div><div class="header-tools"><a class="weather-link" href="https://forecast.weather.gov/MapClick.php?lat=29.4241&lon=-98.4936" target="_blank" rel="noopener" aria-label="Open National Weather Service San Antonio forecast"><div id="weatherBar" class="weatherbar" title="San Antonio safety weather · NOAA/NWS"><div id="wxTempCell" class="wxitem"><span class="wxlabel">SAN ANTONIO, TX</span><span id="wxTemp" class="wxvalue">--°F</span><span id="wxCond" class="wxsub">Loading…</span><span id="wxTempAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxHeatCell" class="wxitem heat"><span class="wxlabel">HEAT INDEX</span><span id="wxHeat" class="wxvalue">--°F</span><span id="wxHeatSub" class="wxsub">Field heat</span><span id="wxHeatAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxWindCell" class="wxitem wind"><span class="wxlabel">WIND</span><span id="wxWind" class="wxvalue">-- mph</span><span id="wxWindDir" class="wxsub">--</span><span id="wxWindAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxLightningCell" class="wxitem alert"><span class="wxlabel">⚡ LIGHTNING</span><span id="wxLightning" class="wxvalue"><span class="wx-dot"></span>Checking</span><span id="wxLightningSub" class="wxsub">NWS thunder risk</span><span id="wxLightningAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxAlertCell" class="wxitem alert wide"><span class="wxlabel">SEVERE WEATHER</span><span id="wxAlert" class="wxvalue">Checking alerts</span><span id="wxAlertSub" class="wxsub">Official NWS alerts</span><span id="wxAlertAdvice" class="wxadvice" aria-live="polite"></span></div><div class="wxitem tomorrow"><span class="wxlabel">TOMORROW</span><span id="wxTomorrow" class="wxvalue">--°F</span><span id="wxTomorrowSub" class="wxsub">Forecast</span></div></div></a></div></div></header>
 <main>
 <div class="nav no-print" aria-label="Main workspace navigation">
   <div class="app-nav-label">Workspace</div>
@@ -211,7 +212,6 @@
   <div class="app-nav-label">Resources</div>
   <button id="nLibrary" type="button" onclick="showView('library')"><span class="navico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10.3 3.5-8 14A2 2 0 0 0 4 20.5h16a2 2 0 0 0 1.7-3l-8-14a2 2 0 0 0-3.4 0z"/><path d="M12 9v4m0 4h.01"/></svg></span>Hazard Library</button>
   <button id="nForms" type="button" onclick="showView('forms')"><span class="navico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 10h18"/></svg></span>Forms &amp; Documents</button>
-  <a class="portal-link" href="incident-scene-builder.html"><span class="navico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5zM3 12l9 5 9-5M3 16l9 5 9-5"/></svg></span>Incident Scene Builder</a>
   <a class="portal-link" href="https://cdiventuresinc-hff.viewpointforcloud.com/account/login?ReturnUrl=%2FHome" target="_blank" rel="noopener"><span class="navico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9"/><path d="M20 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6"/></svg></span>Employee Portal</a>
   <div class="app-nav-note"><strong>Field-ready tools</strong>Plan work, review hazards, and manage crews — all in one workspace.</div>
 </div>
@@ -219,8 +219,8 @@
 <div class="app-home-hero">
   <div>
     <div class="app-eyebrow"><span class="app-status-dot"></span> Your operations workspace</div>
-    <h1>Better workflows.<br><span>Safer workdays.</span></h1>
-    <p>Everything you need to plan the job, keep your teams organized, and put safety first. Built for the field, ready wherever you are.</p>
+    <h1>Plan the job.<br><span>Coordinate the field.</span></h1>
+    <p>Everything you need to plan the job, keep your teams organized, and put safety first. Build PTPs, schedule crews, complete safety audits, and review weather and hazards.</p>
     <div class="app-home-buttons">
       <button type="button" class="app-hero-primary" onclick="showView('ptp');go(1)">Create a PTP <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-7-7 7 7-7 7"/></svg></button>
       <a href="audit.html" class="app-hero-outline">Start safety audit <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9"/><path d="M20 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6"/></svg></a>
@@ -242,7 +242,7 @@
 
 <section id="manpower" class="hidden manpower-host">
   <div class="manpower-shell">
-    <iframe id="manpowerFrame" title="CDI Manpower Planner" loading="eager"></iframe>
+    <iframe id="manpowerFrame" title="Manpower Planner — Field Management Workspace Tool" loading="eager"></iframe>
   </div>
 </section>
 
