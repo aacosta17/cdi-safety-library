@@ -208,7 +208,7 @@
   <button id="nHome" class="active" type="button" onclick="showView('home')"><span class="navico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"/><path d="M9 21v-7h6v7"/></svg></span>Overview</button>
   <button id="nPTP" type="button" onclick="showView('ptp')"><span class="navico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="16" rx="2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h6"/></svg></span>Create PTP</button>
   <button id="nManpower" type="button" onclick="showManpowerView()"><span class="navico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 14h3M14 14h3"/></svg></span>Manpower Planner</button>
-  <a class="portal-link" href="audit.html"><span class="navico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h10l4 4"/></svg></span>Safety Audit</a>
+  <a id="nAudit" class="portal-link" href="audit.html"><span class="navico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h10l4 4"/></svg></span>Safety Audit</a>
   <div class="app-nav-label">Resources</div>
   <button id="nLibrary" type="button" onclick="showView('library')"><span class="navico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10.3 3.5-8 14A2 2 0 0 0 4 20.5h16a2 2 0 0 0 1.7-3l-8-14a2 2 0 0 0-3.4 0z"/><path d="M12 9v4m0 4h.01"/></svg></span>Hazard Library</button>
   <button id="nForms" type="button" onclick="showView('forms')"><span class="navico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 10h18"/></svg></span>Forms &amp; Documents</button>
@@ -563,5 +563,104 @@
   };
 })();
 </script>
+
+<style id="premiumAuditWorkspaceStyles">
+.audit-workspace-layer{position:fixed;inset:0;z-index:10020;height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;background:#f5f7fb;isolation:isolate}
+.audit-workspace-layer.hidden{display:none!important}
+.audit-workspace-layer.audit-loading #auditWorkspaceFrame{opacity:0;pointer-events:none}
+.audit-workspace-layer.audit-loading::after{content:"Preparing your safety audit…";position:absolute;inset:74px 0 0;display:flex;align-items:center;justify-content:center;font:700 13px 'DM Sans',system-ui,sans-serif;letter-spacing:.025em;color:#687b98;pointer-events:none;background:radial-gradient(circle at center,#fff 0%,#f5f7fb 75%)}
+.audit-workspace-topbar{flex:0 0 auto;min-height:74px;padding:11px clamp(16px,3vw,42px);display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #e0e7f1;background:rgba(255,255,255,.97);box-shadow:0 2px 16px rgba(19,34,61,.035);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.audit-workspace-brand{display:flex;align-items:center;gap:12px;min-width:0}
+.audit-workspace-brand>span:last-child{min-width:0}
+.audit-workspace-brand b{display:block;color:#1b2944;font:800 14px/1.3 'Manrope','DM Sans',system-ui,sans-serif;letter-spacing:-.035em}
+.audit-workspace-brand small{display:block;margin-top:4px;color:#8290a2;font:700 10px/1.3 'DM Sans',system-ui,sans-serif;letter-spacing:.075em;text-transform:uppercase}
+.audit-workspace-symbol{width:39px;height:39px;flex:0 0 39px;display:grid;grid-template-columns:repeat(2,7px);grid-template-rows:repeat(2,7px);gap:3px;place-content:center;border-radius:12px;background:#141e31;box-shadow:0 5px 12px rgba(19,30,49,.15)}
+.audit-workspace-symbol i{border-radius:2px;background:#e5ecff}.audit-workspace-symbol i:first-child{background:#88a7ff}.audit-workspace-symbol i:last-child{background:#69d5cd}
+.audit-workspace-back{appearance:none;display:flex;gap:8px;align-items:center;justify-content:center;min-height:40px;border:1px solid #dce3ed;border-radius:10px;padding:9px 13px;background:#fff;color:#3c4e69;font:750 12px 'DM Sans',system-ui,sans-serif;cursor:pointer;white-space:nowrap;transition:background .18s,border-color .18s,color .18s}
+.audit-workspace-back:hover{background:#eff2ff;border-color:#bfcdf2;color:#304ebc}
+.audit-workspace-back svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linejoin:round;stroke-linecap:round}
+#auditWorkspaceFrame{display:block;flex:1 1 0;min-height:0;height:100%;width:100%;border:0;background:#f5f7fb;overflow:auto}
+@media(max-width:520px){.audit-workspace-topbar{min-height:66px;padding:9px 13px;gap:8px}.audit-workspace-brand{gap:9px}.audit-workspace-symbol{width:34px;height:34px;flex-basis:34px;border-radius:10px}.audit-workspace-brand b{font-size:11.4px;max-width:195px}.audit-workspace-brand small{font-size:8px}.audit-workspace-back{font-size:11px;min-height:37px;padding:8px 9px}.audit-workspace-back svg{width:15px;height:15px}}
+@media(prefers-reduced-motion:reduce){.audit-workspace-back{transition:none}}
+@media print{#auditWorkspaceLayer{position:static;height:auto!important;display:block!important}.audit-workspace-topbar{display:none!important}#auditWorkspaceFrame{height:auto!important;overflow:visible!important}}
+</style>
+
+<!-- Safety Audit remains the repository's unchanged audit.html app; it is presented
+     within this workspace with a non-destructive same-origin visual skin. -->
+<div id="auditWorkspaceLayer" class="audit-workspace-layer hidden" role="dialog" aria-modal="true" aria-label="Safety Audit">
+  <div class="audit-workspace-topbar">
+    <div class="audit-workspace-brand">
+      <span class="audit-workspace-symbol" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span><b>Field Management Workspace Tool</b><small>Safety Audit · Field inspections</small></span>
+    </div>
+    <button id="auditWorkspaceBack" type="button" class="audit-workspace-back" onclick="closeAuditWorkspace()" aria-label="Return to main workspace">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 18-6-6 6-6"/><path d="M8 12h13"/></svg>
+      <span>Back to workspace</span>
+    </button>
+  </div>
+  <iframe id="auditWorkspaceFrame" title="Safety Audit · Field Management Workspace Tool" loading="lazy" allow="camera" referrerpolicy="same-origin"></iframe>
+</div>
+
+<script id="premiumAuditWorkspaceController">
+(function(){
+  'use strict';
+  const layer = document.getElementById('auditWorkspaceLayer');
+  const frame = document.getElementById('auditWorkspaceFrame');
+  const escapeButton = document.getElementById('auditWorkspaceBack');
+  if(!layer || !frame) return;
+  let returnFocus = null;
+  const visualCSS = "\n/* Field Management Workspace Tool / Safety Audit, visual-only skin */\n@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap');\n:root{--navy:#172743!important;--blue:#395be6!important;--bg:#f5f7fb!important;--card:#fff!important;--line:#e1e8f3!important;--text:#1b2941!important;--muted:#748197!important;--good:#168466!important;--warn:#906114!important;--bad:#bb454b!important;--shadow:0 9px 38px rgba(15,32,64,.045),0 2px 9px rgba(15,32,64,.02)!important}\nhtml{scroll-padding-top:80px}\nbody{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif!important;color:#1c2d45!important;background:radial-gradient(ellipse 1000px 450px at 85% -180px,#eaf0ff 0,transparent 74%),#f5f7fb!important;-webkit-font-smoothing:antialiased}\n*{-webkit-tap-highlight-color:transparent}\nheader{background:rgba(255,255,255,.96)!important;border-color:#e3e8f0!important;box-shadow:0 3px 18px rgba(16,32,60,.035)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important}\n.header-in{display:none!important}\n.progress-wrap{padding:15px clamp(15px,3vw,36px) 13px!important;max-width:1110px!important}\n.progress-top{margin-bottom:9px!important}.progress-top span{font-size:11px!important;color:#667791!important;font-weight:800!important}\n.progress-track{height:6px!important;background:#e8edf6!important;border-radius:999px!important}\n.progress-bar{background:linear-gradient(90deg,#395be6,#647ef0)!important;border-radius:999px!important;transition:width .32s cubic-bezier(.2,.8,.2,1)!important}\nmain{width:100%!important;max-width:1040px!important;margin:26px auto 95px!important;padding:0 clamp(12px,3vw,25px)!important}\n.hero{margin:0 0 18px!important;position:relative;padding:24px 29px!important;border:1px solid #263b67!important;border-radius:18px!important;overflow:hidden;background:linear-gradient(130deg,#182847,#263e6b 72%,#35529a)!important;box-shadow:0 15px 33px rgba(20,38,79,.1)!important}\n.hero:after{content:'';position:absolute;width:220px;height:220px;border-radius:50%;right:-65px;top:-120px;background:radial-gradient(circle,rgba(121,158,248,.17),transparent 70%);pointer-events:none}\n.eyebrow{position:relative;z-index:1;color:#bbcae3!important;font-size:10px!important;letter-spacing:.14em!important}\nh1{font-family:'Manrope','DM Sans',sans-serif!important;font-size:clamp(23px,2.6vw,29px)!important;letter-spacing:-.04em!important;line-height:1.22!important}\n.hero h1{position:relative;z-index:1;color:#fff!important;margin:8px 0 8px!important;font-weight:800!important}.hero p{position:relative;z-index:1;color:#d6e1f5!important;font-size:13px!important;line-height:1.6!important}\n.card{padding:clamp(17px,2vw,25px)!important;border:1px solid #e2e8f2!important;border-radius:18px!important;background:#fff!important;box-shadow:var(--shadow)!important;margin:14px 0 20px!important}\n.section-title h2,.audit-section h3{font-family:'Manrope','DM Sans',sans-serif!important;color:#233553!important;letter-spacing:-.025em}\n.grid2{gap:16px 17px!important}.field label{font-size:11px!important;letter-spacing:.015em!important;color:#5d6c82!important;font-weight:800!important;margin-bottom:8px!important}\ninput,textarea,select{font-family:'DM Sans',system-ui,sans-serif!important;font-size:14px!important;min-height:47px!important;border:1px solid #d4ddec!important;border-radius:10px!important;padding:11px 13px!important;background:#fbfcff!important;color:#25354e!important;box-shadow:0 1px 2px rgba(14,25,48,.018)!important;transition:border-color .2s,box-shadow .2s,background .2s!important}\ntextarea{min-height:95px!important;line-height:1.5!important}\ninput:focus,textarea:focus,select:focus{outline:none!important;background:#fff!important;border-color:#748deb!important;box-shadow:0 0 0 4px rgba(65,93,222,.11)!important}\n:is(input,textarea,select,button,a):focus-visible{outline:3px solid rgba(76,107,229,.32)!important;outline-offset:2px}\n.chip,.choice,.navbtn,.photo-btn,.home-link{font-family:'DM Sans',system-ui,sans-serif!important;transition:background .18s,border-color .18s,color .18s,box-shadow .18s,transform .18s!important}\n.chip{background:#fbfcff!important;border:1px solid #dde5f0!important;border-radius:11px!important;color:#40526d!important}\n.chip:hover,.choice:hover,.navbtn:hover{border-color:#b9c9ee!important}\n.chip.active{background:#ecf0ff!important;border-color:#9dadf1!important;color:#304bb2!important}\n.audit-section{border-color:#edf1f7!important}.audit-section h3{color:#253c5d!important}\n.qrow{border-color:#edf1f5!important}.qtext{color:#31435f!important}.choice{border:1px solid #dae2ee!important;background:#fff!important;border-radius:9px!important;color:#52657c!important}\n.choice.active.ok{background:#e9f8f2!important;border-color:#9ad4bc!important;color:#137559!important}.choice.active.attn{background:#fff1f1!important;border-color:#e9a8ae!important;color:#b03b45!important}.choice.active.fixed{background:#fff7e7!important;border-color:#eac883!important;color:#936012!important}.choice.active.na{background:#f1f4f8!important;border-color:#cbd4de!important;color:#5c6b7b!important}\n.followup{background:#fff7f7!important;border:1px solid #f0dadd!important;border-radius:12px!important}\n.photo-btn{border:1px dashed #a6b6d4!important;border-radius:11px!important;background:#f7f9ff!important;color:#3956b0!important}.photo-btn:hover{background:#edf2ff!important;border-color:#7896dd!important}\n.photo-card{border-radius:11px!important;border:1px solid #e3e9f2!important}\n.sticky-nav{background:rgba(255,255,255,.97)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;border-top:1px solid #e1e8f2!important;box-shadow:0 -8px 22px rgba(15,32,64,.025)!important}\n.sticky-inner{max-width:990px!important;gap:11px!important}\n.navbtn{border:1px solid #dfe6f0!important;border-radius:11px!important;background:#fff!important;color:#4b5b74!important;min-height:45px!important;font-size:12px!important;font-weight:750!important}\n.navbtn.primary{background:#395be6!important;border-color:#395be6!important;color:#fff!important;box-shadow:0 6px 15px rgba(55,86,212,.13)!important}\n.navbtn.primary:hover{background:#2d4ed6!important;border-color:#2d4ed6!important;box-shadow:0 8px 20px rgba(55,86,212,.19)!important}\n.navbtn:disabled{opacity:.48!important;box-shadow:none!important}\n.metric,.report-metric{background:#f8faff!important;border-color:#e4eaf3!important;border-radius:11px!important}\n.metric b,.report-metric b{color:#263e6e!important}\n.save-note{color:#738197!important}\n.employee-results{z-index:90!important;border:1px solid #d5dfeb!important;border-radius:11px!important;box-shadow:0 16px 34px rgba(18,36,68,.15)!important}\n.employee-option:hover,.employee-option.active{background:#ecf0ff!important;color:#3049ae!important}\n.report-overlay{background:#f5f7fb!important}.report-toolbar{background:rgba(255,255,255,.98)!important;border-color:#dfe6f0!important}\n.report-toolbar b{color:#253c60!important}.report-page{border-color:#e3e9f3!important;border-radius:16px!important;box-shadow:0 14px 35px rgba(18,34,62,.075)!important}\n.report-head{border-bottom-color:#263e6e!important}.report-brand h1{color:#253c61!important}\n.report-section h2{color:#263f68!important;border-color:#e3eaf3!important}\n.report-brand img,img[src*=\"cdi-logo.jpg\"],img[src*=\"cdi-logo.png\"]{display:none!important}\n.report-brand::before{content:'';width:34px;height:34px;flex:0 0 34px;border-radius:10px;background:linear-gradient(135deg,#1c2a45,#324773);display:block}\n.report-footer{color:#6e7e91!important}\n@media(max-width:700px){main{margin-top:12px!important;padding:0 11px!important}.progress-wrap{padding:12px 12px 11px!important}.hero{padding:20px 18px!important;border-radius:15px!important}.card{padding:16px!important;border-radius:14px!important}.grid2{grid-template-columns:1fr!important;gap:13px!important}.full{grid-column:auto!important}.sticky-nav{padding-top:9px!important}.photo-preview{grid-template-columns:1fr!important}.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.response-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}\n@media(min-width:701px) and (max-width:1050px){main{max-width:900px!important}}\n@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}\n@media print{html,body{background:white!important;box-shadow:none!important}.report-page{border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important}.report-brand img,img[src*=\"cdi-logo.jpg\"]{display:none!important}.hero,.sticky-nav,.progress-wrap,header{display:none!important}}\n";
+  function skinAudit(){
+    let d;
+    try { d=frame.contentDocument; if(!d || !d.head) return; }
+    catch(e){ return; } // Same-origin policy, no cross-origin overrides.
+    if(d.getElementById('fieldWorkspaceAuditVisualSkin')) return;
+    const style=d.createElement('style');
+    style.id='fieldWorkspaceAuditVisualSkin';
+    style.textContent=visualCSS;
+    d.head.appendChild(style);
+    layer.classList.remove('audit-loading');
+    d.title='Safety Audit | Field Management Workspace Tool';
+    const icon=d.querySelector('link[rel="icon"]');
+    if(icon) icon.href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23141e31'/%3E%3Cpath d='M18 20h11v11H18zm17 0h11v11H35zM18 37h11v11H18zm17 0h11v11H35z' fill='%23adc5ff'/%3E%3C/svg%3E";
+    const small=d.querySelector('.brand small');
+    if(small) small.textContent='Field Management Workspace Tool';
+    // The audit's built-in Home link would otherwise open index.html *inside* the iframe.
+    const home=d.querySelector('a.home-link');
+    if(home){
+      home.addEventListener('click',function(evt){evt.preventDefault();evt.stopImmediatePropagation();window.closeAuditWorkspace();},true);
+    }
+  }
+  frame.addEventListener('load', skinAudit);
+  window.openAuditWorkspace=function(){
+    returnFocus=document.activeElement;
+    layer.classList.remove('hidden');
+    if(!frame.getAttribute('src')) layer.classList.add('audit-loading');
+    document.body.style.overflow='hidden';
+    if(!frame.getAttribute('src')) frame.setAttribute('src','audit.html');
+    else skinAudit();
+    escapeButton.focus({preventScroll:true});
+  };
+  window.closeAuditWorkspace=function(){
+    layer.classList.add('hidden');
+    layer.classList.remove('audit-loading');
+    document.body.style.overflow='';
+    if(returnFocus && typeof returnFocus.focus==='function') returnFocus.focus({preventScroll:true});
+  };
+  document.addEventListener('click',function(event){
+    const link=event.target.closest && event.target.closest('a[href="audit.html"]');
+    if(!link || link.closest('#auditWorkspaceLayer')) return;
+    if(event.defaultPrevented || event.button!==0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    openAuditWorkspace();
+  },true);
+  document.addEventListener('keydown',function(event){
+    if(event.key==='Escape' && !layer.classList.contains('hidden') && !frame.contentDocument?.getElementById('reportOverlay')?.classList.contains('open')){
+      closeAuditWorkspace();
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
