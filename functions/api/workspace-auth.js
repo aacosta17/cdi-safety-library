@@ -17,7 +17,7 @@ export async function onRequestPost({request,env}) {
     const salt=randomHex(24),id=newId(),hash=await passwordHash(b.password,salt);
     // A single conditional insert prevents duplicate owner bootstrap in normal race conditions.
     const result=await env.DB.prepare(`INSERT INTO workspace_users (id,email,display_name,pw_salt,pw_hash,pw_iterations,permissions,is_owner)
-     SELECT ?,?,?,?,?,250000,'{}',1 WHERE NOT EXISTS (SELECT 1 FROM workspace_users)`).bind(id,b.email.trim().toLowerCase(),String(b.name||'Website owner').trim().slice(0,100),salt,hash).run();
+     SELECT ?,?,?,?,?,100000,'{}',1 WHERE NOT EXISTS (SELECT 1 FROM workspace_users)`).bind(id,b.email.trim().toLowerCase(),String(b.name||'Website owner').trim().slice(0,100),salt,hash).run();
     if(!result.meta?.changes)return respond({error:'Owner setup already completed.'},409);
     const token=await createSession(env,id);return respond({ok:true,user:await getUserFromId(env,id)},200,{'Set-Cookie':setSessionCookie(token)});
   }
