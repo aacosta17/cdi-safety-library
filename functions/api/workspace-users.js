@@ -13,7 +13,7 @@ export async function onRequestPost({request,env}){
     if(!isEmail(b.email)||!validatePassword(b.password)||!String(b.name||'').trim())return respond({error:'Name, valid work email and password of at least 10 characters are required.'},400);
     const salt=randomHex(24),hash=await passwordHash(b.password,salt),id=newId();
     const perms=normalizePermissions(b.permissions);
-    try{await env.DB.prepare(`INSERT INTO workspace_users (id,email,display_name,employee_id,pw_salt,pw_hash,pw_iterations,permissions) VALUES (?,?,?,?,?,?,250000,?)`).bind(id,b.email.trim().toLowerCase(),String(b.name).trim().slice(0,120),String(b.employeeId||'').trim().slice(0,50),salt,hash,JSON.stringify(perms)).run();}
+    try{await env.DB.prepare(`INSERT INTO workspace_users (id,email,display_name,employee_id,pw_salt,pw_hash,pw_iterations,permissions) VALUES (?,?,?,?,?,?,100000,?)`).bind(id,b.email.trim().toLowerCase(),String(b.name).trim().slice(0,120),String(b.employeeId||'').trim().slice(0,50),salt,hash,JSON.stringify(perms)).run();}
     catch(e){if(/UNIQUE|constraint/i.test(String(e)))return respond({error:'That email already has an account.'},409);throw e;}
     return respond({ok:true,id});
   }
@@ -27,7 +27,7 @@ export async function onRequestPost({request,env}){
   }else if(b.action==='reset_password'){
     if(!validatePassword(b.password))return respond({error:'New password must contain at least 10 characters.'},400);
     const salt=randomHex(24),hash=await passwordHash(b.password,salt);
-    await env.DB.prepare(`UPDATE workspace_users SET pw_salt=?,pw_hash=?,pw_iterations=250000,updated_at=datetime('now') WHERE id=?`).bind(salt,hash,target.id).run();
+    await env.DB.prepare(`UPDATE workspace_users SET pw_salt=?,pw_hash=?,pw_iterations=100000,updated_at=datetime('now') WHERE id=?`).bind(salt,hash,target.id).run();
     await env.DB.prepare('DELETE FROM workspace_sessions WHERE user_id=?').bind(target.id).run();
   }else{
     await env.DB.prepare(`UPDATE workspace_users SET is_active=?,updated_at=datetime('now') WHERE id=?`).bind(b.action==='enable'?1:0,target.id).run();
