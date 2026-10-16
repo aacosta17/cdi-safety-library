@@ -268,6 +268,9 @@
 }
 </style>
 <style id="workspaceAccessStyles">
+/* Keep private workspace content out of sight until the login check finishes. */
+body:not(.fw-authenticated) > header,
+body:not(.fw-authenticated) > main { visibility: hidden !important; }
 /* Field Management v1 — owner-issued user accounts */
 #fwAuthCover[hidden],#fwAuthLogin[hidden],#fwAuthSetup[hidden],#fwInitialPassword[hidden],#fwAccountActions[hidden],#fwNavAdmin[hidden],#fwAccountTag[hidden],#fwPublishLocal[hidden],#fwForceRefresh[hidden],.fw-msg[hidden]{display:none!important}
 #fwAuthCover{position:fixed;inset:0;z-index:25000;display:grid;place-items:center;background:rgba(12,23,42,.96);padding:22px;overflow-y:auto}
@@ -758,7 +761,7 @@ main > section.fw-module-host{max-width:none!important;padding:12px 17px 24px!im
   }
 
   window.showManpowerView = function(){
-    ['home','alerts','library','forms','ptp'].forEach(function(id){
+    ['home','alerts','library','forms','ptp','userAdmin'].forEach(function(id){
       const el=document.getElementById(id);
       if(el) el.classList.add('hidden');
     });
@@ -952,6 +955,7 @@ function showOverlay(mode='login'){
  $('fwAuthSummary').textContent=mode==='setup'?'One-time owner setup. Only you can create employee logins.':'Use the work email and password issued by your website administrator.';
 }
 function updateAccess(){
+ document.body.classList.toggle('fw-authenticated',!!app.user);
  $('fwAuthCover').hidden=!!app.user;
  $('fwNavAdmin').hidden=!app.user?.owner;
  $('fwAccountTag').hidden=!app.user;
