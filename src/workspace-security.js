@@ -8,7 +8,7 @@ export function respond(payload, status=200, headers={}) {
 export function randomHex(bytes=32) {const a=new Uint8Array(bytes);crypto.getRandomValues(a);return [...a].map(n=>n.toString(16).padStart(2,'0')).join('');}
 export async function digestHex(value) {let digest=await crypto.subtle.digest('SHA-256',enc.encode(value));return [...new Uint8Array(digest)].map(x=>x.toString(16).padStart(2,'0')).join('');}
 export function fixedCompare(a,b) {if(typeof a!=='string'||typeof b!=='string')return false;const length=Math.max(a.length,b.length);let diff=a.length^b.length;for(let i=0;i<length;i++)diff|=(a.charCodeAt(i)||0)^(b.charCodeAt(i)||0);return diff===0;}
-export async function passwordHash(password,salt,iterations=250000) {
+export async function passwordHash(password,salt,iterations=100000) {
  const key=await crypto.subtle.importKey('raw',enc.encode(password),'PBKDF2',false,['deriveBits']);
  const out=await crypto.subtle.deriveBits({name:'PBKDF2',salt:Uint8Array.from(salt.match(/.{2}/g).map(x=>parseInt(x,16))),iterations,hash:'SHA-256'},key,256);
  return [...new Uint8Array(out)].map(n=>n.toString(16).padStart(2,'0')).join('');
