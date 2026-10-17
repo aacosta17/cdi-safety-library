@@ -1,4 +1,3 @@
-
 /* Standalone company-neutral PTP content assistant. Deterministic task prompts, not generative AI. */
 (()=>{'use strict';const $=id=>document.getElementById(id),escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const tasks=[
@@ -27,10 +26,42 @@ const conditions=[
 ];
 $('taskOptions').innerHTML=tasks.map(t=>`<label class="check"><input type="checkbox" value="${t.id}" name="task"> ${escapeHtml(t.name)}</label>`).join('');
 $('conditionOptions').innerHTML=conditions.map(t=>`<label class="check"><input type="checkbox" value="${t.id}" name="condition"> ${escapeHtml(t.name)}</label>`).join('');
+
+const dynamicRequirements={
+ energy:{tasks:['terminate','test','demo','pull','conduit'],access:[],conditions:[]},
+ lift:{tasks:[],access:['lift','scaffold'],conditions:[]},
+ penetration:{tasks:['core','conduit','security'],access:[],conditions:[]},
+ hot:{tasks:['hot'],access:[],conditions:[]},
+ rigging:{tasks:['lift'],access:[],conditions:[]},
+ excavate:{tasks:['excavate'],access:[],conditions:[]},
+ dust:{tasks:['core','hot'],access:[],conditions:['dust']},
+ weather:{tasks:[],access:[],conditions:['weather']},
+ occupied:{tasks:[],access:[],conditions:['occupied','traffic','othertrade']}
+};
+const followupOptions={energy:'fElectrical',lift:'fLift',penetration:'fPenetration',hot:'fHot',rigging:'fLoad',excavate:'fGround',dust:'fDust',weather:'fHeat',occupied:'fPeople'};
+function getFollowups(){
+ const tasksPicked=selected('task'),conditionsPicked=selected('condition'),access=$('access').value,energy=$('energy').value;
+ const used=[];
+ document.querySelectorAll('.followup').forEach(el=>{
+  const type=el.dataset.for,r=dynamicRequirements[type];
+  const active=r.tasks.some(id=>tasksPicked.includes(id))||r.conditions.some(id=>conditionsPicked.includes(id))||r.access.includes(access)||(type==='energy'&&['adjacent','deenergized'].includes(energy));
+  el.hidden=!active;if(active)used.push(type);
+ });
+ $('taskFollowups').hidden=!used.length;
+ return used;
+}
+function showResources(){
+ const tags=new Set([...selected('task'),...selected('condition'),$('access').value,$('energy').value,'all']);
+ if(tags.has('weather'))tags.add('outdoor');
+ const resources=(window.FIELD_SAFETY_RESOURCES||[]).filter(r=>r.triggers.some(t=>tags.has(t))).slice(0,10);
+ const cards=resources.map(r=>`<article class="resource-card"><span class="tag">${escapeHtml(r.category)}</span><h3>${escapeHtml(r.title)}</h3><p>${escapeHtml(r.explanation)}</p><a href="${escapeHtml(r.url)}" target="_blank" rel="noopener noreferrer">Read: ${escapeHtml(r.source)} ↗</a></article>`).join('');
+ $('recommendedResources').innerHTML=cards;$('personalizedResources').hidden=false;
+}
+
 let rows=[];const selected=n=>[...document.querySelectorAll(`input[name=${n}]:checked`)].map(x=>x.value);
 const status=s=>{$('status').textContent=s;$('status').hidden=!s;};
 function add(step,hazard,control){rows.push({step,hazard,control})}
-function generate(){const chosen=selected('task'),context=selected('condition'),area=$('workarea').value.trim(),scope=$('scope').value.trim(),energy=$('energy').value,access=$('access').value,tools=$('equipment').value.trim(),special=$('special').value.trim();
+function generate(){const requiredFollowups=getFollowups();const chosen=selected('task'),context=selected('condition'),area=$('workarea').value.trim(),scope=$('scope').value.trim(),energy=$('energy').value,access=$('access').value,tools=$('equipment').value.trim(),special=$('special').value.trim();
  if(!scope||!chosen.length){status('Describe the work and select at least one specific task to generate a useful plan.');return}
  rows=[];const contextHazards=context.map(c=>conditions.find(t=>t.id===c)).filter(Boolean);
  add(`Review the planned work with the crew: ${scope}. Confirm work area${area?': '+area:''}.`,
@@ -44,14 +75,38 @@ function generate(){const chosen=selected('task'),context=selected('condition'),
  if(access==='scaffold')add('Verify and use the approved elevated platform or scaffold.', 'Falls, incomplete access, unstable working platform and falling objects.', 'Use only an inspected/released platform under site rules; maintain approved access, loading, guardrails and required protection.');
  for(const id of chosen){const t=tasks.find(x=>x.id===id);if(t)add(t.step,t.hazard,t.control)}
  if(contextHazards.length)add('Coordinate additional work-area hazards and controls before and during the task.',contextHazards.map(x=>x.hazard).join(' '),contextHazards.map(x=>x.control).join(' '));
+
+ const followupAdvice={
+  energy:['Determine and document the electrical work boundary and isolation verification.','Electric shock or arc exposure if electrical conditions are assumed rather than verified.','Stop electrical exposure work and have authorized qualified workers complete required identification, isolation, testing and protection before starting.'],
+  lift:['Confirm the selected access equipment, pre-use checks and work-area conditions.','Equipment instability, tip-over, crush/entrapment and dropped objects from elevated equipment.','Verify operator authorization, pre-use inspection, ground capacity, overhead clearance, exclusion zones and equipment-specific fall protection and rescue plan.'],
+  penetration:['Verify planned drilling / penetration locations and existing services.','Contact with concealed electrical, structural or other utilities, uncontrolled dust and impaired fire barriers.','Confirm drawings and required scanning/approvals before penetration; apply tool, dust and firestop controls based on the work.'],
+  hot:['Confirm hot-work authorization and fire controls.','Ignition of adjacent combustibles, burns, smoke and sparks.','Verify applicable permit, combustible protection, equipment inspections and necessary fire watch/fire extinguisher provisions.'],
+  rigging:['Plan movement and lifting of materials and equipment.','Crushed hands or feet, uncontrolled load movement, overload or struck-by incidents.','Verify weight, approved handling method, equipment capacity, travel path, stable staging, spotters and exclusion zones.'],
+  excavate:['Verify underground utility locations and excavation conditions.','Striking buried services, cave-in or uncontrolled access to the excavation.','Coordinate required utility locating and site approvals, protective system, competent-person review and access/egress before entry.'],
+  dust:['Select dust or silica controls for the actual work method.','Inhalation of hazardous airborne dust or flying particles during drilling/cutting.','Determine material and exposure hazards; implement appropriate collection, wet methods or other controls, and any required respiratory program.'],
+  weather:['Review expected heat, wind, storms and changeable outdoor conditions.','Heat illness, lightning, slips and loss of equipment stability in adverse weather.','Check real jobsite conditions and alerts; determine suitable work/rest, cooling, hydration and stop-work provisions under site rules.'],
+  occupied:['Protect occupants and adjacent crews during the planned work.','Struck-by, overhead objects, unauthorized work-zone entry or disruption of active systems.','Coordinate with affected personnel, maintain access/egress, establish protective work-zone boundaries and control simultaneous activities.']
+ };
+ const unresolved=[];
+ requiredFollowups.forEach(type=>{
+  const value=$(followupOptions[type]).value;
+  if(value==='unconfirmed'){unresolved.push(document.querySelector(`[data-for="${type}"] label`)?.textContent||type);const advice=followupAdvice[type];add(...advice)}
+ });
+ if(requiredFollowups.length&&!unresolved.length)add('Confirm that the described controls remain effective immediately before work begins.','Task conditions or work methods may change after this plan is prepared.','Review completed assessments with the crew, verify current work conditions and re-evaluate if the scope, equipment or hazards change.');
+
  if(tools)add(`Inspect and safely use the specified tools and equipment: ${tools}.`,'Defective tools, improper use and tool-specific electrical, mechanical or struck-by hazards.','Use appropriate inspected tools, qualified operators when required, manufacturer instructions and equipment-specific guards and PPE.');
  add('Inspect completed work, remove debris and restore the work area for turnover.','Trips, leftover sharp material, unsecured equipment and incomplete identification of changes.','Perform a final crew walkdown, remove waste, confirm the work area is safe, label/secure equipment and report unresolved conditions.');
  draw();$('results').hidden=false;$('results').scrollIntoView({behavior:'smooth',block:'start'});status('');
+ $('ptpReadiness').hidden=!unresolved.length;
+ if(unresolved.length)$('ptpReadiness').textContent='DRAFT — '+unresolved.length+' task-specific item(s) not verified: '+unresolved.join('; ')+'. Confirm these requirements with the crew before relying on this PTP.';
+ showResources();
  $('caution').hidden=energy!=='unknown';if(energy==='unknown')$('caution').textContent='Electrical exposure has not been verified. Do not begin electrical tasks until the appropriate qualified personnel complete the site-specific assessment and authorization.';
 }
 function lists(){return{steps:rows.map((r,i)=>`${i+1}. ${r.step}`).join('\n\n'),hazards:rows.map((r,i)=>`${i+1}. ${r.hazard}`).join('\n\n'),controls:rows.map((r,i)=>`${i+1}. ${r.control}`).join('\n\n')}}
 function draw(){const v=lists();$('stepsOutput').value=v.steps;$('hazardsOutput').value=v.hazards;$('controlsOutput').value=v.controls;$('stepEditor').innerHTML=rows.map((r,i)=>`<div class="editline"><span>${i+1}.</span><textarea data-row="${i}" data-col="step" aria-label="Work step ${i+1}">${escapeHtml(r.step)}</textarea><textarea data-row="${i}" data-col="hazard" aria-label="Hazard ${i+1}">${escapeHtml(r.hazard)}</textarea><textarea data-row="${i}" data-col="control" aria-label="Mitigation ${i+1}">${escapeHtml(r.control)}</textarea></div>`).join('')}
 async function copy(text){try{await navigator.clipboard.writeText(text);status('Copied to clipboard.')}catch{const e=document.createElement('textarea');e.value=text;document.body.append(e);e.select();const worked=document.execCommand('copy');e.remove();status(worked?'Copied to clipboard.':'Clipboard access is unavailable here; select the text and copy it manually.')}}
+document.querySelectorAll('input[name="task"],input[name="condition"]').forEach(el=>el.addEventListener('change',getFollowups));
+$('energy').addEventListener('change',getFollowups);$('access').addEventListener('change',getFollowups);getFollowups();
 $('generate').addEventListener('click',generate);
 $('copySteps').addEventListener('click',()=>copy($('stepsOutput').value));$('copyHazards').addEventListener('click',()=>copy($('hazardsOutput').value));$('copyControls').addEventListener('click',()=>copy($('controlsOutput').value));
 $('copyAll').addEventListener('click',()=>copy('WORK STEPS\n'+$('stepsOutput').value+'\n\nASSOCIATED HAZARDS\n'+$('hazardsOutput').value+'\n\nMITIGATIONS / CONTROLS\n'+$('controlsOutput').value));$('print').addEventListener('click',()=>window.print());
