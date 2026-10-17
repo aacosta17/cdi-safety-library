@@ -1,5 +1,24 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Safety Resource Library · Field Management Workspace</title>
-<style>:root{font-family:Inter,system-ui,-apple-system,sans-serif;color:#213248;background:#f4f7fa}*{box-sizing:border-box}body{margin:0}.page{max-width:1100px;padding:36px 20px 80px;margin:auto}.eyebrow{color:#188367;letter-spacing:.13em;text-transform:uppercase;font-size:11px;font-weight:850}h1{letter-spacing:-.04em;font-size:clamp(27px,4vw,40px);margin:10px 0}p{line-height:1.6;color:#60758a;font-size:14px}.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:24px 0}.bar input,.bar select{padding:12px 14px;border:1px solid #cbd6e0;border-radius:11px;background:white;color:#1f2d3c;font:inherit;min-height:44px}.bar input{flex:1;min-width:230px}.bar select{max-width:275px}.list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.card{border:1px solid #dae3ea;background:white;border-radius:16px;padding:20px;box-shadow:0 7px 20px #223c5010}.card h2{font-size:18px;margin:7px 0}.card p{margin:10px 0;font-size:13px}.tag{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#168268;font-weight:800}a{font-size:13px;font-weight:800;color:#126f56;text-decoration:none}a:hover{text-decoration:underline}.note{border:1px solid #dce9e3;background:#f9fcfa;border-radius:12px;padding:15px;margin:16px 0 24px;font-size:12px;color:#53675d}@media(max-width:750px){.list{grid-template-columns:1fr}.page{padding:23px 15px}}</style></head><body>
+<style>:root{font-family:Inter,system-ui,-apple-system,sans-serif;color:#213248;background:#f4f7fa}*{box-sizing:border-box}body{margin:0}.page{max-width:1100px;padding:36px 20px 80px;margin:auto}.eyebrow{color:#188367;letter-spacing:.13em;text-transform:uppercase;font-size:11px;font-weight:850}h1{letter-spacing:-.04em;font-size:clamp(27px,4vw,40px);margin:10px 0}p{line-height:1.6;color:#60758a;font-size:14px}.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:24px 0}.bar input,.bar select{padding:12px 14px;border:1px solid #cbd6e0;border-radius:11px;background:white;color:#1f2d3c;font:inherit;min-height:44px}.bar input{flex:1;min-width:230px}.bar select{max-width:275px}.list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.card{border:1px solid #dae3ea;background:white;border-radius:16px;padding:20px;box-shadow:0 7px 20px #223c5010}.card h2{font-size:18px;margin:7px 0}.card p{margin:10px 0;font-size:13px}.tag{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#168268;font-weight:800}a{font-size:13px;font-weight:800;color:#126f56;text-decoration:none}a:hover{text-decoration:underline}.note{border:1px solid #dce9e3;background:#f9fcfa;border-radius:12px;padding:15px;margin:16px 0 24px;font-size:12px;color:#53675d}@media(max-width:750px){.list{grid-template-columns:1fr}.page{padding:23px 15px}}</style><style id="fw-responsive-page-v3">
+
+/* Responsive educational library */
+@media screen{
+ html,body{max-width:100%;overflow-x:clip}
+ .page,.bar,.list,.card{min-width:0;max-width:100%}
+ .bar input,.bar select{min-width:0;max-width:100%;box-sizing:border-box}
+ .card{overflow-wrap:anywhere}
+}
+@media screen and (min-width:1800px){.page{max-width:1440px}.list{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media screen and (max-width:600px){
+ .page{padding:19px 12px 60px}
+ .bar{display:flex;flex-direction:column;align-items:stretch;margin:18px 0}
+ .bar input,.bar select{width:100%;max-width:none;min-height:46px;font-size:16px}
+ .list{grid-template-columns:minmax(0,1fr)}
+ .card{padding:16px}
+}
+
+</style>
+</head><body>
 <main class="page"><div class="eyebrow">Field Management / Education</div><h1>Safety Resource Library</h1><p>Explore common construction hazards, why they matter, and references to practical control measures. After you generate a PTP, the assistant automatically recommends relevant topics.</p>
 <div class="note">Educational information only. Always check your company safety program, current regulations, manufacturer instructions and project-specific conditions. A resource card does not authorize work.</div>
 <div class="bar"><input id="search" type="search" placeholder="Search topics, hazards, or controls…" aria-label="Search safety resources"><select id="category" aria-label="Filter safety resource category"><option value="all">All categories</option></select></div><p id="count" role="status"></p><div id="list" class="list"></div></main>
