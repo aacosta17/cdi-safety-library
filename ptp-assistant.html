@@ -4,7 +4,37 @@
 
 .followups{margin-top:22px;padding:16px;border-radius:14px;background:#f7fafc;border:1px solid #dfe9ee}.followup-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:14px}.followup[hidden]{display:none!important}.followups .field label{font-weight:750;font-size:12px}.followups .field select{min-height:44px}.resource-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:18px}.resource-card{border:1px solid #dce6eb;border-radius:12px;background:#fcfdfd;padding:16px;display:grid;gap:9px}.resource-card h3{margin:0;font-size:15px}.resource-card p{margin:0;font-size:12px;line-height:1.55;color:#536577}.resource-card .tag{font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:#18745c;font-weight:800}.resource-card a{font-size:12px;font-weight:800;text-decoration:none;color:#156f55}.resource-card a:hover{text-decoration:underline}.safety-recs .btn{display:inline-flex;align-items:center;text-decoration:none;white-space:nowrap}
 @media(max-width:730px){.followup-grid,.resource-grid{grid-template-columns:1fr}}
-</style></head><body><div class="app"><div class="hero"><div><div class="eyebrow">Field Safety / Job Planning</div><h1>PTP Writing Assistant</h1><p class="sub">Describe the actual work. Generate editable work steps, associated hazards and specific control measures for any company's PTP form.</p></div><button id="startOver" class="btn">Start over</button></div><div id="status" class="message" hidden></div><div class="shell"><div class="boxlabel">01 / Describe the actual task</div><div class="grid"><div class="field"><label for="scope">Exactly what will the crew accomplish?</label><textarea id="scope" placeholder="Example: Run ¾-inch EMT above grid ceiling from room 210 to 214; install two boxes and pull control conductors."></textarea></div><div class="field"><label for="workarea">Where will the work take place?</label><textarea id="workarea" placeholder="Building, floor, area, access limitations, adjacent trades, work environment…"></textarea></div><div class="field"><label for="energy">Electrical exposure / isolation status</label><select id="energy"><option value="unknown">Not yet verified / unknown</option><option value="deenergized">Isolated and verified de-energized</option><option value="adjacent">Working near energized systems / equipment</option><option value="no-electrical">No electrical exposure anticipated</option></select></div><div class="field"><label for="access">Primary access method</label><select id="access"><option value="floor">From floor / ground level</option><option value="ladder">Ladder</option><option value="lift">Mobile elevating work platform (MEWP)</option><option value="scaffold">Scaffold or other approved elevated platform</option></select></div><div class="field"><label for="equipment">Specific tools / equipment</label><input id="equipment" placeholder="Bender, drill, fish tape, ladder, lift…"></div><div class="field"><label for="special">Other task details / restrictions</label><input id="special" placeholder="Restricted areas, shutdown window, overhead occupants…"></div></div>
+</style><style id="fw-responsive-page-v3">
+
+/* Responsive PTP form — readable, touch-friendly inputs and results. */
+@media screen{
+ html,body{max-width:100%;overflow-x:clip}
+ .app,.shell,.grid,.field,.hero,.followups,.output-grid,.output,.resource-grid{min-width:0;max-width:100%}
+ textarea,input,select{min-width:0;max-width:100%;box-sizing:border-box}
+ .output textarea{min-height:240px;max-width:100%;overflow-wrap:anywhere}
+ .resource-card{min-width:0;overflow-wrap:anywhere}
+ .hero>div{min-width:0}
+}
+@media screen and (min-width:1800px){.app{max-width:1680px}}
+@media screen and (max-width:1024px){
+ .output-grid{grid-template-columns:minmax(0,1fr)!important}
+ .output textarea{min-height:180px}
+}
+@media screen and (max-width:650px){
+ .app{padding:17px 11px 50px!important}
+ .hero{display:flex;flex-direction:column;align-items:stretch;gap:12px}
+ .hero button{min-height:44px}
+ .shell{padding:15px!important;border-radius:13px}
+ .grid,.options,.followup-grid,.resource-grid{grid-template-columns:minmax(0,1fr)!important}
+ .check{min-height:44px}
+ .editing,.toolbar,.headrow{flex-wrap:wrap;gap:8px}
+ .field input,.field select,.field textarea,.output textarea{font-size:16px!important}
+ .resource-card{padding:14px}
+ .output{padding:12px}
+}
+
+</style>
+</head><body><div class="app"><div class="hero"><div><div class="eyebrow">Field Safety / Job Planning</div><h1>PTP Writing Assistant</h1><p class="sub">Describe the actual work. Generate editable work steps, associated hazards and specific control measures for any company's PTP form.</p></div><button id="startOver" class="btn">Start over</button></div><div id="status" class="message" hidden></div><div class="shell"><div class="boxlabel">01 / Describe the actual task</div><div class="grid"><div class="field"><label for="scope">Exactly what will the crew accomplish?</label><textarea id="scope" placeholder="Example: Run ¾-inch EMT above grid ceiling from room 210 to 214; install two boxes and pull control conductors."></textarea></div><div class="field"><label for="workarea">Where will the work take place?</label><textarea id="workarea" placeholder="Building, floor, area, access limitations, adjacent trades, work environment…"></textarea></div><div class="field"><label for="energy">Electrical exposure / isolation status</label><select id="energy"><option value="unknown">Not yet verified / unknown</option><option value="deenergized">Isolated and verified de-energized</option><option value="adjacent">Working near energized systems / equipment</option><option value="no-electrical">No electrical exposure anticipated</option></select></div><div class="field"><label for="access">Primary access method</label><select id="access"><option value="floor">From floor / ground level</option><option value="ladder">Ladder</option><option value="lift">Mobile elevating work platform (MEWP)</option><option value="scaffold">Scaffold or other approved elevated platform</option></select></div><div class="field"><label for="equipment">Specific tools / equipment</label><input id="equipment" placeholder="Bender, drill, fish tape, ladder, lift…"></div><div class="field"><label for="special">Other task details / restrictions</label><input id="special" placeholder="Restricted areas, shutdown window, overhead occupants…"></div></div>
 <div class="boxlabel" style="margin-top:25px">02 / Which tasks are actually being performed?</div><div class="options" id="taskOptions"></div><div class="boxlabel" style="margin-top:26px">02B / Jobsite conditions to address</div><div class="options" id="conditionOptions"></div><div id="taskFollowups" class="followups" aria-live="polite" hidden>
   <div class="boxlabel" style="margin-top:26px">03 / A few job-specific details</div>
   <p class="muted">These questions change with the tasks and conditions selected above. Unverified items will be flagged in your draft.</p>
