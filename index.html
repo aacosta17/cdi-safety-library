@@ -478,6 +478,12 @@ main > section.fw-module-host{max-width:none!important;padding:12px 17px 24px!im
   body > header #weatherBar > .wxitem:nth-last-child(-n+2){border-bottom:0!important;}
 }
 </style>
+<style id="fwPresenterLaunchStyles">
+.fw-presenter-entry{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:4px 0 11px}
+.fw-presenter-link{display:inline-flex;align-items:center;justify-content:center;min-height:42px;border-radius:10px;background:#1c746a;color:white!important;font:bold 12px system-ui,sans-serif;padding:9px 15px;text-decoration:none;box-shadow:0 3px 10px #143a3619}
+.fw-presenter-link:hover{background:#135a54}
+@media(max-width:640px){.fw-presenter-entry{align-items:stretch}.fw-presenter-link{width:100%}}
+</style>
 </head>
 <body>
 <header><div class="headerin"><div class="brand"><span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2" fill="#88a7ff"/><rect x="14" y="3" width="7" height="7" rx="2" fill="#e5ecff"/><rect x="3" y="14" width="7" height="7" rx="2" fill="#e5ecff"/><rect x="14" y="14" width="7" height="7" rx="2" fill="#69d5cd"/></svg></span><div class="brandtext"><b>Field Management<br>Workspace Tool</b><small>Operations · Safety · Planning</small></div></div><div class="header-tools"><a class="weather-link" href="https://forecast.weather.gov/MapClick.php?lat=29.4241&lon=-98.4936" target="_blank" rel="noopener" aria-label="Open National Weather Service San Antonio forecast"><div id="weatherBar" class="weatherbar" title="San Antonio safety weather · NOAA/NWS"><div id="wxTempCell" class="wxitem"><span class="wxlabel">SAN ANTONIO, TX</span><span id="wxTemp" class="wxvalue">--°F</span><span id="wxCond" class="wxsub">Loading…</span><span id="wxTempAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxHeatCell" class="wxitem heat"><span class="wxlabel">HEAT INDEX</span><span id="wxHeat" class="wxvalue">--°F</span><span id="wxHeatSub" class="wxsub">Field heat</span><span id="wxHeatAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxWindCell" class="wxitem wind"><span class="wxlabel">WIND</span><span id="wxWind" class="wxvalue">-- mph</span><span id="wxWindDir" class="wxsub">--</span><span id="wxWindAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxLightningCell" class="wxitem alert"><span class="wxlabel">⚡ LIGHTNING</span><span id="wxLightning" class="wxvalue"><span class="wx-dot"></span>Checking</span><span id="wxLightningSub" class="wxsub">NWS thunder risk</span><span id="wxLightningAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxAlertCell" class="wxitem alert wide"><span class="wxlabel">SEVERE WEATHER</span><span id="wxAlert" class="wxvalue">Checking alerts</span><span id="wxAlertSub" class="wxsub">Official NWS alerts</span><span id="wxAlertAdvice" class="wxadvice" aria-live="polite"></span></div><div class="wxitem tomorrow"><span class="wxlabel">TOMORROW</span><span id="wxTomorrow" class="wxvalue">--°F</span><span id="wxTomorrowSub" class="wxsub">Forecast</span></div></div></a></div></div></header>
@@ -523,7 +529,7 @@ main > section.fw-module-host{max-width:none!important;padding:12px 17px 24px!im
 </section>
 
 <section id="manpower" class="hidden manpower-host">
-  <div class="fw-planner-banner" style="font:700 11px system-ui,sans-serif;color:#63758b;margin:3px 0 10px" id="fwSyncStatus" role="status">Connecting…</div>
+  <div class="fw-presenter-entry"><div class="fw-planner-banner" style="font:700 11px system-ui,sans-serif;color:#63758b" id="fwSyncStatus" role="status">Connecting…</div><a class="fw-presenter-link" href="/presenter.html" target="_blank" rel="noopener" title="Open editable full-screen meeting calendar">▣ Open Presenter Mode ↗</a></div>
   <div class="manpower-shell">
     <iframe id="manpowerFrame" title="Manpower Planner — Field Management Workspace Tool" loading="eager"></iframe>
   </div>
@@ -1182,15 +1188,15 @@ async function startSharedPlanner(){
  if(!app.user)return;
  if(app.plannerReady&&access('manpower'))await loadSharedPlanner();
  if(app.pollTimer)clearInterval(app.pollTimer);
- if(access('manpower'))app.pollTimer=setInterval(()=>{if(app.shared.enabled&&!app.shared.dirty&&!app.shared.transmitting&&!app.shared.locked)checkNewer();},35000);
+ if(access('manpower'))app.pollTimer=setInterval(()=>{if(app.shared.enabled&&!app.shared.dirty&&!app.shared.transmitting&&!app.shared.locked)checkNewer();},5000);
 }
 async function loadSharedPlanner(){
  const f=frame();if(!app.user||!f||!access('manpower'))return;
  try{
   setSyncStatus('Connecting to shared planner…');
   const r=await api('/api/workspace-data?key=manpower');
-  app.shared.enabled=!!r.exists;app.shared.revision=r.revision||0;app.shared.locked=false;app.shared.dirty=false;app.shared.lastEditor=r.updatedBy;
-  if(r.exists){f.import(r.data,{readonly:!access('manpower','edit')});setSyncStatus(`Shared · saved by ${r.updatedBy||'staff'}`,'good');}
+  app.shared.enabled=!!r.exists;app.shared.revision=r.revision||0;app.shared.locked=false;app.shared.dirty=false;app.shared.lastEditor=r.updatedByName||r.updatedBy;
+  if(r.exists){f.import(r.data,{readonly:!access('manpower','edit')});setSyncStatus(`Shared · saved by ${r.updatedByName||r.updatedBy||'staff'}`,'good');}
   else{f.setReadonly(!access('manpower','edit'));setSyncStatus('Shared schedule not published yet · owner can publish existing browser data','warn');}
   showSharedButtons();
  }catch(e){app.shared.enabled=false;setSyncStatus(`Shared planner unavailable: ${e.message}`,'error');}
@@ -1205,7 +1211,7 @@ async function saveSharedPlanner(){
  try{
   const document=frame().export();const r=await post('/api/workspace-data',{key:'manpower',revision:app.shared.revision,data:document});app.shared.revision=r.revision;
   setSyncStatus(`Saved to shared planner · ${new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}`,'good');
- }catch(e){app.shared.dirty=true;if(e.status===409){app.shared.locked=true;setSyncStatus(`Edit conflict · ${e.details?.updatedBy||'another user'} saved first. Use Refresh shared schedule to review changes.`,'error');alert('The shared schedule was updated elsewhere. Your browser copy has not been published. Use the planner backup/export before refreshing if you need to preserve your local edits.');}
+ }catch(e){app.shared.dirty=true;if(e.status===409){app.shared.locked=true;setSyncStatus(`Edit conflict · ${e.details?.updatedByName||e.details?.updatedBy||'another user'} saved first. Use Refresh shared schedule to review changes.`,'error');alert('The shared schedule was updated elsewhere. Your browser copy has not been published. Use the planner backup/export before refreshing if you need to preserve your local edits.');}
   else setSyncStatus(`Sync failed: ${e.message}. Unsaved changes stay in this browser.`,'error');
  }finally{app.shared.transmitting=false;if(app.shared.dirty&&!app.shared.locked){clearTimeout(app.shared.timer);app.shared.timer=setTimeout(saveSharedPlanner,3000)}}
 }
@@ -1220,7 +1226,7 @@ async function refreshShared(){if(!frame()||!access('manpower'))return;
  if((app.shared.dirty||app.shared.locked)&&!confirm('Refresh from the shared database? This replaces your current in-browser planner state. Export a backup first if you need any unpublished changes.'))return;
  await loadSharedPlanner();
 }
-async function checkNewer(){try{const r=await api('/api/workspace-data?key=manpower');if(r.revision>app.shared.revision&&!app.shared.dirty&&!app.shared.transmitting&&!app.shared.locked){frame()?.import(r.data,{readonly:!access('manpower','edit')});app.shared.revision=r.revision;setSyncStatus(`Updated · last edited by ${r.updatedBy||'staff'}`,'good');}}catch(_){/* retry next interval */}}
+async function checkNewer(){try{const r=await api('/api/workspace-data?key=manpower&since='+encodeURIComponent(app.shared.revision));if(r.revision>app.shared.revision&&!app.shared.dirty&&!app.shared.transmitting&&!app.shared.locked){frame()?.import(r.data,{readonly:!access('manpower','edit')});app.shared.revision=r.revision;setSyncStatus(`Updated · last edited by ${r.updatedByName||r.updatedBy||'staff'}`,'good');}}catch(_){/* retry next interval */}}
 function bind(){
  $('fwAuthLogin').addEventListener('submit',doLogin);$('fwAuthSetup').addEventListener('submit',doSetup);$('fwSignOut').addEventListener('click',signOut);
  $('fwNavAdmin').addEventListener('click',openAdmin);$('fwNewAccount').addEventListener('click',resetEditor);$('fwReloadUsers').addEventListener('click',refreshUsers);$('fwUserForm').addEventListener('submit',saveEmployee);
