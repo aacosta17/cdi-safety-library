@@ -41,6 +41,36 @@ function applyOps(doc,ops){
  data.presenter=pres;
  return {data,changes};
 }
+async function saveRequest(env,user,body){
+ const create=body.action==='request',canManage=can(user,'manpower','edit');
+ if(!create&&!canManage)return bad('Manpower edit permission is needed to review requests.',403);
+ const types=['more_staff','schedule_change','employee_transfer'];
+ const details=String(body.details||'').trim().slice(0,700);
+ if(create&&(!types.includes(body.type)||!/^\d{4}-\d{2}-\d{2}$/.test(String(body.date||''))||details.trim().length<6))return bad('Select a valid request type and date, and explain the change needed.');
+ if(!create&&(!safe(body.id)||!['open','approved','declined','resolved'].includes(body.status)))return bad('Invalid request update.');
+ for(let attempt=0;attempt<6;attempt++){
+  const r=await getDoc(env.DB,DOC);if(!r)return bad('Shared Manpower schedule must be published first.',409);
+  const doc=JSON.parse(r.payload);doc.presenter??={};const requests=doc.presenter.requests=Array.isArray(doc.presenter.requests)?doc.presenter.requests:[];
+  let record;
+  if(create){
+   const jobId=safe(body.jobId),employeeId=safe(body.employeeId),matchedJob=jobId?doc.jobs?.find(j=>String(j.id)===jobId):null;
+   if(jobId&&!matchedJob)return bad('Select a job from the current schedule.');
+   if(employeeId&&!doc.employees?.some(e=>String(e.id)===employeeId))return bad('Choose a valid employee.');
+   if(requests.length>=500)return bad('The request dashboard is full. Resolve older requests before adding new ones.',409);
+   record={id:'mpr_'+crypto.randomUUID(),type:body.type,date:body.date,jobId,employeeId,details:details.trim(),status:'open',by:user.displayName,byId:user.id,createdAt:now()};requests.push(record);
+  }else{
+   record=requests.find(req=>String(req.id)===String(body.id));if(!record)return bad('Request no longer exists.',404);
+   record.status=body.status;record.handledBy=user.displayName;record.updatedAt=now();
+  }
+  doc.presenter.events=Array.isArray(doc.presenter.events)?doc.presenter.events:[];
+  doc.presenter.events.push({kind:'request',id:record.id,label:create?'Requested manpower change':'Updated manpower request',job:doc.jobs?.find(j=>j.id===record.jobId)?.name||'General schedule',by:user.displayName,byId:user.id,at:now()});
+  doc.presenter.events=doc.presenter.events.slice(-85);
+  const payload=json(doc);if(payload.length>950000)return bad('Schedule is too large to save.',413);
+  const saved=await env.DB.prepare("UPDATE workspace_documents SET payload=?,revision=revision+1,updated_by=?,updated_at=datetime('now') WHERE doc_key=? AND revision=?").bind(payload,user.email,DOC,r.revision).run();
+  if(saved.meta?.changes)return respond({ok:true,request:record,revision:r.revision+1});
+ }
+ return bad('Another editor is updating the schedule. Please try again.',409,{retry:true});
+}
 export async function onRequestGet({request,env}){
  try{
   assertDb(env);const user=await getUser(request,env);
@@ -57,8 +87,12 @@ export async function onRequestPost({request,env}){
  const denied=requireWriteRequest(request);if(denied)return denied;
  try{
   assertDb(env);const user=await getUser(request,env);
-  if(!can(user,'manpower','edit'))return bad('Manpower editing permission required.',403);
   const body=await parseJson(request,450000);
+  if(body.action==='request'||body.action==='requestStatus'){
+   if(!can(user,'manpower','view'))return bad('Manpower viewing permission required.',403);
+   return saveRequest(env,user,body);
+  }
+  if(!can(user,'manpower','edit'))return bad('Manpower editing permission required.',403);
   if(body.action==='heartbeat'){
    for(let attempt=0;attempt<5;attempt++){
     const existing=await getDoc(env.DB,PRESENCE),ts=Date.now();
