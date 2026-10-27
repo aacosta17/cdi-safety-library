@@ -60,6 +60,30 @@ body.report-only #jobInfo{margin-bottom:3px}
 }
 
 </style>
+<style id="production-project-gallery-v4">
+.project-gallery{margin-top:19px}
+.gallery-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:17px}
+.gallery-heading h2{font-size:24px;margin:0 0 5px}
+.gallery-filters{display:flex;gap:9px;flex-wrap:wrap}
+.gallery-filters input,.gallery-filters select{font:inherit;font-size:13px;border:1px solid #d4dde6;background:#fff;border-radius:10px;padding:10px 12px;min-height:43px}
+.gallery-filters input{min-width:230px;flex:1}
+.project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,285px),1fr));gap:15px}
+.project-card{appearance:none;display:block;text-align:left;width:100%;background:#fff;border:1px solid #dfe7ef;border-radius:15px;min-height:234px;padding:20px;color:#1c3145;box-shadow:0 5px 20px #163a5409;transition:transform .14s,border-color .14s,box-shadow .14s}
+.project-card:hover,.project-card:focus-visible{transform:translateY(-2px);border-color:#8cbab3;box-shadow:0 9px 24px #163a5417}
+.project-card-top,.project-card-bottom,.project-card-detail{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.project-card-top{margin-bottom:17px}.project-card h3{font-size:17px;letter-spacing:-.03em;line-height:1.3;margin:0 0 6px}.project-card p{font-size:12px;color:#748397;margin:0 0 13px}
+.project-code{font-size:11px;font-weight:900;letter-spacing:.04em;color:#486982}
+.project-status{font-size:10px;font-weight:800;border-radius:20px;padding:5px 8px;background:#e8f5ee;color:#18714b;text-transform:capitalize}
+.project-status.on_hold{background:#fff4e4;color:#976822}.project-status.complete{background:#e9f0fa;color:#466a92}
+.project-card-detail{font-size:11px;color:#64788c;margin-bottom:15px}.project-card .bar{height:7px}.project-card-bottom{font-size:11px;color:#607588;margin-top:14px}.project-card-bottom strong{color:#187a67}
+.gallery-summary{font-size:12px;color:#667a8e;margin-top:5px}
+.roster-card{cursor:pointer;font-family:inherit;text-align:left;width:100%;position:relative}
+.roster-card.selected{background:#edfaf4;border-color:#7cc1a9}.roster-card:disabled{opacity:.65;cursor:not-allowed}
+.resource-indicator{font-size:10px;color:#147c5c;white-space:nowrap;margin-left:auto}
+.assigned-chips{display:flex;gap:7px;flex-wrap:wrap}.assigned-chip{border-radius:999px;background:#eaf4ef;color:#20775a;font-size:11px;font-weight:700;padding:7px 10px}
+.project-detail-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+@media(max-width:600px){.project-gallery{padding:14px}.gallery-filters{width:100%}.gallery-filters input,.gallery-filters select{min-width:0;width:100%}.project-grid{grid-template-columns:1fr}.project-card{min-height:205px}}
+</style>
 </head><body>
 <datalist id="employeeRosterOptions"></datalist><div class="app" id="app"><div class="topline"><div><div class="eyebrow">Field Operations / Production</div><h1>Project operations</h1><p class="sub">Manage job progress, labor budgets, inventory, and incoming crew reports.</p></div><div class="actions"><button class="btn" id="refreshBtn" type="button">↻ Refresh</button><button class="btn" id="printBtn" type="button">Print / PDF report</button><button class="btn primary" id="newJobBtn" type="button" hidden>+ New job</button></div></div>
 <div id="banner" class="message" hidden></div><div class="notice" id="fieldLoginHelp" hidden>To submit a field report, sign in with the work account issued by your administrator. <a id="fieldLoginLink" href="index.html">Sign in to Field Management Workspace →</a></div><div class="shell"><div class="job-bar"><div class="field job-chooser"><label for="jobSelect">Active project</label><select id="jobSelect"><option value="">Loading jobs…</option></select></div><div id="jobInfo" class="sub"></div></div><div id="noJob" class="empty">Choose a job to open its dashboard. A production manager can create a new one.</div>
