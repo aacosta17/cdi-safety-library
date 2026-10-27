@@ -11,7 +11,7 @@ const weekStart=d=>{const v=new Date(d);v.setHours(12,0,0,0);v.setDate(v.getDate
 const short=s=>dateObj(s).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
 const time=s=>s?new Date(s).toLocaleString([],{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
 const makeId=p=>p+'_'+(crypto?.randomUUID?.()||Date.now()+'_'+Math.random().toString(36).slice(2));
-const app={user:null,canEdit:false,doc:null,revision:0,week:weekStart(new Date()),zoom:100,filter:'all',division:'all',presence:[],events:[],edits:{},editing:null,draft:null,original:null,saveBusy:false,fetchBusy:false,undo:[],redo:[],rosterDate:dateKey(new Date()),rosterSearch:'',lastOnline:0};
+const app={user:null,canEdit:false,doc:null,revision:0,week:weekStart(new Date()),zoom:85,filter:'all',division:'all',presence:[],events:[],edits:{},editing:null,draft:null,original:null,saveBusy:false,fetchBusy:false,undo:[],redo:[],rosterDate:dateKey(new Date()),rosterSearch:'',lastOnline:0};
 async function api(url,opts={}){
  const response=await fetch(url,{credentials:'same-origin',cache:'no-store',...opts,headers:{'Accept':'application/json',...(opts.body?{'Content-Type':'application/json','X-Field-Request':'1'}:{}),...opts.headers}});
  let data;try{data=await response.json()}catch(_){throw Error('The server returned an unreadable response. Try again.')}
@@ -39,14 +39,44 @@ function renderMetrics(){const days=weekDates(),jobs=(app.doc?.jobs||[]).filter(
 function jobHTML(j){const p=app.edits?.[j.id],changed=p&&Date.now()-new Date(p.at).getTime()<60*60*1000;const issue=(j.assignments||[]).flatMap(a=>assignmentIssues(a.employeeId,j.date,j.id)).length;
  const crew=(j.assignments||[]).map(a=>{const emp=userFor(a.employeeId);return `<span class="person ${a.lead?'lead':''}" draggable="${app.canEdit}" data-drag-assignment="${esc(j.id)}|${esc(a.id||a.employeeId)}" title="${esc(emp?.name||'Unknown employee')} · ${Number(a.hours)||0} hours">${a.lead?'★ ':''}${esc(emp?.name||'Unknown')} · ${Number(a.hours)||0}h</span>`}).join('');
  return `<article class="job ${changed?'recent':''} ${issue?'problem':''}" data-job-id="${esc(j.id)}"><div class="job-head"><div><h3>${esc(j.name)}</h3><div class="meta">${esc(j.number||'No job number')} · ${esc(displayDivision(j))} · ${Number(j.percent)||0}%</div></div><button class="job-actions" data-edit-job="${esc(j.id)}">Edit</button></div>${j.priority==='high'?'<span class="pill warn">High priority</span>':''}${j.status==='behind'?'<span class="pill warn">Behind</span>':''}${j.dayType==='ot'?'<span class="pill">Overtime</span>':''}${issue?`<div class="problem-text">⚠ ${issue} scheduling warning(s)</div>`:''}<div class="staff">${crew||'<small>No crew assigned</small>'}</div>${j.notes?`<div class="meta">${esc(j.notes).slice(0,130)}</div>`:''}<div class="job-footer"><span>${p?`Edited by ${esc(p.by)} · ${time(p.at)}`:'No recent edit'}</span><strong>${(j.assignments||[]).length} staff</strong></div></article>`;}
-function renderCalendar(){const today=dateKey(new Date());$('calendar').innerHTML=weekDates().map(date=>{const jobs=visibleJobs(date);return `<section class="day ${today===date?'today':''}" data-drop-date="${date}"><div class="day-header"><strong>${esc(short(date))}</strong><span class="subtle">${jobs.length} jobs · ${jobs.reduce((n,j)=>n+(j.assignments||[]).length,0)} placements</span></div><div class="day-body">${jobs.map(jobHTML).join('')}<button class="add" data-add-day="${date}">+ Add job</button></div></section>`}).join('');}
+function renderCalendar(){const today=dateKey(new Date());$('calendar').innerHTML=weekDates().map(date=>{const jobs=visibleJobs(date);return `<section class="day ${today===date?'today':''}" data-drop-date="${date}"><div class="day-header"><strong>${esc(short(date))}</strong><span class="subtle">${jobs.length} jobs · ${jobs.reduce((n,j)=>n+(j.assignments||[]).length,0)} placements</span></div><div class="day-body">${jobs.map(jobHTML).join('')}<button class="add" data-add-day="${date}">+ Add job</button></div></section>`}).join('');applyCalendarZoom();}
+function applyCalendarZoom(){
+ const calendar=$('calendar'),scroll=$('calendarScroll'),scale=app.zoom/100;
+ if($('zoomValue'))$('zoomValue').textContent=app.zoom+'%';
+ if(window.matchMedia('(max-width:800px)').matches){calendar.style.transform='';calendar.style.width='';scroll.style.height='';document.documentElement.style.setProperty('--scale',scale);return;}
+ // Scale the day columns, cards, spacing and crew chips as one board.
+ calendar.style.width=(100/scale)+'%';
+ calendar.style.transform=`scale(${scale})`;
+ document.documentElement.style.setProperty('--scale',1);
+ scroll.style.height=Math.ceil(calendar.offsetHeight*scale+24)+'px';
+}
 function renderRoster(){const date=app.rosterDate||dateKey(new Date());const people=(app.doc?.employees||[]).filter(e=>!e.archived&&!e.isArchived&&(e.status||'available')==='available'&&availability(e,date)==='available');const assigned=new Set((app.doc?.jobs||[]).filter(j=>j.date===date).flatMap(j=>(j.assignments||[]).map(a=>String(a.employeeId))));const free=people.filter(e=>!assigned.has(String(e.id))&&(e.name||'').toLowerCase().includes(app.rosterSearch.toLowerCase())).sort((a,b)=>String(a.name).localeCompare(String(b.name)));
  $('rosterCount').textContent=`${free.length} free`;$('roster').innerHTML=free.length?free.map(e=>`<div class="roster-item" draggable="${app.canEdit}" data-roster-id="${esc(e.id)}"><strong>${esc(e.name)}</strong><small>${esc(e.classificationDetail||e.classification||'Employee')} · ${esc(e.division||'Unassigned')}</small></div>`).join(''):'<div class="empty">No available employees match this date or search.</div>';
 }
 function renderNotes(){const selected=$('noteJob').value;const projectOptions=(app.doc?.jobs||[]).filter(j=>weekDates().includes(j.date));$('noteJob').innerHTML='<option value="">General meeting</option>'+projectOptions.map(j=>`<option value="${esc(j.id)}">${esc(j.name)} · ${esc(short(j.date))}</option>`).join('');if(projectOptions.some(j=>j.id===selected))$('noteJob').value=selected;const notes=(app.doc?.presenter?.notes||[]).filter(n=>weekDates().includes(n.date));$('notes').innerHTML=notes.length?notes.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))).map(n=>`<div class="note ${n.done?'done':''}"><strong>${esc(short(n.date))}${n.jobId?' · '+esc((app.doc?.jobs||[]).find(j=>j.id===n.jobId)?.name||'Project'):''}</strong> · ${esc(n.text)}<div class="note-actions"><button data-note-toggle="${esc(n.id)}">${n.done?'Reopen':'Mark done'}</button><button data-note-delete="${esc(n.id)}">Delete</button></div></div>`).join(''):'<div class="empty">No meeting notes this week.</div>'}
+function renderRequests(){
+ const requests=Array.isArray(app.doc?.presenter?.requests)?app.doc.presenter.requests:[],open=requests.filter(r=>r.status==='open').length;
+ $('requestCount').textContent=`${open} open · ${requests.length} total`;
+ const jobSelect=$('requestJob'),chosenJob=jobSelect.value,jobOptions=(app.doc?.jobs||[]).filter(j=>weekDates().includes(j.date));
+ jobSelect.innerHTML='<option value="">General request</option>'+jobOptions.map(j=>`<option value="${esc(j.id)}">${esc(j.name)} · ${esc(short(j.date))}</option>`).join('');
+ if(jobOptions.some(j=>j.id===chosenJob))jobSelect.value=chosenJob;
+ const employeeSelect=$('requestEmployee'),chosenEmployee=employeeSelect.value,people=(app.doc?.employees||[]).filter(e=>!e.archived&&!e.isArchived);
+ employeeSelect.innerHTML='<option value="">No specific employee</option>'+people.map(e=>`<option value="${esc(e.id)}">${esc(e.name)}</option>`).join('');
+ if(people.some(e=>String(e.id)===chosenEmployee))employeeSelect.value=chosenEmployee;
+ const ordered=requests.slice().sort((a,b)=>(a.status==='open'?0:1)-(b.status==='open'?0:1)||String(b.createdAt).localeCompare(String(a.createdAt))).slice(0,60);
+ const types={more_staff:'Additional manpower',schedule_change:'Schedule change',employee_transfer:'Assigned employee request'};
+ $('requests').innerHTML=ordered.length?ordered.map(r=>`<article class="request-row"><h3>${esc(types[r.type]||'Manpower request')} · ${esc(r.date)}</h3><p>${esc(r.details)}</p><small>${esc(r.by||'Manager')} · ${esc((app.doc.jobs||[]).find(j=>j.id===r.jobId)?.name||'General')} · ${esc(r.status||'open')}</small>${app.canEdit?`<label style="display:block;font-size:11px;margin-top:6px">Review status<select data-request-status="${esc(r.id)}">${['open','approved','declined','resolved'].map(s=>`<option value="${s}" ${s===r.status?'selected':''}>${s[0].toUpperCase()+s.slice(1)}</option>`).join('')}</select></label>`:''}</article>`).join(''):'<div class="empty">No manager requests yet. Submit the first request using the form.</div>';
+ renderRequestEmployeeStatus();
+}
+function renderRequestEmployeeStatus(){
+ const id=$('requestEmployee').value,date=$('requestDate').value,notice=$('requestEmployeeStatus');if(!notice)return;
+ if(!id){notice.textContent='';return}
+ const scheduled=(app.doc?.jobs||[]).filter(j=>j.date===date&&(j.assignments||[]).some(a=>String(a.employeeId)===id));
+ notice.textContent=scheduled.length?'Currently assigned on '+date+': '+scheduled.map(j=>j.name).join(', ')+'. This request will not move them automatically.':'No existing job assignment found for that employee on the selected date.';
+}
 function renderActivity(){const entries=app.events.slice(-9).reverse();$('activity').innerHTML=entries.length?entries.map(e=>`<div class="note"><b>${esc(e.by||'Team member')}</b><br>${esc(e.label||'Updated')} · ${esc(e.job||'Calendar')}<br><small>${time(e.at)}</small></div>`).join(''):'<div class="empty">No recent meeting edits.</div>'}
 function renderPresence(){const n=app.presence.length;$('editors').textContent=n?`${n} editor${n===1?'':'s'} active · ${app.presence.map(p=>p.name).join(', ')}`:'No active editors detected';}
-function render(){if(!app.doc)return;const end=weekDates()[6];$('weekRange').textContent=`${short(weekDates()[0])} – ${short(end)}`;$('viewNote').textContent=app.canEdit?'Click any job to edit. Changes save for everyone.':'View-only account · editing disabled.';$('addJob').disabled=!app.canEdit;$('addNote').disabled=!app.canEdit;document.documentElement.style.setProperty('--scale',app.zoom/100);renderMetrics();renderCalendar();renderRoster();renderNotes();renderActivity();renderPresence();updateUndo();}
+function render(){if(!app.doc)return;const end=weekDates()[6];$('weekRange').textContent=`${short(weekDates()[0])} – ${short(end)}`;$('viewNote').textContent=app.canEdit?'Click any job to edit. Changes save for everyone.':'View-only account · editing disabled.';$('addJob').disabled=!app.canEdit;$('addNote').disabled=!app.canEdit;document.documentElement.style.setProperty('--scale',app.zoom/100);renderMetrics();renderCalendar();renderRoster();renderNotes();renderRequests();renderActivity();renderPresence();updateUndo();}
 function updateUndo(){$('undo').disabled=!app.canEdit||app.saveBusy||!app.undo.length;$('redo').disabled=!app.canEdit||app.saveBusy||!app.redo.length}
 async function refresh({force=false}={}){if(app.fetchBusy||app.saveBusy)return;app.fetchBusy=true;try{const r=await api('/api/manpower-presenter'+(force?'':'?since='+encodeURIComponent(app.revision)));if(!r.same&&(force||r.revision!==app.revision)){app.doc=r.data;app.revision=r.revision;app.edits=r.edits||{};app.events=r.events||[];render();if(!force)setStatus(`Synced · ${r.updatedByName||'team member'}`,'ok')}app.presence=r.presence||[];renderPresence();app.lastOnline=Date.now();}catch(e){setStatus('Connection interrupted · retrying','err');if(force)notify(e.message,true)}finally{app.fetchBusy=false}}
 async function heartbeat(){if(!app.canEdit)return;try{const r=await post({action:'heartbeat'});app.presence=r.presence||[];renderPresence()}catch(_){/* next heartbeat retry */}}
@@ -66,7 +96,7 @@ function allow(){if(app.canEdit)return true;notify('Your account has view-only M
 const blankJob=date=>({id:makeId('jpres'),name:'',number:'',date,scope:'auto',priority:'normal',status:'normal',percent:0,finish:'',dayType:'regular',otHours:0,location:'',notes:'',ptp:false,assignments:[]});
 function openJob(id=null,date=null){if(!allow())return;const found=id?(app.doc?.jobs||[]).find(j=>j.id===id):null;if(id&&!found){notify('Job not found. Refresh the schedule.',true);return}
  app.editing=id||null;app.original=copy(found);app.draft=copy(found||blankJob(date||weekDates()[0]));const j=app.draft;
- $('jobTitle').textContent=found?'Edit job and crew':'Create job';$('jName').value=j.name||'';$('jNumber').value=j.number||'';$('jDate').value=j.date||dateKey(new Date());$('jScope').value=['auto','electrical','security'].includes(j.scope)?j.scope:'auto';$('jPriority').value=j.priority||'normal';$('jStatus').value=j.status||'normal';$('jPercent').value=Number(j.percent)||0;$('jDayType').value=j.dayType==='ot'?'ot':'regular';$('jOT').value=Number(j.otHours)||0;$('jLocation').value=j.location||'';$('jNotes').value=j.notes||'';
+ $('jobTitle').textContent=found?'Edit job and crew':'Create job';$('jName').value=j.name||'';$('jNumber').value=j.number||'';$('jDate').value=j.date||dateKey(new Date());$('jScope').value=['auto','electrical','security','data','fire_alarm'].includes(j.scope)?j.scope:'auto';$('jPriority').value=j.priority||'normal';$('jStatus').value=j.status||'normal';$('jPercent').value=Number(j.percent)||0;$('jDayType').value=j.dayType==='ot'?'ot':'regular';$('jOT').value=Number(j.otHours)||0;$('jLocation').value=j.location||'';$('jNotes').value=j.notes||'';
  $('editorError').classList.add('hidden');$('deleteJob').hidden=!found;renderAssignments();$('jobOverlay').classList.remove('hidden');$('jName').focus();}
 function closeJob(){$('jobOverlay').classList.add('hidden');app.editing=null;app.original=null;app.draft=null}
 function renderAssignments(){const job=app.draft;if(!job)return;const items=job.assignments||[];
@@ -105,14 +135,20 @@ async function bootstrap(){try{
  if(!u.owner&&!['view','edit','approve','manage'].includes(u.permissions?.manpower)){$('gateMessage').textContent='Your account does not have Manpower access.';$('gateBack').hidden=false;return}
  app.user=u;app.canEdit=!!(u.owner||['edit','approve','manage'].includes(u.permissions?.manpower));
  const r=await api('/api/manpower-presenter');app.doc=r.data;app.revision=r.revision;app.edits=r.edits||{};app.events=r.events||[];app.presence=r.presence||[];
- $('authGate').hidden=true;$('app').hidden=false;$('rosterDate').value=app.rosterDate;
+ $('authGate').hidden=true;$('app').hidden=false;$('rosterDate').value=app.rosterDate;$('requestDate').value=app.rosterDate;
+ if(new URLSearchParams(location.search).get('requests')==='1'){$('requestContent').hidden=false;$('toggleRequests').setAttribute('aria-expanded','true');$('toggleRequests').textContent='Hide requests';}
  setStatus('Shared · ready','ok');render();heartbeat();setInterval(()=>refresh(),3500);setInterval(()=>heartbeat(),15000);
  }catch(e){$('gateMessage').textContent=e.message;$('gateBack').hidden=false;}}
 $('previous').onclick=()=>{app.week.setDate(app.week.getDate()-7);app.rosterDate=weekDates()[0];$('rosterDate').value=app.rosterDate;render()};
 $('next').onclick=()=>{app.week.setDate(app.week.getDate()+7);app.rosterDate=weekDates()[0];$('rosterDate').value=app.rosterDate;render()};
 $('current').onclick=()=>{app.week=weekStart(new Date());app.rosterDate=dateKey(new Date());$('rosterDate').value=app.rosterDate;render()};
 $('divisionFilter').onchange=e=>{app.division=e.target.value;renderCalendar()};$('jobFilter').onchange=e=>{app.filter=e.target.value;renderCalendar()};
-$('zoom').oninput=e=>{app.zoom=Number(e.target.value)||100;renderCalendar();document.documentElement.style.setProperty('--scale',app.zoom/100)};
+$('zoom').oninput=e=>{app.zoom=Number(e.target.value)||100;applyCalendarZoom()};
+$('toggleRequests').onclick=()=>{const hidden=$('requestContent').hidden;$('requestContent').hidden=!hidden;$('toggleRequests').textContent=hidden?'Hide requests':'View requests / make a request';$('toggleRequests').setAttribute('aria-expanded',String(hidden))};
+const employeeRequestHint=document.createElement('p');employeeRequestHint.id='requestEmployeeStatus';employeeRequestHint.className='help';employeeRequestHint.style.margin='2px 0';$('requestEmployee').closest('label').after(employeeRequestHint);
+$('requestEmployee').onchange=renderRequestEmployeeStatus;$('requestDate').onchange=renderRequestEmployeeStatus;
+$('requestForm').onsubmit=async e=>{e.preventDefault();const button=$('sendRequest');button.disabled=true;try{await post({action:'request',type:$('requestType').value,date:$('requestDate').value,jobId:$('requestJob').value,employeeId:$('requestEmployee').value,details:$('requestDetails').value});$('requestDetails').value='';await refresh({force:true});notify('Manpower request submitted. It is now on the shared request dashboard.');}catch(error){notify(error.message,true)}finally{button.disabled=false}};
+$('requests').addEventListener('change',async e=>{if(!e.target.matches('[data-request-status]')||!app.canEdit)return;try{await post({action:'requestStatus',id:e.target.dataset.requestStatus,status:e.target.value});await refresh({force:true});notify('Request status updated.')}catch(error){notify(error.message,true);await refresh({force:true})}});
 $('rosterDate').onchange=e=>{app.rosterDate=e.target.value;renderRoster()};$('searchRoster').oninput=e=>{app.rosterSearch=e.target.value;renderRoster()};
 $('addJob').onclick=()=>openJob(null,app.rosterDate||weekDates()[0]);$('addNote').onclick=addNote;
 $('undo').onclick=()=>undoOrRedo('undo');$('redo').onclick=()=>undoOrRedo('redo');
@@ -132,5 +168,16 @@ $('calendar').addEventListener('dragover',e=>{if(e.target.closest('[data-job-id]
 $('calendar').addEventListener('drop',e=>{const target=e.target.closest('[data-job-id]');if(!target||!app.canEdit)return;e.preventDefault();try{const p=JSON.parse(e.dataTransfer.getData('text/plain'));if(['roster','assignment'].includes(p.type))dragDrop(p,target.dataset.jobId)}catch(_){notify('Could not read the employee being moved.',true)}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('jobOverlay').classList.contains('hidden'))closeJob();if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)){e.preventDefault();undoOrRedo(e.shiftKey?'redo':'undo')}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)){e.preventDefault();undoOrRedo('redo')}});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){refresh();heartbeat()}});
+// Presenter defaults to meeting notes above the employee roster, with the notes visible on larger screens.
+const side=document.querySelector('.side');if(side?.children.length>1)side.insertBefore(side.children[1],side.children[0]);
+for(const [value,label] of [['data','Data'],['fire_alarm','Fire Alarm']]){
+ for(const id of ['divisionFilter','jScope']){
+  const select=$(id);if(select&&!select.querySelector(`option[value="${value}"]`))select.add(new Option(label,value));
+ }
+}
+const initialZoom=$('zoom');initialZoom.min='65';initialZoom.max='115';initialZoom.value=String(app.zoom);
+$('report').textContent='Print notes + calendar';
+if(window.matchMedia('(min-width:1100px)').matches){document.querySelector('.workarea').classList.add('show-side');$('toggleSide').textContent='Hide workforce & notes';$('toggleSide').setAttribute('aria-pressed','true');}
+window.addEventListener('resize',()=>requestAnimationFrame(applyCalendarZoom));
 bootstrap();
 })();
