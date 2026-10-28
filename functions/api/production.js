@@ -46,6 +46,26 @@ export async function onRequestPost({request,env}){
    const id=newId();await run(env,`INSERT INTO production_jobs(id,code,title,location,project_manager,budget_hours,description,division,created_by) VALUES(?,?,?,?,?,?,?,?,?)`,id,short(b.code,50),short(b.title,160),short(b.location,250),short(b.projectManager,120),number(b.budgetHours),short(b.description,3000),b.division,u.email);return respond({ok:true,id});
   }
   if(!jobId||!(await requiredJob(env,jobId)))return err('Select a valid job.',404);
+  if(action==='deleteJob'){
+   if(!u.owner)return err('Only the workspace owner can permanently delete a project.',403);
+   const existing=await requiredJob(env,jobId);
+   if(!existing)return err('Job not found.',404);
+   if(!short(b.confirmCode,50)||short(b.confirmCode,50)!==existing.code)return err('Enter the exact job number to confirm permanent deletion.',400);
+   try{
+    // D1 batch runs atomically: failure rolls back all deletions, not part of a project.
+    await env.DB.batch([
+     env.DB.prepare('DELETE FROM production_personnel_notes WHERE job_id=?').bind(jobId),
+     env.DB.prepare('DELETE FROM production_material_ledger WHERE job_id=?').bind(jobId),
+     env.DB.prepare('DELETE FROM production_requests WHERE job_id=?').bind(jobId),
+     env.DB.prepare('DELETE FROM production_lookaheads WHERE job_id=?').bind(jobId),
+     env.DB.prepare('DELETE FROM production_reports WHERE job_id=?').bind(jobId),
+     env.DB.prepare('DELETE FROM production_materials WHERE job_id=?').bind(jobId),
+     env.DB.prepare('DELETE FROM production_job_resources WHERE job_id=?').bind(jobId),
+     env.DB.prepare('DELETE FROM production_jobs WHERE id=?').bind(jobId)
+    ]);
+   }catch(_){return err('Project could not be deleted safely because a linked record or database constraint prevented removal. No changes were committed.',409);}
+   return respond({ok:true,deleted:true});
+  }
   if(action==='updateJob'){
    if(!can(u,'production','edit'))return err('Production edit permission required.',403);
    if(!nonnegative(b.budgetHours)||!nonnegative(b.progressPercent)||number(b.progressPercent)>100||!divisionOk(b.division))return err('Hours, progress or department are invalid.');
