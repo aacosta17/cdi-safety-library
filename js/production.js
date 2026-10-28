@@ -50,6 +50,7 @@ async function refresh(wanted=state.jobId||(reportMode?pageParams.get('jobId')||
  const galleryView=!state.jobId&&!reportMode;
  $('projectGallery').hidden=!galleryView;document.querySelector('.job-bar').hidden=galleryView;
  $('backProjects').hidden=!!reportMode;
+ $('deleteProjectBtn').hidden=!!reportMode||!state.jobId||!state.user?.owner;
  if(state.jobId){state.data=await api('/api/production?jobId='+encodeURIComponent(state.jobId));$('content').hidden=false;$('noJob').hidden=true;render();renderEmployeeRoster();if(!reportMode){const u=encodeURIComponent(state.jobId);$('dailyReportLink').href='production.html?mode=report&jobId='+u;$('lookaheadLink').href='production.html?mode=lookahead&jobId='+u;}}
  else{state.data=null;$('content').hidden=true;$('noJob').hidden=!reportMode&&!state.jobs.length;}
  message('');
@@ -123,6 +124,18 @@ function setupProjectScreen(){
  shell.before(gallery);
  const back=document.createElement('button');back.type='button';back.id='backProjects';back.className='btn';back.textContent='← All projects';document.querySelector('.job-bar').prepend(back);
  $('jobSelect').previousElementSibling.textContent='Switch project';$('newJobBtn').textContent='+ New project';
+ const remove=document.createElement('button');remove.id='deleteProjectBtn';remove.className='btn project-delete-btn';remove.type='button';remove.textContent='Delete project';remove.style.cssText='border-color:#e8c5ca;color:#a13847;margin-left:auto';remove.hidden=true;remove.setAttribute('aria-label','Permanently delete selected project');document.querySelector('.job-bar').append(remove);
+ remove.addEventListener('click',async()=>{
+  const job=state.data?.job;if(!job||!state.user?.owner)return;
+  const code=String(job.code||'');
+  const entered=prompt(`Permanently delete project ${code} — ${job.title}?\n\nThis also deletes its daily reports, material records, requests, look-aheads, employee assignments and personnel notes. This does NOT delete a similarly named Manpower Planner schedule job.\n\nType the exact project number to continue: ${code}`);
+  if(entered===null)return;
+  if(entered.trim()!==code){message('Project was not deleted: the entered job number did not match.');return;}
+  if(!confirm(`FINAL CONFIRMATION: permanently delete project ${code} and all of its Project Operations data? This cannot be undone.`))return;
+  remove.disabled=true;
+  try{await post('deleteJob',{confirmCode:code});state.jobId='';state.tab='overview';await refresh('');message(`Project ${code} was permanently deleted.`,true);}
+  catch(e){message(e.message);}finally{remove.disabled=false;}
+ });
  $('projectSearch').addEventListener('input',renderProjectGallery);$('projectDivision').addEventListener('change',renderProjectGallery);
  $('projectCards').addEventListener('click',e=>{const card=e.target.closest('[data-open-project]');if(card)refresh(card.dataset.openProject)});
  back.addEventListener('click',()=>{state.jobId='';state.tab='overview';refresh('')});
