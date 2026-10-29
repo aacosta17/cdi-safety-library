@@ -502,7 +502,29 @@ main > section.fw-module-host{max-width:none!important;padding:12px 17px 24px!im
 .mp-unified-toolbar span{margin-left:auto;color:#7a889d;font:11px system-ui,sans-serif}
 #mpLegacyShell,#mpPresenterShell{height:calc(100dvh - 185px)!important;min-height:600px!important}
 @media(max-width:760px){.mp-unified-toolbar span{display:none}#mpLegacyShell,#mpPresenterShell{height:calc(100dvh - 180px)!important;min-height:500px!important}}
-</style></head>
+</style>
+<style id="mpPresenterSizingRepair20261029">
+/* The embedded presenter iframe must be explicitly sized; otherwise Safari uses 300x150px. */
+#manpower.manpower-host{display:block;min-width:0;width:100%;max-width:none!important;overflow:visible}
+#manpower.manpower-host.hidden{display:none!important}
+#manpower .mp-unified-toolbar{width:100%;box-sizing:border-box}
+#manpower #mpPresenterShell,#manpower #mpLegacyShell{
+  display:block;position:relative;width:100%!important;max-width:100%!important;
+  height:calc(100dvh - 185px)!important;min-height:650px!important;
+  padding:0!important;overflow:hidden;box-sizing:border-box;
+}
+#manpower #mpPresenterShell[hidden],#manpower #mpLegacyShell[hidden]{display:none!important}
+#manpower #mpPresenterFrame,#manpower #manpowerFrame{
+  display:block!important;position:absolute!important;inset:0!important;
+  width:100%!important;height:100%!important;max-width:none!important;
+  min-width:0!important;min-height:0!important;border:0!important;
+  background:#f5f7fa!important;box-sizing:border-box!important;
+}
+@media(max-width:760px){
+ #manpower #mpPresenterShell,#manpower #mpLegacyShell{height:calc(100dvh - 160px)!important;min-height:540px!important}
+}
+</style>
+</head>
 <body>
 <header><div class="headerin"><div class="brand"><span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2" fill="#88a7ff"/><rect x="14" y="3" width="7" height="7" rx="2" fill="#e5ecff"/><rect x="3" y="14" width="7" height="7" rx="2" fill="#e5ecff"/><rect x="14" y="14" width="7" height="7" rx="2" fill="#69d5cd"/></svg></span><div class="brandtext"><b>Field Management<br>Workspace Tool</b><small>Operations · Safety · Planning</small></div></div><div class="header-tools"><a class="weather-link" href="https://forecast.weather.gov/MapClick.php?lat=29.4241&lon=-98.4936" target="_blank" rel="noopener" aria-label="Open National Weather Service San Antonio forecast"><div id="weatherBar" class="weatherbar" title="San Antonio safety weather · NOAA/NWS"><div id="wxTempCell" class="wxitem"><span class="wxlabel">SAN ANTONIO, TX</span><span id="wxTemp" class="wxvalue">--°F</span><span id="wxCond" class="wxsub">Loading…</span><span id="wxTempAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxHeatCell" class="wxitem heat"><span class="wxlabel">HEAT INDEX</span><span id="wxHeat" class="wxvalue">--°F</span><span id="wxHeatSub" class="wxsub">Field heat</span><span id="wxHeatAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxWindCell" class="wxitem wind"><span class="wxlabel">WIND</span><span id="wxWind" class="wxvalue">-- mph</span><span id="wxWindDir" class="wxsub">--</span><span id="wxWindAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxLightningCell" class="wxitem alert"><span class="wxlabel">⚡ LIGHTNING</span><span id="wxLightning" class="wxvalue"><span class="wx-dot"></span>Checking</span><span id="wxLightningSub" class="wxsub">NWS thunder risk</span><span id="wxLightningAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxAlertCell" class="wxitem alert wide"><span class="wxlabel">SEVERE WEATHER</span><span id="wxAlert" class="wxvalue">Checking alerts</span><span id="wxAlertSub" class="wxsub">Official NWS alerts</span><span id="wxAlertAdvice" class="wxadvice" aria-live="polite"></span></div><div class="wxitem tomorrow"><span class="wxlabel">TOMORROW</span><span id="wxTomorrow" class="wxvalue">--°F</span><span id="wxTomorrowSub" class="wxsub">Forecast</span></div></div></a></div></div></header>
 <main>
