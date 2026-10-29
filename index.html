@@ -494,6 +494,14 @@ main > section.fw-module-host{max-width:none!important;padding:12px 17px 24px!im
  main>section#manpower{padding:7px!important}
  main>section#manpower .manpower-shell{height:calc(100dvh - 122px)!important;min-height:440px!important}
 }
+</style><style id="mpUnifiedRestoredTools">
+#mpLegacyShell[hidden],#mpPresenterShell[hidden]{display:none!important}
+.mp-unified-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 12px;background:#fff;border:1px solid #dce4ee;border-radius:12px;margin-bottom:10px}
+.mp-unified-toolbar button{font:750 12px system-ui,sans-serif;border:1px solid #d5deea;border-radius:9px;background:#f8faff;color:#354b68;padding:10px 13px;cursor:pointer;min-height:42px}
+.mp-unified-toolbar button.mp-unified-active{background:#244c83;color:#fff;border-color:#244c83}
+.mp-unified-toolbar span{margin-left:auto;color:#7a889d;font:11px system-ui,sans-serif}
+#mpLegacyShell,#mpPresenterShell{height:calc(100dvh - 185px)!important;min-height:600px!important}
+@media(max-width:760px){.mp-unified-toolbar span{display:none}#mpLegacyShell,#mpPresenterShell{height:calc(100dvh - 180px)!important;min-height:500px!important}}
 </style></head>
 <body>
 <header><div class="headerin"><div class="brand"><span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2" fill="#88a7ff"/><rect x="14" y="3" width="7" height="7" rx="2" fill="#e5ecff"/><rect x="3" y="14" width="7" height="7" rx="2" fill="#e5ecff"/><rect x="14" y="14" width="7" height="7" rx="2" fill="#69d5cd"/></svg></span><div class="brandtext"><b>Field Management<br>Workspace Tool</b><small>Operations · Safety · Planning</small></div></div><div class="header-tools"><a class="weather-link" href="https://forecast.weather.gov/MapClick.php?lat=29.4241&lon=-98.4936" target="_blank" rel="noopener" aria-label="Open National Weather Service San Antonio forecast"><div id="weatherBar" class="weatherbar" title="San Antonio safety weather · NOAA/NWS"><div id="wxTempCell" class="wxitem"><span class="wxlabel">SAN ANTONIO, TX</span><span id="wxTemp" class="wxvalue">--°F</span><span id="wxCond" class="wxsub">Loading…</span><span id="wxTempAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxHeatCell" class="wxitem heat"><span class="wxlabel">HEAT INDEX</span><span id="wxHeat" class="wxvalue">--°F</span><span id="wxHeatSub" class="wxsub">Field heat</span><span id="wxHeatAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxWindCell" class="wxitem wind"><span class="wxlabel">WIND</span><span id="wxWind" class="wxvalue">-- mph</span><span id="wxWindDir" class="wxsub">--</span><span id="wxWindAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxLightningCell" class="wxitem alert"><span class="wxlabel">⚡ LIGHTNING</span><span id="wxLightning" class="wxvalue"><span class="wx-dot"></span>Checking</span><span id="wxLightningSub" class="wxsub">NWS thunder risk</span><span id="wxLightningAdvice" class="wxadvice" aria-live="polite"></span></div><div id="wxAlertCell" class="wxitem alert wide"><span class="wxlabel">SEVERE WEATHER</span><span id="wxAlert" class="wxvalue">Checking alerts</span><span id="wxAlertSub" class="wxsub">Official NWS alerts</span><span id="wxAlertAdvice" class="wxadvice" aria-live="polite"></span></div><div class="wxitem tomorrow"><span class="wxlabel">TOMORROW</span><span id="wxTomorrow" class="wxvalue">--°F</span><span id="wxTomorrowSub" class="wxsub">Forecast</span></div></div></a></div></div></header>
@@ -540,8 +548,17 @@ main > section.fw-module-host{max-width:none!important;padding:12px 17px 24px!im
 
 <section id="manpower" class="hidden manpower-host">
   <div class="fw-presenter-entry" style="display:none"><div class="fw-planner-banner" style="font:700 11px system-ui,sans-serif;color:#63758b" id="fwSyncStatus" role="status">Connecting…</div><a class="fw-presenter-link" href="/presenter.html" target="_blank" rel="noopener" title="Open editable full-screen meeting calendar">▣ Open Presenter Mode ↗</a></div>
-  <div class="manpower-shell">
-    <iframe id="manpowerFrame" title="Manpower Planner — Field Management Workspace Tool" loading="eager"></iframe>
+  <div class="mp-unified-toolbar" role="toolbar" aria-label="Manpower planner views and reporting">
+    <button type="button" id="mpShowCalendar" class="mp-unified-active">Weekly calendar</button>
+    <button type="button" id="mpShowTools">Workforce tools &amp; availability</button>
+    <button type="button" id="mpDetailedReport">Detailed work report / PDF</button>
+    <span>Seven-day calendar · full workforce management · original printable report</span>
+  </div>
+  <div class="manpower-shell" id="mpPresenterShell">
+    <iframe id="mpPresenterFrame" title="Seven-day Manpower Planner" loading="eager" src="/presenter.html?embedded=1"></iframe>
+  </div>
+  <div class="manpower-shell" id="mpLegacyShell" hidden>
+    <iframe id="manpowerFrame" title="Workforce tools, employee directory, availability and detailed work report" loading="eager"></iframe>
   </div>
 </section>
 
@@ -905,7 +922,7 @@ main > section.fw-module-host{max-width:none!important;padding:12px 17px 24px!im
   const frame = document.getElementById('manpowerFrame');
   if(frame && !frame.srcdoc){
     const bytes = Uint8Array.from(atob(MANPOWER_B64), c => c.charCodeAt(0));
-    frame.src = '/presenter.html?embedded=1';
+    frame.srcdoc = new TextDecoder().decode(bytes);
   }
 
   const baseShowView = typeof window.showView === 'function' ? window.showView : null;
@@ -1297,5 +1314,28 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  if(frame.contentDocument?.readyState==='complete')apply();
 })();
 </script>
-</body>
+<script id="mpUnifiedRestoredToolsLogic">
+(function(){
+ const $=id=>document.getElementById(id);
+ function show(which){
+   $('mpPresenterShell').hidden=which!=='calendar';
+   $('mpLegacyShell').hidden=which!=='tools';
+   $('mpShowCalendar').classList.toggle('mp-unified-active',which==='calendar');
+   $('mpShowTools').classList.toggle('mp-unified-active',which==='tools');
+ }
+ function report(){
+   const f=$('manpowerFrame').contentWindow;
+   if(!f||!f.document||!f.document.getElementById('reportPlannerBtn')){
+     show('tools');alert('The detailed workforce report is still loading. Try again in a moment.');return;
+   }
+   // Reuse the full legacy report generator and its original print/PDF preview.
+   f.document.getElementById('reportPlannerBtn').click();
+ }
+ $('mpShowCalendar').addEventListener('click',()=>show('calendar'));
+ $('mpShowTools').addEventListener('click',()=>show('tools'));
+ $('mpDetailedReport').addEventListener('click',report);
+ // Preserve the calendar when returning from another section.
+ show('calendar');
+})();
+</script></body>
 </html>
