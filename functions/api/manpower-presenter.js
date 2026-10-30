@@ -16,8 +16,9 @@ async function getPresence(db){const r=await getDoc(db,PRESENCE);const all=r?JSO
 function validateEntity(kind,v){
  if(v===null)return true;
  if(!v||typeof v!=='object'||Array.isArray(v)||!safe(v.id))return false;
- if(kind==='job')return typeof v.name==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(String(v.date||''))&&Array.isArray(v.assignments)&&v.assignments.length<250&&v.assignments.every(a=>a&&typeof a.employeeId==='string'&&Number(a.hours??0)>=0);
+ if(kind==='job')return typeof v.name==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(String(v.date||''))&&Array.isArray(v.assignments)&&v.assignments.length<250&&v.assignments.every(a=>a&&typeof a.employeeId==='string'&&a.employeeId.length>0&&a.employeeId.length<160&&Number.isFinite(Number(a.hours))&&Number(a.hours)>=0&&Number(a.hours)<=24);
  if(kind==='note')return typeof v.text==='string'&&v.text.length<=1600&&typeof v.date==='string';
+ if(kind==='employee')return typeof v.name==='string'&&v.name.trim().length>0&&v.name.length<=150&&(!v.schoolDays||Array.isArray(v.schoolDays))&&(!v.exceptions||typeof v.exceptions==='object')&&json(v).length<18000;
  return false;
 }
 function applyOps(doc,ops){
@@ -26,9 +27,9 @@ function applyOps(doc,ops){
  pres.events=Array.isArray(pres.events)?pres.events:[];
  const changes=[];
  for(const op of ops){
-  if(!op||!['job','note'].includes(op.kind)||!safe(op.id)||safe(op.id).length>130||!validateEntity(op.kind,op.after)||!validateEntity(op.kind,op.before))return {error:'Invalid change data.'};
+  if(!op||!['job','note','employee'].includes(op.kind)||!safe(op.id)||safe(op.id).length>130||!validateEntity(op.kind,op.after)||!validateEntity(op.kind,op.before))return {error:'Invalid change data.'};
   if(op.after&&String(op.after.id)!==op.id||op.before&&String(op.before.id)!==op.id)return {error:'Invalid change identity.'};
-  const array=op.kind==='job'?data.jobs:pres.notes;
+  const array=op.kind==='job'?data.jobs:op.kind==='employee'?data.employees:pres.notes;
   const index=array.findIndex(x=>String(x.id)===op.id);
   const current=index<0?null:array[index];
   if(!same(current,op.before))return {conflict:true,kind:op.kind,id:op.id};
@@ -36,7 +37,7 @@ function applyOps(doc,ops){
   if(index>=0&&op.after===null)array.splice(index,1);
   else if(index>=0)array[index]=clone(op.after);
   else if(op.after!==null)array.push(clone(op.after));
-  changes.push({kind:op.kind,id:op.id,label:safe(op.label)||'Updated',job:op.kind==='job'?(op.after?.name||op.before?.name||'Job'):'Meeting note'});
+  changes.push({kind:op.kind,id:op.id,label:safe(op.label)||'Updated',job:op.kind==='job'?(op.after?.name||op.before?.name||'Job'):op.kind==='employee'?(op.after?.name||op.before?.name||'Employee'):'Meeting note'});
  }
  data.presenter=pres;
  return {data,changes};
@@ -106,8 +107,10 @@ export async function onRequestPost({request,env}){
    }
    return bad('Presence will retry on next heartbeat.',503);
   }
-  if(body.action!=='change'||!Array.isArray(body.ops)||body.ops.length<1||body.ops.length>30)return bad('Invalid presenter operation.');
+  if(body.action!=='change'||!Array.isArray(body.ops)||body.ops.length<1||body.ops.length>150)return bad('Invalid presenter operation.');
   const ops=body.ops;
+  if(ops.some(op=>op.kind==='employee')&&!can(user,'manpower','manage'))return bad('Only manpower managers can edit employee records.',403);
+  if(!can(user,'manpower','approve')&&ops.some(op=>op.kind==='job'&&json(op.before?.conflictWaivers||[])!==json(op.after?.conflictWaivers||[])))return bad('Only approvers can change conflict waivers.',403);
   for(let attempt=0;attempt<6;attempt++){
    const r=await getDoc(env.DB,DOC);
    if(!r)return bad('Shared schedule has not been published.',409);
