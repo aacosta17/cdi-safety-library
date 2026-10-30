@@ -438,3 +438,14 @@ section:not(#home)>.hero{margin-top:0;background:linear-gradient(120deg,#071a2f,
   max-height:none !important;
   object-fit:contain !important;
 }
+
+
+/* Green brand refresh 2026-10-30. Keep hazard severity colors unchanged. */
+:root{--blue:#197667;--navy:#18392d;--green:#197667}
+.hero{background:linear-gradient(118deg,#173a30,#205849 63%,#307866)!important;box-shadow:0 16px 36px rgba(17,59,39,.13)!important}
+.primary,.btn.primary,.form-view-btn,.manual-btn,.manual-nav-btn{background:#197667!important;border-color:#197667!important;color:#fff!important}
+.secondary,.btn.secondary{background:#e8f6ee!important;color:#1a7054!important}
+.form-card-icon,.tile .icon{background:#e8f6ee!important;color:#197667!important}
+.nav button.active:after{background:#62c5a0!important}
+.form-view-btn:hover,.manual-btn:hover{background:#115f4c!important}
+button:focus-visible,a:focus-visible,input:focus-visible{outline-color:#2f9b7a!important}
