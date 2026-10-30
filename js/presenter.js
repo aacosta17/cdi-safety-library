@@ -32,6 +32,21 @@ function issueSignature(job,empId,jobSet=app.doc?.jobs||[]){
  return JSON.stringify([job.date,availability(userFor(empId),job.date),parts]);
 }
 function waiverValid(j,employeeId){return(j.conflictWaivers||[]).some(w=>String(w.employeeId)===String(employeeId)&&w.date===j.date&&w.active!==false&&w.signature===issueSignature(j,employeeId));}
+function waiverNeeded(job,jobSet=app.doc?.jobs||[]){
+ return [...new Set((job.assignments||[]).filter(a=>assignmentIssues(a.employeeId,job.date,job.id,Number(a.hours)||0,job,jobSet).length)
+   .map(a=>String(a.employeeId)))].filter(empId=>!waiverValid(job,empId));
+}
+function appendWaivers(job,reason,by=app.user?.displayName||'Editor',jobSet=app.doc?.jobs||[]){
+ const ids=waiverNeeded(job,jobSet),after=copy(job),at=new Date().toISOString();
+ after.conflictWaivers=[...(after.conflictWaivers||[]),...ids.map(employeeId=>({employeeId,date:after.date,
+  reason,by,byId:app.user?.id||'',at,signature:issueSignature(after,employeeId,jobSet),active:true}))];
+ return {after,added:ids.length};
+}
+function sameProject(original,another){
+ if(original.number&&String(original.number).trim())return String(original.number).trim().toLowerCase()===String(another.number||'').trim().toLowerCase();
+ return String(original.name||'').trim().toLowerCase()===String(another.name||'').trim().toLowerCase();
+}
+
 function assignmentIssues(empId,date,jobId,withHours=null,jobOverride=null,jobSet=app.doc?.jobs||[]){
  const emp=userFor(empId),status=availability(emp,date);
  const current=jobOverride||jobSet.find(j=>String(j.id)===String(jobId));
@@ -54,7 +69,7 @@ function groupedAssignments(job){
 const weekDates=()=>Array.from({length:7},(_,i)=>{const d=new Date(app.week);d.setDate(d.getDate()+i);return dateKey(d)});
 function visibleJobs(date){return(app.doc?.jobs||[]).filter(j=>j.date===date&&(app.filter==='all'||app.filter==='priority'&&j.priority==='high'||app.filter==='behind'&&j.status==='behind')&&(app.division==='all'||displayDivision(j)===app.division)).sort((a,b)=>(b.assignments||[]).length-(a.assignments||[]).length||String(a.name).localeCompare(String(b.name)))}
 function renderMetrics(){const days=weekDates(),jobs=(app.doc?.jobs||[]).filter(j=>days.includes(j.date)),assigned=new Set(jobs.flatMap(j=>(j.assignments||[]).map(a=>a.employeeId))),hours=jobs.reduce((n,j)=>n+(j.assignments||[]).reduce((k,a)=>k+(Number(a.hours)||0),0),0),conflicts=allIssues(jobs);
- $('metrics').innerHTML=[[new Set(jobs.map(j=>j.number||j.name)).size,'Distinct jobs'],[jobs.length,'Scheduled job-days'],[assigned.size,'Employees assigned'],[hours.toFixed(hours%1?1:0),'Scheduled hours'],[conflicts,'Potential conflicts']].map(([v,k])=>`<div class="metric"><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join('');}
+ $('metrics').innerHTML=[[new Set(jobs.map(j=>j.number||j.name)).size,'Distinct jobs'],[new Set(jobs.map(j=>j.date)).size,'Scheduled days'],[assigned.size,'Employees assigned'],[hours.toFixed(hours%1?1:0),'Scheduled hours'],[conflicts,'Potential conflicts']].map(([v,k])=>`<div class="metric"><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join('');}
 function jobHTML(j){const p=app.edits?.[j.id],changed=p&&Date.now()-new Date(p.at).getTime()<60*60*1000;const issue=(j.assignments||[]).flatMap(a=>assignmentIssues(a.employeeId,j.date,j.id)).length;const waived=(j.conflictWaivers||[]).filter(w=>w.active!==false).length;
  const crew=groupedAssignments(j);
  return `<article class="job ${changed?'recent':''} ${issue?'problem':''}" data-job-id="${esc(j.id)}"><div class="job-head"><input class="bulk-check" type="checkbox" data-bulk-id="${esc(j.id)}" ${app.selected.has(String(j.id))?'checked':''} aria-label="Select ${esc(j.name)} on ${esc(j.date)}"><div><h3>${esc(j.name)}</h3><div class="meta">${esc(j.number||'No job number')} · ${esc(displayDivision(j))} · ${Number(j.percent)||0}%</div></div><button class="job-actions" data-edit-job="${esc(j.id)}">Edit</button></div>${j.priority==='high'?'<span class="pill warn">High priority</span>':''}${j.status==='behind'?'<span class="pill warn">Behind</span>':''}${j.dayType==='ot'?'<span class="pill">Overtime</span>':''}${issue?`<div class="problem-text">⚠ ${issue} scheduling warning(s) · <button data-edit-job="${esc(j.id)}" type="button" class="mp-inline-waive">Review / waive</button></div>`:''}${waived?`<div class="meta">✓ ${waived} recorded waiver(s) (only valid for unchanged schedules)</div>`:''}<div class="staff">${crew||'<small>No crew assigned</small>'}</div>${j.notes?`<div class="meta">${esc(j.notes).slice(0,130)}</div>`:''}<div class="job-footer"><span>${p?`Edited by ${esc(p.by)} · ${time(p.at)}`:'No recent edit'}</span><strong>${(j.assignments||[]).length} staff</strong></div></article>`;}
@@ -112,7 +127,7 @@ const blankJob=date=>({id:makeId('jpres'),name:'',number:'',date,scope:'auto',pr
 function openJob(id=null,date=null){if(!allow())return;const found=id?(app.doc?.jobs||[]).find(j=>j.id===id):null;if(id&&!found){notify('Job not found. Refresh the schedule.',true);return}
  app.editing=id||null;app.original=copy(found);app.draft=copy(found||blankJob(date||weekDates()[0]));const j=app.draft;
  $('jobTitle').textContent=found?'Edit job and crew':'Create job';$('jName').value=j.name||'';$('jNumber').value=j.number||'';$('jDate').value=j.date||dateKey(new Date());$('jScope').value=['auto','electrical','security','data','fire_alarm','service'].includes(j.scope)?j.scope:'auto';$('jPriority').value=j.priority||'normal';$('jStatus').value=j.status||'normal';$('jPercent').value=Number(j.percent)||0;$('jDayType').value=j.dayType==='ot'?'ot':'regular';$('jOT').value=Number(j.otHours)||0;$('jLocation').value=j.location||'';$('jNotes').value=j.notes||'';$('jFinish').value=j.finish||'';$('jPTP').checked=!!j.ptp;$('jApplyWeek').checked=false;$('jApplyWeekLabel').hidden=!found;
- $('newEmployeeSearch').value='';$('editorError').classList.add('hidden');$('deleteJob').hidden=!found;$('copyJob').hidden=!found;$('waiveConflict').checked=false;$('waiverReason').value='';renderAssignments();$('jobOverlay').classList.remove('hidden');$('jName').focus();}
+ $('newEmployeeSearch').value='';$('editorError').classList.add('hidden');$('deleteJob').hidden=!found;$('copyJob').hidden=!found;$('waiveConflict').checked=false;$('waiveScope').value='week';$('waiverReason').value='';renderAssignments();$('jobOverlay').classList.remove('hidden');$('jName').focus();}
 function closeJob(){$('jobOverlay').classList.add('hidden');app.editing=null;app.original=null;app.draft=null}
 function renderAssignments(){const job=app.draft;if(!job)return;const items=job.assignments||[],leads=items.filter(a=>a.lead);
  $('assignments').innerHTML=items.length?items.map((a,i)=>{const e=userFor(a.employeeId);return `<div class="assignment-row" data-assign-index="${i}"><span><strong>${esc(e?.name||'Unknown employee')}</strong><br><small>${esc(e?.classificationDetail||e?.classification||'')}</small></span><input type="number" min="0.5" max="24" step="0.5" value="${Number(a.hours)||8}" data-assign-hours="${i}" aria-label="Scheduled hours for ${esc(e?.name||'employee')}"><label><input type="checkbox" data-assign-lead="${i}" ${a.lead?'checked':''}> Lead</label><select data-assign-under="${i}" aria-label="Lead for ${esc(e?.name||'employee')}" ${a.lead?'disabled':''}><option value="">No specific lead</option>${leads.filter(l=>String(l.employeeId)!==String(a.employeeId)).map(l=>`<option value="${esc(l.employeeId)}" ${String(a.underLead||'')===String(l.employeeId)?'selected':''}>${esc(userFor(l.employeeId)?.name||'Lead')}</option>`).join('')}</select><button class="remove" data-remove-assign="${i}" aria-label="Remove employee">✕</button></div>`}).join(''):'<div class="empty">No crew assigned. Search for an employee below.</div>';
@@ -131,7 +146,20 @@ function renderEditorWarnings(){const j=app.draft;if(!j)return;const day=$('jDat
 }
 function fillDraft(){const j=app.draft;if(!j)return;j.name=$('jName').value.trim();j.number=$('jNumber').value.trim();j.date=$('jDate').value;j.scope=$('jScope').value;j.priority=$('jPriority').value;j.status=$('jStatus').value;j.percent=Math.min(100,Math.max(0,Number($('jPercent').value)||0));j.dayType=$('jDayType').value;j.otHours=j.dayType==='ot'?Number($('jOT').value)||0:0;j.location=$('jLocation').value.trim();j.notes=$('jNotes').value.trim();j.finish=$('jFinish').value;j.ptp=$('jPTP').checked;}
 async function saveJob(){if(!allow()||!app.draft)return;fillDraft();const j=app.draft;if(!j.name||!j.date){$('editorError').textContent='Enter a job name and scheduled date.';$('editorError').classList.remove('hidden');return}
- if($('waiveConflict').checked){if(!app.canApprove){$('editorError').textContent='Approver permission is required to waive a conflict.';$('editorError').classList.remove('hidden');return;}const reason=$('waiverReason').value.trim();if(!reason){$('editorError').textContent='Enter a reason for waiving the scheduling conflicts.';$('editorError').classList.remove('hidden');return;}const existing=j.conflictWaivers||[];const affected=(j.assignments||[]).filter(a=>assignmentIssues(a.employeeId,j.date,j.id,Number(a.hours)||0,j).length);j.conflictWaivers=[...existing,...affected.filter(a=>!waiverValid(j,a.employeeId)).map(a=>({employeeId:a.employeeId,date:j.date,reason,by:app.user?.displayName||'Editor',at:new Date().toISOString(),signature:issueSignature(j,a.employeeId),active:true}))];}
+ let otherWaiverOps=[];
+ if($('waiveConflict').checked){
+   if(!app.canApprove){$('editorError').textContent='Approver permission is required to waive a conflict.';$('editorError').classList.remove('hidden');return;}
+   const reason=$('waiverReason').value.trim();
+   if(!reason){$('editorError').textContent='Enter a reason for the waiver.';$('editorError').classList.remove('hidden');return;}
+   const result=appendWaivers(j,reason);j.conflictWaivers=result.after.conflictWaivers;
+   if($('waiveScope').value==='week'&&app.original){
+     for(const original of app.doc.jobs){
+       if(original.id===app.original.id||!weekDates().includes(original.date)||!sameProject(app.original,original))continue;
+       const {after,added}=appendWaivers(original,reason);
+       if(added)otherWaiverOps.push({kind:'job',id:original.id,before:copy(original),after,label:'Approved matching job conflicts'});
+     }
+   }
+ }
  const ops=[{kind:'job',id:j.id,before:app.original,after:copy(j),label:app.original?'Edited job / crew':'Created job'}];
  if(app.original&&$('jApplyWeek').checked){
    const days=new Set(weekDates()),old=app.original;
@@ -143,6 +171,12 @@ async function saveJob(){if(!allow()||!app.draft)return;fillDraft();const j=app.
      ops.push({kind:'job',id:original.id,before:copy(original),after,label:'Updated weekly project details'});
    }
  }
+ // Merge project-wide detail updates and waiver updates to avoid duplicate operations for one job.
+ for(const wop of otherWaiverOps){
+   const current=ops.find(op=>op.kind==='job'&&op.id===wop.id);
+   if(current){current.after.conflictWaivers=copy(wop.after.conflictWaivers);}else ops.push(wop);
+ }
+ if(ops.length>150){$('editorError').textContent='This update affects too many job-days for one save. Narrow the scope.';$('editorError').classList.remove('hidden');return;}
  $('saveJob').disabled=true;const ok=await change(ops,{label:app.original?'Edited job / crew':'Created job'});$('saveJob').disabled=false;if(ok)closeJob();else{$('editorError').textContent='This job may have been changed by another editor. Your draft remains open. Cancel and reopen the job to review the latest schedule.';$('editorError').classList.remove('hidden')}}
 async function deleteJob(){if(!allow()||!app.original)return;if(!confirm(`Delete ${app.original.name} on ${short(app.original.date)}? Other editors will see this immediately.`))return;const j=app.original;const ok=await change([{kind:'job',id:j.id,before:j,after:null,label:'Deleted job'}],{label:'Deleted job'});if(ok)closeJob();}
 async function addNote(){if(!allow())return;const text=$('noteText').value.trim();if(!text)return;const note={id:makeId('note'),date:app.rosterDate||weekDates()[0],jobId:$('noteJob').value||'',text,done:false};const ok=await change([{kind:'note',id:note.id,before:null,after:note,label:'Added meeting note'}],{label:'Added meeting note'});if(ok)$('noteText').value='';}
@@ -177,7 +211,7 @@ function reportData(){const days=weekDates(),jobs=(app.doc?.jobs||[]).filter(j=>
  return {days,jobs,employees,hours,ot,issues:allIssues(jobs)};
 }
 function makeWorkReport(){const d=reportData(),notes=(app.doc?.presenter?.notes||[]).filter(n=>d.days.includes(n.date));
- let output=`<div class="report-brand"><small>FIELD MANAGEMENT WORKSPACE · OPERATIONS / LABOR PLANNING</small><h1>Weekly Manpower Work Report</h1><p class="subtle">${esc(short(d.days[0]))} – ${esc(short(d.days[6]))} · Generated ${esc(new Date().toLocaleString())}</p></div><div class="report-stats">${[[d.jobs.length,'Scheduled job-days'],[new Set(d.jobs.map(j=>j.number||j.name)).size,'Distinct jobs'],[d.employees.length,'Employees scheduled'],[d.hours.toFixed(1)+'h','Scheduled labor hours']].map(([v,t])=>`<div><b>${esc(v)}</b>${esc(t)}</div>`).join('')}</div><p><b>Overtime-job hours:</b> ${d.ot.toFixed(1)} h &nbsp; <b>Potential conflict groups:</b> ${d.issues}. Warnings acknowledged by a waiver remain in the count.</p>`;
+ let output=`<div class="report-brand"><small>FIELD MANAGEMENT WORKSPACE · OPERATIONS / LABOR PLANNING</small><h1>Weekly Manpower Work Report</h1><p class="subtle">${esc(short(d.days[0]))} – ${esc(short(d.days[6]))} · Generated ${esc(new Date().toLocaleString())}</p></div><div class="report-stats">${[[new Set(d.jobs.map(j=>j.date)).size,'Scheduled days'],[new Set(d.jobs.map(j=>j.number||j.name)).size,'Distinct jobs'],[d.employees.length,'Employees scheduled'],[d.hours.toFixed(1)+'h','Scheduled labor hours']].map(([v,t])=>`<div><b>${esc(v)}</b>${esc(t)}</div>`).join('')}</div><p><b>Total scheduled project-day entries:</b> ${d.jobs.length} &nbsp; <b>Overtime-job hours:</b> ${d.ot.toFixed(1)} h &nbsp; <b>Potential conflict groups:</b> ${d.issues}. Warnings acknowledged by a waiver remain in the count.</p>`;
  for(const date of d.days){const dayJobs=d.jobs.filter(j=>j.date===date),dayHours=dayJobs.reduce((n,j)=>n+(j.assignments||[]).reduce((z,a)=>z+Number(a.hours||0),0),0);
  output+=`<section class="report-day"><h2>${esc(short(date))} · ${dayJobs.length} job(s) · ${dayHours.toFixed(1)} hours</h2>`;
  for(const j of dayJobs){const tally=(j.assignments||[]).reduce((n,a)=>n+Number(a.hours||0),0),warnings=[...new Set((j.assignments||[]).flatMap(a=>assignmentIssues(a.employeeId,j.date,j.id)))];
@@ -208,7 +242,49 @@ async function bootstrap(){try{
  setStatus('Shared · ready','ok');render();heartbeat();setInterval(()=>refresh(),3500);setInterval(()=>heartbeat(),15000);
  }catch(e){$('gateMessage').textContent=e.message;$('gateBack').hidden=false;}}
 
-function updateBulk(){document.body.classList.toggle('bulk-active',app.bulk);$('bulkToggle').textContent=app.bulk?'Selecting jobs':'Select jobs';$('bulkDelete').classList.toggle('hidden',!app.bulk);$('bulkCancel').classList.toggle('hidden',!app.bulk);$('bulkCount').textContent=app.selected.size;$('bulkScope').classList.toggle('hidden',!app.bulk);document.querySelectorAll('[data-bulk-id]').forEach(el=>el.checked=app.selected.has(String(el.dataset.bulkId)));}
+function pendingWeekWaivers(){
+ const week=new Set(weekDates()),jobs=(app.doc?.jobs||[]).filter(j=>week.has(j.date));
+ const pending=jobs.map(j=>({job:j,ids:waiverNeeded(j)})).filter(x=>x.ids.length);
+ return {pending,employeeWarnings:pending.reduce((n,x)=>n+x.ids.length,0)};
+}
+function openWaiveAll(){
+ if(!app.canApprove){notify('Only manpower managers and approvers can waive conflicts.',true);return;}
+ const {pending,employeeWarnings}=pendingWeekWaivers();
+ $('mpWaiveAllSummary').innerHTML=pending.length?`<strong>${employeeWarnings}</strong> pending employee exception(s) across <strong>${pending.length}</strong> job-day(s).<br>Approve all currently flagged conflicts in ${esc(short(weekDates()[0]))} – ${esc(short(weekDates()[6]))}.`: 'There are no pending conflicts to approve for this week.';
+ $('mpWaiveAllConfirm').disabled=!pending.length;
+ $('mpWaiveAllReason').value='';
+ $('mpWaiveAllOverlay').classList.remove('hidden');
+ $('mpWaiveAllReason').focus();
+}
+function closeWaiveAll(){$('mpWaiveAllOverlay').classList.add('hidden')}
+async function approveAllWeek(){
+ if(!app.canApprove||!allow())return;
+ const reason=$('mpWaiveAllReason').value.trim();
+ if(!reason)return notify('An approval reason is required for all conflict waivers.',true);
+ const {pending,employeeWarnings}=pendingWeekWaivers();
+ if(!pending.length)return notify('No unacknowledged conflicts remain this week.');
+ if(pending.length>150)return notify('More than 150 job-days have warnings. Please narrow the dates before approving.',true);
+ if(!confirm(`Approve ${employeeWarnings} employee conflict(s) across ${pending.length} scheduled job-day(s)?\n\nWarnings remain visible as acknowledged. Hours, PTO and school availability are not changed.`))return;
+ const ops=pending.map(({job})=>({kind:'job',id:job.id,before:copy(job),after:appendWaivers(job,reason).after,label:'Approved all weekly scheduling exceptions'}));
+ $('mpWaiveAllConfirm').disabled=true;
+ const ok=await change(ops,{label:`Approved ${employeeWarnings} weekly scheduling exceptions`});
+ $('mpWaiveAllConfirm').disabled=false;
+ if(ok){closeWaiveAll();notify(`${employeeWarnings} weekly scheduling exceptions acknowledged. Warnings remain visible.`)}
+}
+function updateBulk(){
+ document.body.classList.toggle('bulk-active',app.bulk);
+ const toggle=$('bulkToggle');toggle.textContent=app.bulk?'Selecting jobs':'Select jobs';toggle.setAttribute('aria-pressed',String(app.bulk));
+ $('mpBulkBar').hidden=!app.bulk;
+ $('bulkCount').textContent=app.selected.size;
+ $('bulkDelete').disabled=!app.selected.size||!app.canEdit;
+ document.querySelectorAll('[data-bulk-id]').forEach(el=>el.checked=app.selected.has(String(el.dataset.bulkId)));
+}
+function selectAllBulk(mode){
+ if(!app.bulk||!allow())return;
+ const ids=mode==='week'?(app.doc?.jobs||[]).filter(j=>weekDates().includes(j.date)).map(j=>String(j.id))
+   :[...document.querySelectorAll('#calendar [data-bulk-id]')].map(el=>String(el.dataset.bulkId));
+ ids.forEach(id=>app.selected.add(id));updateBulk();
+}
 async function deleteBulk(){if(!allow()||!app.selected.size)return;let chosen=(app.doc?.jobs||[]).filter(j=>app.selected.has(String(j.id)));
  if($('bulkScope').value==='week'){
   const days=new Set(weekDates()),keys=new Set(chosen.map(j=>String(j.name||'').trim().toLowerCase()+'|'+String(j.number||'').trim().toLowerCase()));
@@ -297,7 +373,16 @@ async function saveEmployee(){if(!employeeDraft||!allow()||!app.canManageRoster)
  if(ok){employeeOriginal=copy(e);renderDirectory();$('employeeStatus').textContent='Saved to the shared schedule.';}
  else $('employeeStatus').textContent='Unable to save. Review recent changes and try again.';
 }
-$('bulkToggle').onclick=()=>{app.bulk=!app.bulk;app.selected.clear();renderCalendar();updateBulk()};$('bulkCancel').onclick=()=>{app.bulk=false;app.selected.clear();renderCalendar();updateBulk()};$('bulkDelete').onclick=deleteBulk;
+$('bulkToggle').onclick=()=>{app.bulk=!app.bulk;app.selected.clear();renderCalendar();updateBulk()};
+$('bulkCancel').onclick=()=>{app.bulk=false;app.selected.clear();renderCalendar();updateBulk()};
+$('bulkDelete').onclick=deleteBulk;
+$('mpSelectVisible').onclick=()=>selectAllBulk('visible');
+$('mpSelectAllWeek').onclick=()=>selectAllBulk('week');
+$('mpClearSelection').onclick=()=>{app.selected.clear();updateBulk()};
+$('mpOpenWaiveAll').onclick=()=>{const menu=$('mpToolsMenu');if(menu)menu.hidden=true;$('mpMoreTools')?.setAttribute('aria-expanded','false');openWaiveAll()};
+$('mpWaiveAllClose').onclick=closeWaiveAll;$('mpWaiveAllCancel').onclick=closeWaiveAll;
+$('mpWaiveAllConfirm').onclick=approveAllWeek;
+
 $('copyJob').onclick=openCopy;$('copyClose').onclick=closeCopy;$('copyCancel').onclick=closeCopy;$('copyConfirm').onclick=confirmCopy;
 $('calendar').addEventListener('change',e=>{if(e.target.matches('[data-bulk-id]')){const id=String(e.target.dataset.bulkId);if(e.target.checked)app.selected.add(id);else app.selected.delete(id);updateBulk()}});
 if(new URLSearchParams(location.search).get('embedded')==='1')document.documentElement.classList.add('embedded');
