@@ -34,7 +34,51 @@
 }
 
 </style>
-<style id="fwClientGreenPTPV3">:root{--navy:#173a30;--green:#197667;background:#f4f8f5!important;color:#233e34!important}body{background:#f4f8f5!important}.btn.primary,.btn.green{background:#197667!important;border-color:#197667!important;color:white!important}input:focus,select:focus,textarea:focus{border-color:#44a181!important;box-shadow:0 0 0 3px rgba(39,139,93,.12)!important}button:focus-visible{outline-color:#40a987!important}</style></head><body><div class="app"><div class="hero"><div><div class="eyebrow">Field Safety / Job Planning</div><h1>PTP Writing Assistant</h1><p class="sub">Describe the actual work. Generate editable work steps, associated hazards and specific control measures for any company's PTP form.</p></div><button id="startOver" class="btn">Start over</button></div><div id="status" class="message" hidden></div><div class="shell"><div class="boxlabel">01 / Describe the actual task</div><div class="grid"><div class="field"><label for="scope">Exactly what will the crew accomplish?</label><textarea id="scope" placeholder="Example: Run ¾-inch EMT above grid ceiling from room 210 to 214; install two boxes and pull control conductors."></textarea></div><div class="field"><label for="workarea">Where will the work take place?</label><textarea id="workarea" placeholder="Building, floor, area, access limitations, adjacent trades, work environment…"></textarea></div><div class="field"><label for="energy">Electrical exposure / isolation status</label><select id="energy"><option value="unknown">Not yet verified / unknown</option><option value="deenergized">Isolated and verified de-energized</option><option value="adjacent">Working near energized systems / equipment</option><option value="no-electrical">No electrical exposure anticipated</option></select></div><div class="field"><label for="access">Primary access method</label><select id="access"><option value="floor">From floor / ground level</option><option value="ladder">Ladder</option><option value="lift">Mobile elevating work platform (MEWP)</option><option value="scaffold">Scaffold or other approved elevated platform</option></select></div><div class="field"><label for="equipment">Specific tools / equipment</label><input id="equipment" placeholder="Bender, drill, fish tape, ladder, lift…"></div><div class="field"><label for="special">Other task details / restrictions</label><input id="special" placeholder="Restricted areas, shutdown window, overhead occupants…"></div></div>
+<style id="fwClientGreenPTPV3">:root{--navy:#173a30;--green:#197667;background:#f4f8f5!important;color:#233e34!important}body{background:#f4f8f5!important}.btn.primary,.btn.green{background:#197667!important;border-color:#197667!important;color:white!important}input:focus,select:focus,textarea:focus{border-color:#44a181!important;box-shadow:0 0 0 3px rgba(39,139,93,.12)!important}button:focus-visible{outline-color:#40a987!important}</style><style id="premium20261030">
+/* Premium workspace • 2026-10-30. Screen-only: report geometry is preserved. */
+@media screen {
+:root{--accent:#157560;--accent-2:#2c967e;--accent-soft:#e8f4ee;--navy:#173c30;--blue:#157560;--ink:#203b31;--muted:#60766c;--line:#dce5df;--bg:#f3f5f1;--shadow:0 2px 4px #173c3003,0 12px 32px #173c3007}
+body{background:#f3f5f1!important;color:#203b31;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font-family:inherit}button,a{touch-action:manipulation}
+h1,h2,h3{letter-spacing:-.035em}h1{line-height:1.14}
+:is(.card,.shell,.toolbar,.panel,.form-card,.dialog,.fw-auth-card){border-color:#dce5df;box-shadow:var(--shadow)}
+:is(.card,.form-card,.panel){border-radius:18px}
+:is(.btn,.fw-button,.form-view-btn,.form-print-btn,.manual-btn){border-radius:11px;transition:background .18s,border-color .18s,box-shadow .18s,transform .18s}
+:is(.btn.primary,.btn.green,.fw-primary){background:linear-gradient(135deg,#187c65,#105a48)!important;border-color:#166b56!important;box-shadow:inset 0 1px 0 #ffffff24,0 4px 10px #125d4820;color:#fff!important}
+:is(button,a,input,select,textarea,summary):focus-visible{outline:3px solid #26896d!important;outline-offset:3px}
+input[type=checkbox],input[type=radio]{accent-color:#187b62}
+:is(input,select,textarea):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]){border-color:#cbd9d0;background:#fcfdfb;border-radius:10px;transition:box-shadow .18s,border-color .18s}
+:is(input,select,textarea):focus{border-color:#26896d!important;box-shadow:0 0 0 3px #26896d18!important}
+:is(.help,.sub,.muted){color:#60766c}
+:is(.dialog-head,.dialog-footer){background:#f7f9f5;border-color:#e1e8e2}
+.dialog{border-radius:20px;box-shadow:0 28px 90px #0f302a30}
+:is(.modal.open,.modal.show) .dialog{animation:fw-dialog-in .22s ease-out}
+:is(.top,.topline){background:linear-gradient(120deg,#102b23,#1c4c3a);color:#fff}
+.topline h1,.top h1{color:#fff}
+.toolbar{background:#fff;border-radius:18px}
+.metric{background:#fff;border-color:#e1e8e2;border-radius:12px}
+.metric b{font-variant-numeric:tabular-nums}
+.calendar-scroll{border-color:#d7e2d9;border-radius:16px;scrollbar-color:#a8beb0 #edf2ed}
+.day-header{background:#edf3ed;border-bottom-color:#d9e4dc}
+.day.today .day-header{background:#dceee2;color:#174f39}
+.job{border-radius:13px;box-shadow:0 2px 6px #193c2809}
+.mp-lead-group{border-radius:10px}
+.mp-command{border-color:#dce5df;box-shadow:0 4px 16px #173c3007}
+.tab.active{box-shadow:0 3px 8px #153c3012}
+@media(hover:hover) and (pointer:fine){
+:is(.btn,.fw-button,.form-view-btn):not(:disabled):hover{transform:translateY(-1px);box-shadow:0 5px 13px #173c3014}
+.job:hover{box-shadow:0 5px 15px #173c3012}
+}
+:is(.btn,.fw-button,.app-tool,.app-hero-primary,.app-hero-outline):not(:disabled):active{transform:translateY(1px)!important;box-shadow:none!important}
+@keyframes fw-dialog-in{from{opacity:0;transform:translateY(8px) scale(.99)}to{opacity:1;transform:none}}
+@media(pointer:coarse){.btn,.fw-button{min-height:44px}input,select,textarea{font-size:16px}}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+</style><style>
+@media screen{.overlay{grid-template-columns:minmax(0,1fr)}.overlay .dialog{min-width:0;max-width:100%;justify-self:center}.overlay:not(.hidden) .dialog{animation:fw-dialog-in .22s ease-out}.dialog-body{min-width:0}.fw-module-container{border-color:#dce5df}}
+@media(prefers-reduced-motion:reduce){.overlay .dialog{animation:none!important}}
+</style></head><body><div class="app"><div class="hero"><div><div class="eyebrow">Field Safety / Job Planning</div><h1>PTP Writing Assistant</h1><p class="sub">Describe the actual work. Generate editable work steps, associated hazards and specific control measures for any company's PTP form.</p></div><button id="startOver" class="btn">Start over</button></div><div id="status" class="message" hidden></div><div class="shell"><div class="boxlabel">01 / Describe the actual task</div><div class="grid"><div class="field"><label for="scope">Exactly what will the crew accomplish?</label><textarea id="scope" placeholder="Example: Run ¾-inch EMT above grid ceiling from room 210 to 214; install two boxes and pull control conductors."></textarea></div><div class="field"><label for="workarea">Where will the work take place?</label><textarea id="workarea" placeholder="Building, floor, area, access limitations, adjacent trades, work environment…"></textarea></div><div class="field"><label for="energy">Electrical exposure / isolation status</label><select id="energy"><option value="unknown">Not yet verified / unknown</option><option value="deenergized">Isolated and verified de-energized</option><option value="adjacent">Working near energized systems / equipment</option><option value="no-electrical">No electrical exposure anticipated</option></select></div><div class="field"><label for="access">Primary access method</label><select id="access"><option value="floor">From floor / ground level</option><option value="ladder">Ladder</option><option value="lift">Mobile elevating work platform (MEWP)</option><option value="scaffold">Scaffold or other approved elevated platform</option></select></div><div class="field"><label for="equipment">Specific tools / equipment</label><input id="equipment" placeholder="Bender, drill, fish tape, ladder, lift…"></div><div class="field"><label for="special">Other task details / restrictions</label><input id="special" placeholder="Restricted areas, shutdown window, overhead occupants…"></div></div>
 <div class="boxlabel" style="margin-top:25px">02 / Which tasks are actually being performed?</div><div class="options" id="taskOptions"></div><div class="boxlabel" style="margin-top:26px">02B / Jobsite conditions to address</div><div class="options" id="conditionOptions"></div><div id="taskFollowups" class="followups" aria-live="polite" hidden>
   <div class="boxlabel" style="margin-top:26px">03 / A few job-specific details</div>
   <p class="muted">These questions change with the tasks and conditions selected above. Unverified items will be flagged in your draft.</p>
@@ -55,3 +99,4 @@
  <div class="resource-grid" id="recommendedResources"></div>
  <p class="muted" style="margin-top:16px">General educational references only. Verify your employer's policies, current regulations, equipment manuals and applicable jobsite procedures with qualified personnel.</p>
 </div></div><script src="js/safety-resources-data.js" defer></script><script src="js/ptp-assistant.js" defer></script></body></html>
+

@@ -18,7 +18,49 @@
 }
 
 </style>
-<style id="fwClientGreenResourcesV3">:root{--navy:#173a30;--green:#197667;background:#f4f8f5!important}body{background:#f4f8f5!important}button.primary,.primary{background:#197667!important;border-color:#197667!important;color:white!important}input:focus,select:focus{border-color:#45a17f!important;box-shadow:0 0 0 3px rgba(39,139,93,.12)!important}</style></head><body>
+<style id="fwClientGreenResourcesV3">:root{--navy:#173a30;--green:#197667;background:#f4f8f5!important}body{background:#f4f8f5!important}button.primary,.primary{background:#197667!important;border-color:#197667!important;color:white!important}input:focus,select:focus{border-color:#45a17f!important;box-shadow:0 0 0 3px rgba(39,139,93,.12)!important}</style><style id="premium20261030">/* Premium workspace • 2026-10-30. Screen-only: report geometry is preserved. */
+@media screen {
+:root{--accent:#157560;--accent-2:#2c967e;--accent-soft:#e8f4ee;--navy:#173c30;--blue:#157560;--ink:#203b31;--muted:#60766c;--line:#dce5df;--bg:#f3f5f1;--shadow:0 2px 4px #173c3003,0 12px 32px #173c3007}
+body{background:#f3f5f1!important;color:#203b31;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font-family:inherit}button,a{touch-action:manipulation}
+h1,h2,h3{letter-spacing:-.035em}h1{line-height:1.14}
+:is(.card,.shell,.toolbar,.panel,.form-card,.dialog,.fw-auth-card){border-color:#dce5df;box-shadow:var(--shadow)}
+:is(.card,.form-card,.panel){border-radius:18px}
+:is(.btn,.fw-button,.form-view-btn,.form-print-btn,.manual-btn){border-radius:11px;transition:background .18s,border-color .18s,box-shadow .18s,transform .18s}
+:is(.btn.primary,.btn.green,.fw-primary){background:linear-gradient(135deg,#187c65,#105a48)!important;border-color:#166b56!important;box-shadow:inset 0 1px 0 #ffffff24,0 4px 10px #125d4820;color:#fff!important}
+:is(button,a,input,select,textarea,summary):focus-visible{outline:3px solid #26896d!important;outline-offset:3px}
+input[type=checkbox],input[type=radio]{accent-color:#187b62}
+:is(input,select,textarea):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]){border-color:#cbd9d0;background:#fcfdfb;border-radius:10px;transition:box-shadow .18s,border-color .18s}
+:is(input,select,textarea):focus{border-color:#26896d!important;box-shadow:0 0 0 3px #26896d18!important}
+:is(.help,.sub,.muted){color:#60766c}
+:is(.dialog-head,.dialog-footer){background:#f7f9f5;border-color:#e1e8e2}
+.dialog{border-radius:20px;box-shadow:0 28px 90px #0f302a30}
+:is(.modal.open,.modal.show) .dialog{animation:fw-dialog-in .22s ease-out}
+:is(.top,.topline){background:linear-gradient(120deg,#102b23,#1c4c3a);color:#fff}
+.topline h1,.top h1{color:#fff}
+.toolbar{background:#fff;border-radius:18px}
+.metric{background:#fff;border-color:#e1e8e2;border-radius:12px}
+.metric b{font-variant-numeric:tabular-nums}
+.calendar-scroll{border-color:#d7e2d9;border-radius:16px;scrollbar-color:#a8beb0 #edf2ed}
+.day-header{background:#edf3ed;border-bottom-color:#d9e4dc}
+.day.today .day-header{background:#dceee2;color:#174f39}
+.job{border-radius:13px;box-shadow:0 2px 6px #193c2809}
+.mp-lead-group{border-radius:10px}
+.mp-command{border-color:#dce5df;box-shadow:0 4px 16px #173c3007}
+.tab.active{box-shadow:0 3px 8px #153c3012}
+@media(hover:hover) and (pointer:fine){
+:is(.btn,.fw-button,.form-view-btn):not(:disabled):hover{transform:translateY(-1px);box-shadow:0 5px 13px #173c3014}
+.job:hover{box-shadow:0 5px 15px #173c3012}
+}
+:is(.btn,.fw-button,.app-tool,.app-hero-primary,.app-hero-outline):not(:disabled):active{transform:translateY(1px)!important;box-shadow:none!important}
+@keyframes fw-dialog-in{from{opacity:0;transform:translateY(8px) scale(.99)}to{opacity:1;transform:none}}
+@media(pointer:coarse){.btn,.fw-button{min-height:44px}input,select,textarea{font-size:16px}}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style><style>
+@media screen{.overlay{grid-template-columns:minmax(0,1fr)}.overlay .dialog{min-width:0;max-width:100%;justify-self:center}.overlay:not(.hidden) .dialog{animation:fw-dialog-in .22s ease-out}.dialog-body{min-width:0}.fw-module-container{border-color:#dce5df}}
+@media(prefers-reduced-motion:reduce){.overlay .dialog{animation:none!important}}
+</style></head><body>
 <main class="page"><div class="eyebrow">Field Management / Education</div><h1>Safety Resource Library</h1><p>Explore common construction hazards, why they matter, and references to practical control measures. After you generate a PTP, the assistant automatically recommends relevant topics.</p>
 <div class="note">Educational information only. Always check your company safety program, current regulations, manufacturer instructions and project-specific conditions. A resource card does not authorize work.</div>
 <div class="bar"><input id="search" type="search" placeholder="Search topics, hazards, or controls…" aria-label="Search safety resources"><select id="category" aria-label="Filter safety resource category"><option value="all">All categories</option></select></div><p id="count" role="status"></p><div id="list" class="list"></div></main>
