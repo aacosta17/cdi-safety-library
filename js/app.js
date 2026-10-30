@@ -1501,11 +1501,11 @@ function updateV34Panel(){
  [...panel.querySelectorAll('.stage-pill')].forEach((x,i)=>{x.classList.toggle('done',!!c.checks[i]);x.classList.toggle('active',!c.checks[i]&&i===Math.max(0,Math.min(4,(currentPTPStep||1)-1)))});
  const scopeBox=E('v34ScopeConfirmBox'),scopeBtn=E('v34ScopeConfirmBtn'),qualityCard=E('v34QualityCard');
  if(scopeBox)scopeBox.style.display=(currentPTPStep===3?'block':'none');
- E('v34ScopeSummary').textContent=ready?v34ScopeSummary():'Finish the work plan and confirm the correct step order first. Your completed scope will appear here for one final confirmation.';
+ if(E('v34ScopeSummary')) E('v34ScopeSummary').textContent=ready?v34ScopeSummary():'Finish the work plan and confirm the correct step order first. Your completed scope will appear here for one final confirmation.';
  if(scopeBox)scopeBox.classList.toggle('locked',!ready);
  if(scopeBtn)scopeBtn.disabled=!ready;
- E('v34ScopeState').textContent=v34ScopeConfirmed?'✓ Scope confirmed':(ready?'Ready for final scope confirmation':'Available after work sequence is complete');
- E('v34ScopeState').className=v34ScopeConfirmed?'scope-ok':'';
+ if(E('v34ScopeState')) E('v34ScopeState').textContent=v34ScopeConfirmed?'✓ Scope confirmed':(ready?'Ready for final scope confirmation':'Available after work sequence is complete');
+ if(E('v34ScopeState')) E('v34ScopeState').className=v34ScopeConfirmed?'scope-ok':'';
  const showQuality=(currentPTPStep>=5||v35QualityUnlocked);
  if(qualityCard)qualityCard.style.display=showQuality?'block':'none';
  const q=E('v34QualityList');
@@ -1825,7 +1825,7 @@ setTimeout(()=>{v49CondensePTPProgress();v49RestorePlannerSelections();updateV34
 setTimeout(()=>{
   document.querySelector('.buildbadge')?.replaceChildren(document.createTextNode('v222'));
   document.getElementById('buildVersionBadge')?.remove();
-  document.title='CDI Field Safety Management Tool · v222';
+  document.title='Field Management Workspace Tool';
   restorePTPDraft();
   updateV34Panel();
 },80);
@@ -1893,7 +1893,7 @@ console.info('CDI Safety Hub v49 Condensed Progress + Planner Draft Persistence 
 setTimeout(()=>{
   document.querySelector('.buildbadge')?.replaceChildren(document.createTextNode('v222'));
   document.getElementById('buildVersionBadge')?.remove();
-  document.title='CDI Field Safety Management Tool · v222';
+  document.title='Field Management Workspace Tool';
 },260);
 console.info('CDI Safety Hub v54 Form State + Scope Complete loaded');
 
@@ -1937,7 +1937,7 @@ console.info('CDI Safety Hub v54 Form State + Scope Complete loaded');
   const oldGo=window.go;
   if(typeof oldGo==='function')window.go=function(n){const r=oldGo.apply(this,arguments);if(Number(n)===3)setTimeout(()=>refreshMajorTaskOrder(false),0);return r};
   document.querySelector('.buildbadge')?.replaceChildren(document.createTextNode('v222'));
-  document.title='CDI Field Safety Management Tool · v222';
+  document.title='Field Management Workspace Tool';
 })();
 
 /* BUILD v56: authoritative visible version + weather coaching confirmation. */
@@ -1945,7 +1945,7 @@ console.info('CDI Safety Hub v54 Form State + Scope Complete loaded');
   const setV56=()=>{
     const b=document.querySelector('.buildbadge');
     if(b)b.textContent='v222';
-    document.title='CDI Field Safety Management Tool · v222';
+    document.title='Field Management Workspace Tool';
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setV56,{once:true});
   else setV56();
@@ -1953,7 +1953,7 @@ console.info('CDI Safety Hub v54 Form State + Scope Complete loaded');
 
 (function(){
   try {
-    document.title='CDI Field Safety Management Tool · v222';
+    document.title='Field Management Workspace Tool';
     var b=document.querySelector('.buildbadge'); if(b) b.textContent='v222';
   } catch(e) {}
 })();
@@ -2026,7 +2026,7 @@ console.info('CDI Safety Hub v54 Form State + Scope Complete loaded');
   }
   function checkConnection(){fetch(ENDPOINT+'?status=1',{cache:'no-store'}).then(r=>{if(!r.ok)throw 0;return r.json()}).then(d=>{if(d&&d.configured){const b=E2('teamsConnectionBadge');if(b){b.className='connection-badge ready';b.textContent='Teams connected'}}}).catch(()=>{})}
   const oldShow=window.showView; if(typeof oldShow==='function')window.showView=function(v){const r=oldShow.apply(this,arguments);if(v==='alerts'){setTimeout(()=>{renderAlertLeads();updateAlertPreview();checkConnection()},0)}return r};
-  function init(){const m=E2('alertMessage');if(m&&!m.value)m.value=alertTemplate(E2('alertType')?.value);renderAlertLeads();updateAlertPreview();checkConnection();const b=document.querySelector('.buildbadge');if(b)b.textContent='v222';document.title='CDI Field Safety Management Tool · v222'}
+  function init(){const m=E2('alertMessage');if(m&&!m.value)m.value=alertTemplate(E2('alertType')?.value);renderAlertLeads();updateAlertPreview();checkConnection();const b=document.querySelector('.buildbadge');if(b)b.textContent='v222';document.title='Field Management Workspace Tool'}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 
@@ -2090,13 +2090,13 @@ console.info('CDI Safety Hub v54 Form State + Scope Complete loaded');
   // Ensure the hidden alert surface cannot remain open from stale state.
   document.getElementById('alerts')?.classList.add('hidden');
   document.getElementById('nAlerts')?.remove();
-  document.title='CDI Field Safety Management Tool · v222';
+  document.title='Field Management Workspace Tool';
   const badge=document.querySelector('.buildbadge'); if(badge)badge.textContent='v222';
 })();
 
 (function(){
   function setV66(){
-    document.title='CDI Field Safety Management Tool · v222';
+    document.title='Field Management Workspace Tool';
     var b=document.querySelector('.buildbadge');
     if(b)b.textContent='v222';
   }
@@ -2105,3 +2105,4 @@ console.info('CDI Safety Hub v54 Form State + Scope Complete loaded');
   window.addEventListener('pageshow',setV66);
   setTimeout(setV66,300);
 })();
+
