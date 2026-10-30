@@ -362,6 +362,50 @@ const initialZoom=$('zoom');initialZoom.min='65';initialZoom.max='115';initialZo
 $('report').textContent='Detailed work report / PDF';
 if(window.matchMedia('(min-width:1100px)').matches){document.querySelector('.workarea').classList.add('show-side');$('toggleSide').textContent='Hide workforce & notes';$('toggleSide').setAttribute('aria-pressed','true');}
 window.addEventListener('resize',()=>requestAnimationFrame(applyCalendarZoom));
+
+// Full employee availability board: one row per employee and one column per day.
+const oldRenderDirectory=renderDirectory;
+renderDirectory=function(){
+ oldRenderDirectory();
+ const matrix=$('availabilityMatrix');
+ if(!matrix||!$('availabilityDetails').open)return;
+ const q=($('directorySearch').value||'').trim().toLowerCase(),dept=$('directoryDept').value,union=$('directoryUnion').value;
+ const entries=(app.doc?.employees||[]).filter(e=>{
+  const archived=!!(e.archived||e.isArchived);
+  if(union==='archived'?!archived:archived)return false;
+  if((union==='union'||union==='nonunion')&&employeeUnion(e)!==union)return false;
+  if(dept!=='all'&&divisionForEmployee(e)!==dept)return false;
+  return (e.name+' '+(e.employeeNumber||'')+' '+(e.classificationDetail||'')).toLowerCase().includes(q);
+ }).sort((a,b)=>String(a.name).localeCompare(String(b.name)));
+ const days=weekDates();
+ matrix.innerHTML='<table class="mp-week-availability"><thead><tr><th>Employee</th>'+days.map(d=>'<th>'+esc(short(d))+'</th>').join('')+'</tr></thead><tbody>'+entries.map(e=>'<tr><th><b>'+esc(e.name)+'</b><small>'+esc(e.employeeNumber||'')+' · '+esc(e.classificationDetail||e.classification||'')+'</small></th>'+days.map(date=>{
+  const jobs=(app.doc?.jobs||[]).filter(j=>j.date===date&&(j.assignments||[]).some(a=>String(a.employeeId)===String(e.id)));
+  const hrs=jobs.reduce((total,j)=>total+(j.assignments||[]).filter(a=>String(a.employeeId)===String(e.id)).reduce((n,a)=>n+(Number(a.hours)||0),0),0);
+  const status=availability(e,date),issue=hrs>8||(jobs.length>0&&status!=='available');
+  const names=jobs.map(j=>j.name).join(' / ');
+  return '<td class="'+(issue?'warn':jobs.length?'busy':'free')+'"><button type="button" data-av-employee="'+esc(e.id)+'" data-av-date="'+date+'" title="Edit availability for '+esc(e.name)+'">'+(issue?'⚠ ':'')+(jobs.length?esc(names)+' · '+hrs+'h':esc(status==='available'?'Available':status.toUpperCase()))+'</button></td>';
+ }).join('')+'</tr>').join('')+'</tbody></table>';
+};
+$('availabilityDetails').addEventListener('toggle',()=>renderDirectory());
+$('availabilityMatrix').addEventListener('click',e=>{
+ const cell=e.target.closest('[data-av-employee]');if(!cell)return;
+ openEmployee(cell.dataset.avEmployee);
+ if(employeeDraft)$('eExceptionDate').value=cell.dataset.avDate;
+});
+// Existing site has a NOAA/NWS planner-weather endpoint; do not display fabricated forecasts.
+let weekWeather=null;
+const oldRenderCalendar=renderCalendar;
+renderCalendar=function(){oldRenderCalendar();if(!weekWeather?.days)return;
+ document.querySelectorAll('#calendar .day').forEach(day=>{
+  const date=day.dataset.dropDate,weather=weekWeather.days[date];if(!weather)return;
+  const head=day.querySelector('.day-header');if(!head)return;
+  const label=document.createElement('small');label.className='mp-day-weather';
+  label.textContent=(Number.isFinite(Number(weather.temp))?Math.round(Number(weather.temp))+'°F · ':'')+String(weather.short||'Forecast');
+  label.title='San Antonio · '+String(weekWeather.source||'NWS forecast');head.appendChild(label);
+ });
+};
+api('/api/planner-weather').then(w=>{if(w?.ok&&w.days){weekWeather=w;if(app.doc)renderCalendar()}}).catch(()=>{});
+
 window.__mpDiagnostics=()=>({ready:!!app.doc,days:weekDates().length,jobs:app.doc?.jobs?.length||0,employees:app.doc?.employees?.length||0,revision:app.revision,canEdit:app.canEdit,reportAvailable:!!$('reportSheet')});
 bootstrap();
 })();
