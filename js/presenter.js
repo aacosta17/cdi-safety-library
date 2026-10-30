@@ -358,9 +358,9 @@ for(const [value,label] of [['data','Data'],['fire_alarm','Fire Alarm']]){
   const select=$(id);if(select&&!select.querySelector(`option[value="${value}"]`))select.add(new Option(label,value));
  }
 }
-const initialZoom=$('zoom');initialZoom.min='65';initialZoom.max='115';initialZoom.value=String(app.zoom);
+const initialZoom=$('zoom');initialZoom.min='50';initialZoom.max='130';initialZoom.value=String(app.zoom);
 $('report').textContent='Detailed work report / PDF';
-if(window.matchMedia('(min-width:1100px)').matches){document.querySelector('.workarea').classList.add('show-side');$('toggleSide').textContent='Hide workforce & notes';$('toggleSide').setAttribute('aria-pressed','true');}
+// Keep the seven-day schedule as the default primary view at every screen width; notes remain one click away.
 window.addEventListener('resize',()=>requestAnimationFrame(applyCalendarZoom));
 
 // Full employee availability board: one row per employee and one column per day.
