@@ -152,48 +152,124 @@ body.bulk-active .job:has(.bulk-check:checked){outline:2px solid #278b75}
 @media(max-width:1120px){.mp-command-first{grid-template-columns:1fr auto;gap:12px}.mp-command-identity{grid-column:1}.mp-report-main{grid-column:2}.mp-week-nav{grid-column:1/-1;grid-row:2;justify-content:flex-start}.mp-command-second{flex-wrap:wrap}.mp-command-tools{justify-content:flex-start;flex-basis:100%}.mp-command-divider:last-of-type{display:none}}
 @media(max-width:650px){.mp-command-first{display:grid;grid-template-columns:1fr auto;padding:13px 12px}.mp-command-identity h2{font-size:17px}.mp-command-eyebrow{font-size:8px}.mp-report-main{font-size:11px;padding:8px!important}.mp-report-sub{display:none}.mp-week-nav{flex-wrap:wrap;justify-content:flex-start;gap:5px}.mp-week-nav strong{flex:1 0 100%;margin:7px 0 0;font-size:13px}.mp-command-second{gap:10px;padding:10px 12px}.mp-field-group{flex:1 1 100%;flex-wrap:wrap}.mp-field-group .mp-group-label{flex:1 0 100%}.mp-field-group select{flex:1;min-width:0!important}.mp-density{flex:1 1 auto}.mp-command-divider{display:none}.mp-command-tools{flex-basis:100%;display:grid;grid-template-columns:1fr 1fr;gap:7px}.mp-command-tools .mp-tool-btn{white-space:normal;min-height:43px}}
 @media(prefers-reduced-motion:reduce){.mp-zoom-step,.mp-report-main{transition:none!important}}
-</style></head>
+</style>
+<style id="mpProfessionalControls20261030">
+/* Scope deliberately to .mp-command; the existing planner, dialogs and report are untouched. */
+:root{--mp-col-width:clamp(146px,calc(105px + var(--scale)*90px),238px)}
+body{background:#f4f8f5}
+.mp-command{display:flex!important;flex-direction:column!important;gap:0!important;padding:0!important;margin:0 0 12px!important;border:1px solid #dce8df!important;border-radius:15px!important;box-shadow:0 4px 15px rgba(19,60,41,.045)!important;background:#fff!important;position:relative!important;overflow:visible!important;z-index:12}
+html.embedded .mp-command{position:relative!important;top:auto!important}
+.mp-head-row{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:14px 17px 13px;border-bottom:1px solid #e3eee6}
+.mp-head-title{min-width:166px;flex:0 1 auto}
+.mp-head-kicker{display:block;font-size:9px;line-height:1.5;font-weight:850;letter-spacing:.12em;color:#67917a}
+.mp-head-dot{color:#88b4a0}
+.mp-head-title h2{font-size:19px;letter-spacing:-.045em;line-height:1.2;color:#1a3f30;margin:3px 0 0}
+.mp-week-nav{display:flex!important;align-items:center;justify-content:flex-start!important;gap:5px;flex:1 1 360px;min-width:0}
+.mp-week-nav strong{font-size:14px;color:#294d3e;letter-spacing:-.025em;margin-left:9px;font-weight:800;white-space:nowrap}
+.mp-week-nav .btn{min-height:36px!important;height:36px;border-radius:9px!important;padding:7px 10px!important;box-shadow:none!important;color:#315d4b}
+.mp-week-nav .mp-nav-arrow{display:grid;place-items:center;width:36px!important;min-width:36px;font-size:17px}
+.mp-week-nav .mp-today{font-size:11px!important;background:#f1f7f3;border-color:#d9e7dc}
+.mp-head-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-left:auto}
+.mp-head-actions .btn{min-height:37px;border-radius:9px!important;font-size:11.5px;padding:8px 12px!important;font-weight:780;box-shadow:none!important}
+.mp-action-new{background:#18735a!important;border-color:#18735a!important;color:#fff!important}
+.mp-action-new:hover{background:#115d48!important}
+.mp-action-new span{font-size:17px;font-weight:500;line-height:0}
+.mp-action-report{color:#2a6351;background:#fff;border-color:#cfded4}
+.mp-action-report svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px;margin-right:4px}
+.mp-controls-row{display:flex;align-items:center;flex-wrap:wrap;column-gap:17px;row-gap:9px;background:#f8fbf9;border-radius:0 0 15px 15px;padding:10px 16px}
+.mp-controls-label{font-size:9px;color:#688779;letter-spacing:.11em;font-weight:850;white-space:nowrap}
+.mp-filters,.mp-density,.mp-tools-shortcuts{display:flex;align-items:center;gap:7px;min-width:0}
+.mp-filters{flex:0 1 auto}
+.mp-filters select{font-size:11px;min-height:35px!important;height:35px!important;width:auto;min-width:120px;max-width:180px;color:#315544;background:#fff;border:1px solid #d8e5dd;border-radius:8px;padding:5px 22px 5px 9px;font-weight:650}
+.mp-filters select:first-of-type{min-width:135px}
+.mp-density{flex:0 0 auto;border-left:1px solid #d9e6dd;padding-left:13px}
+.mp-zoom-step{display:grid!important;place-items:center;min-width:33px!important;width:33px!important;height:33px!important;min-height:33px!important;background:#fff;border:1px solid #d3e3d9;color:#20664d;border-radius:8px;font-size:18px;line-height:1;cursor:pointer}
+.mp-zoom-step:hover,.mp-fit-week:hover{border-color:#a4cdb6;background:#ecf6f0}
+.mp-density output{display:inline-block!important;min-width:38px;text-align:center;color:#225a45!important;font-size:12px!important;font-weight:850;font-variant-numeric:tabular-nums}
+.mp-fit-week{min-height:33px;border:1px solid #cdded2;background:#fff;color:#28624a;border-radius:8px;font-size:10.5px;font-weight:760;padding:5px 10px;white-space:nowrap;cursor:pointer}
+.mp-zoom-original{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
+.mp-tools-shortcuts{margin-left:auto;justify-content:flex-end;flex:1 1 auto}
+.mp-tools-shortcuts .btn{min-height:35px!important;padding:7px 10px!important;font-size:11px!important;border-radius:8px!important;white-space:nowrap;color:#315c49;background:#fff;border-color:#d7e4dc;box-shadow:none!important}
+.mp-tool-shortcut:hover,.mp-more-trigger:hover{background:#eaf6ef!important}
+.mp-more-container{position:relative}
+.mp-tools-shortcuts .mp-more-trigger{font-weight:800!important;color:#fff!important;background:#276c54!important;border-color:#276c54!important;padding-inline:13px!important}
+.mp-more-trigger span{margin-left:4px}
+.mp-tools-menu{position:absolute;z-index:99;top:calc(100% + 8px);right:0;width:min(300px,80vw);display:grid;gap:2px;padding:7px;background:white;border:1px solid #d8e7dc;border-radius:12px;box-shadow:0 18px 40px rgba(16,47,31,.17)}
+.mp-tools-menu[hidden]{display:none!important}
+.mp-tools-menu button{background:#fff;border:none;width:100%;padding:10px 12px;border-radius:8px;text-align:left;font-size:12px;color:#315447;cursor:pointer}
+.mp-tools-menu button:hover,.mp-tools-menu button:focus-visible{background:#eaf6ef;color:#175d45}
+.mp-menu-divider{border-top:1px solid #e3eee6;margin:5px 0}
+/* At small density values, preserve complete employee names instead of ellipsizing. */
+.calendar,.workarea.show-side .calendar{width:max(100%,calc(7 * var(--mp-col-width) + 48px))!important;grid-template-columns:repeat(7,minmax(var(--mp-col-width),1fr))!important;min-width:0!important;gap:8px!important}
+.calendar-scroll{overflow-x:auto!important;overflow-y:visible!important}
+.day{min-width:0!important;overflow:visible!important}
+.day-header{padding:9px 8px!important}.day-body{padding:7px!important}
+.job{padding:8px!important;min-width:0}
+.staff{display:flex;flex-direction:column;align-items:stretch;gap:5px}
+.person{display:inline-block!important;max-width:100%!important;width:fit-content!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important;word-break:normal!important;line-height:1.3!important;font-size:10.5px!important;padding:3px 5px!important;hyphens:auto}
+.mp-lead-group{margin:3px 0!important;padding-left:5px!important}
+.mp-crew-member{margin-left:9px!important;min-width:0}
+.job-footer{flex-wrap:wrap;gap:4px}
+/* Keep existing report, employee, conflict and scheduling dialog presentation. */
+@media(max-width:1330px){.mp-head-row{gap:11px}.mp-week-nav{flex-basis:300px}.mp-controls-row{gap:8px}.mp-tools-shortcuts{flex:1 0 auto}.mp-filters select{min-width:110px}.mp-filters select:first-of-type{min-width:125px}}
+@media(max-width:1060px){.mp-head-row{padding:12px}.mp-head-title{flex:1 1 160px}.mp-week-nav{order:3;flex:1 1 100%;justify-content:flex-start}.mp-head-actions{margin-left:auto}.mp-controls-row{padding:10px 12px}.mp-tools-shortcuts{margin-left:0;flex:1 1 100%;justify-content:flex-start}}
+@media(max-width:660px){.mp-head-title{flex:1 1 55%}.mp-head-title h2{font-size:17px}.mp-head-kicker{font-size:8px}.mp-head-actions .btn{font-size:10px!important;padding:7px 8px!important}.mp-week-nav{flex-wrap:wrap;gap:5px}.mp-week-nav strong{margin:5px 0 0;flex:1 1 100%;font-size:12px;order:5}.mp-controls-row{gap:9px}.mp-filters{flex:1 1 100%;gap:6px;flex-wrap:wrap}.mp-filters .mp-controls-label{flex:1 0 100%}.mp-filters select{flex:1 1 130px;max-width:none}.mp-density{border-left:0;padding-left:0}.mp-tools-shortcuts{flex:1 1 100%;display:flex;flex-wrap:wrap}.mp-tools-shortcuts .btn{flex:1 1 auto;white-space:normal!important}.mp-more-container{flex:0 0 auto}.mp-tools-menu{right:0}}
+</style>
+</head>
 <body>
 <div id="authGate" role="status"><div class="loadcard"><h1>Manpower Planner</h1><p id="gateMessage">Checking your workspace access…</p><a id="gateBack" href="/index.html" hidden>Return to Field Management Workspace</a></div></div>
 <div id="app" hidden>
 <header class="top"><div><div class="eyebrow">Field Management Workspace · Weekly Planning</div><h1>Manpower Planner</h1><p>Live weekly crew scheduling · shared with your team</p></div><div class="head-actions"><span id="connection" class="top-status" role="status">Connecting…</span><button class="btn" id="undo" title="Undo your last change (Ctrl/⌘+Z)">↶ Undo</button><button class="btn" id="redo" title="Redo your last undone change (Ctrl/⌘+Shift+Z)">↷ Redo</button><button class="btn" id="fullscreen">⛶ Full screen</button><a class="btn" id="presenterExit" href="/index.html" target="_top" style="text-decoration:none">Exit</a></div></header>
 <div class="shell">
 <div id="notice" class="notice hidden" role="alert"></div>
-<div class="toolbar mp-command" aria-label="Weekly manpower controls">
-  <div class="mp-command-first">
-    <div class="mp-command-identity">
-      <span class="mp-command-eyebrow">FIELD OPERATIONS / WORKFORCE</span>
-      <h2>Manpower schedule</h2>
-    </div>
-    <div class="mp-week-nav" role="group" aria-label="Schedule week">
-      <button id="previous" type="button" class="btn mp-nav-arrow" aria-label="Previous week">&#8592;</button>
+<section class="mp-command" aria-label="Manpower Planner controls">
+  <div class="mp-head-row">
+    <div class="mp-head-title"><span class="mp-head-kicker">FIELD OPERATIONS <span class="mp-head-dot">·</span> CREW SCHEDULING</span><h2>Manpower Planner</h2></div>
+    <div class="mp-week-nav" role="group" aria-label="Select scheduling week">
+      <button id="previous" type="button" class="btn mp-nav-arrow" aria-label="Previous week" title="Previous week">&#8592;</button>
       <button id="current" type="button" class="btn mp-today">This week</button>
-      <button id="next" type="button" class="btn mp-nav-arrow" aria-label="Next week">&#8594;</button>
+      <button id="next" type="button" class="btn mp-nav-arrow" aria-label="Next week" title="Next week">&#8594;</button>
       <strong id="weekRange" aria-live="polite"></strong>
     </div>
-    <button id="report" type="button" class="btn primary mp-report-main"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h7l5 5v15H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM14 2v6h5M9 13h6M9 17h6"/></svg> Work report <span class="mp-report-sub">PDF</span></button>
+    <div class="mp-head-actions">
+      <button id="mpQuickNewJob" type="button" class="btn mp-action-new"><span aria-hidden="true">+</span> New job</button>
+      <button id="report" type="button" class="btn mp-action-report"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h7l5 5v15H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM14 2v6h5M9 13h6M9 17h6"/></svg> Work report</button>
+    </div>
   </div>
-  <div class="mp-command-second">
-    <div class="mp-field-group" role="group" aria-label="Schedule filters">
-      <span class="mp-group-label">SHOW</span>
+  <div class="mp-controls-row">
+    <div class="mp-filters" role="group" aria-label="Filter calendar">
+      <span class="mp-controls-label">VIEW</span>
       <select id="divisionFilter" aria-label="Filter by division"><option value="all">All divisions</option><option value="electrical">Electrical</option><option value="security">Security</option><option value="data">Data</option><option value="fire_alarm">Fire Alarm</option><option value="mixed">Mixed</option></select>
       <select id="jobFilter" aria-label="Filter jobs"><option value="all">All jobs</option><option value="priority">High priority</option><option value="behind">Behind schedule</option></select>
     </div>
-    <div class="mp-command-divider" aria-hidden="true"></div>
-    <div class="mp-density" role="group" aria-label="Calendar zoom">
-      <span class="mp-group-label">CALENDAR SIZE</span>
-      <button type="button" class="mp-zoom-step" id="zoomOut" aria-label="Zoom out" title="Show more columns">&#8722;</button>
+    <div class="mp-density" role="group" aria-label="Calendar size">
+      <span class="mp-controls-label">SIZE</span>
+      <button id="zoomOut" type="button" class="mp-zoom-step" aria-label="Zoom out" title="Smaller calendar, more days visible">&#8722;</button>
       <output id="zoomValue" for="zoom" aria-live="polite">85%</output>
-      <button type="button" class="mp-zoom-step" id="zoomIn" aria-label="Zoom in" title="Increase calendar size">+</button>
-      <input id="zoom" class="mp-zoom-original" type="range" min="65" max="115" value="85" step="5" tabindex="-1" aria-hidden="true">
+      <button id="zoomIn" type="button" class="mp-zoom-step" aria-label="Zoom in" title="Larger calendar">+</button>
+      <button id="mpFitWeek" type="button" class="mp-fit-week" title="Show as much of the seven-day week as fits">Fit week</button>
+      <input id="zoom" class="mp-zoom-original" type="range" min="50" max="130" value="85" step="5" tabindex="-1" aria-hidden="true">
     </div>
-    <div class="mp-command-divider" aria-hidden="true"></div>
-    <div class="mp-command-tools" role="group" aria-label="Planner tools">
-      <button class="btn mp-tool-btn" id="toggleSide" type="button" aria-pressed="false">Workforce &amp; notes</button>
-      <button class="btn mp-tool-btn" id="workforceTools" type="button">Employees &amp; availability</button>
+    <div class="mp-tools-shortcuts">
+      <button id="workforceTools" type="button" class="btn mp-tool-shortcut">Employees &amp; availability</button>
+      <button id="toggleSide" type="button" class="btn mp-tool-shortcut" aria-pressed="false">Workforce &amp; notes</button>
+      <div class="mp-more-container">
+        <button id="mpMoreTools" type="button" class="btn mp-more-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="mpToolsMenu">Tools <span aria-hidden="true">&#8964;</span></button>
+        <div id="mpToolsMenu" class="mp-tools-menu" hidden role="group" aria-label="Additional manpower tools">
+          <button type="button" data-mp-target="workforceTools">Employee directory &amp; PTO / school</button>
+          <button type="button" data-mp-target="toggleSide">Workforce board &amp; meeting notes</button>
+          <button type="button" data-mp-target="toggleRequests">Manpower requests</button>
+          <button type="button" data-mp-target="bulkToggle">Select / delete multiple jobs</button>
+          <button type="button" data-mp-target="report">Detailed weekly report / PDF</button>
+          <div class="mp-menu-divider" role="separator"></div>
+          <button type="button" data-mp-target="undo">Undo last edit</button>
+          <button type="button" data-mp-target="redo">Redo last edit</button>
+          <button type="button" data-mp-target="fullscreen">Full-screen calendar</button>
+        </div>
+      </div>
     </div>
   </div>
-</div>
+</section>
 <div class="weekbar"><span id="viewNote" class="subtle">This calendar shows the shared schedule.</span><span id="editors" class="pill">Editors connecting…</span></div>
 <div class="metrics" id="metrics"></div>
 <section class="request-dashboard" id="requestDashboard"><div class="request-summary"><div><h2>Manpower requests</h2><p>Ask for more people, a change in the schedule, or an assigned employee.</p></div><div class="request-controls"><span class="request-count" id="requestCount">0 open</span><button id="toggleRequests" class="btn" type="button" aria-expanded="false">View requests / make a request</button></div></div><div id="requestContent" class="request-content" hidden><form id="requestForm" class="request-form"><label>Request type<select id="requestType" required><option value="more_staff">Additional manpower</option><option value="schedule_change">Change this week's schedule</option><option value="employee_transfer">Request assigned employee</option></select></label><label>Needed on<input id="requestDate" type="date" required></label><label>Project (optional)<select id="requestJob"><option value="">General request</option></select></label><label>Employee (optional)<select id="requestEmployee"><option value="">Select employee</option></select></label><label>Details<textarea id="requestDetails" minlength="6" maxlength="700" required placeholder="What needs to change? How many employees, which crew, and why?"></textarea></label><button class="btn primary" type="submit" id="sendRequest">Submit request</button></form><div><h3 style="margin-bottom:8px">Request dashboard</h3><div id="requests" class="request-list"></div></div></div></section>
@@ -252,4 +328,36 @@ body.bulk-active .job:has(.bulk-check:checked){outline:2px solid #278b75}
   document.getElementById('zoomOut')?.addEventListener('click',()=>adjust(-5));
   document.getElementById('zoomIn')?.addEventListener('click',()=>adjust(5));
 })();
-</script></body></html>
+</script><script id="mpClientToolsAndFitWeek20261030">
+(function(){
+ 'use strict';
+ const $=id=>document.getElementById(id);
+ function setZoom(value){
+   const slider=$('zoom');if(!slider)return;
+   const min=Number(slider.min),max=Number(slider.max);
+   slider.value=String(Math.max(min,Math.min(max,Math.round(value/5)*5)));
+   slider.dispatchEvent(new Event('input',{bubbles:true}));
+ }
+ $('mpFitWeek')?.addEventListener('click',()=>{
+   const scroll=$('calendarScroll');if(!scroll)return;
+   const available=Math.max(0,scroll.clientWidth-28);
+   const target=100*((available-48)/7-105)/90;
+   setZoom(Math.max(50,Math.min(130,target)));
+   scroll.scrollLeft=0;
+ });
+ $('mpQuickNewJob')?.addEventListener('click',()=>$('addJob')?.click());
+ const menu=$('mpToolsMenu'),trigger=$('mpMoreTools');
+ function close(){menu.hidden=true;trigger.setAttribute('aria-expanded','false')}
+ function open(){menu.hidden=false;trigger.setAttribute('aria-expanded','true')}
+ trigger?.addEventListener('click',e=>{e.stopPropagation();if(menu.hidden)open();else close()});
+ menu?.addEventListener('click',e=>{
+   const action=e.target.closest('[data-mp-target]');if(!action)return;
+   const target=$(action.dataset.mpTarget);close();
+   if(target){target.click();if(action.dataset.mpTarget==='toggleRequests')$('requestDashboard')?.scrollIntoView({behavior:'smooth',block:'nearest'});}
+ });
+ document.addEventListener('click',e=>{if(!e.target.closest('.mp-more-container'))close()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+ // Top-bar shortcuts mirror the existing permission-aware controls; no writes occur here.
+})();
+</script>
+</body></html>
