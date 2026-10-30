@@ -98,7 +98,19 @@ html.embedded .toolbar{position:sticky;top:0;z-index:15}
  .mp-report-sheet table tr{break-inside:avoid}.mp-report-sheet h2,.mp-report-sheet h3{break-after:avoid}
  .mp-report-sheet .report-day{break-inside:auto}.mp-report-sheet .report-stats>div,.mp-report-sheet th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
  }
-</style></head>
+</style><style id="mp-availability-board">
+.mp-availability-details{border:1px solid #dde6ef;border-radius:10px;padding:11px;background:#fff;margin:9px 0 12px}
+.mp-availability-details summary{cursor:pointer;color:#385a7c;font-size:12px;font-weight:800}
+.mp-availability-scroll{overflow:auto;max-height:360px;margin-top:9px}
+.mp-week-availability{width:100%;min-width:860px;border-collapse:collapse;font-size:10px}
+.mp-week-availability th,.mp-week-availability td{border:1px solid #e4eaf2;text-align:left;vertical-align:top;padding:5px;min-width:85px}
+.mp-week-availability thead th{position:sticky;top:0;background:#f0f4f8;z-index:1}
+.mp-week-availability tbody th{min-width:145px;background:#fff}
+.mp-week-availability small{display:block;color:#8393a5;font-size:9px;margin-top:2px}
+.mp-week-availability button{padding:2px;border:0;text-align:left;cursor:pointer;font-size:10px;line-height:1.35;color:#405775;background:none;width:100%}
+.mp-week-availability td.warn{background:#fff3e9}.mp-week-availability td.busy{background:#eaf7f1}.mp-week-availability td.free{background:#f9fbfd}
+.mp-day-weather{display:block;font-size:10px;line-height:1.25;margin:4px 0 0;color:#738397}
+.calendar,.workarea.show-side .calendar{width:max(100%,calc(1330px * var(--scale)))!important;grid-template-columns:repeat(7,minmax(calc(190px * var(--scale)),1fr))!important}</style></head>
 <body>
 <div id="authGate" role="status"><div class="loadcard"><h1>Manpower Planner</h1><p id="gateMessage">Checking your workspace access…</p><a id="gateBack" href="/index.html" hidden>Return to Field Management Workspace</a></div></div>
 <div id="app" hidden>
@@ -124,7 +136,7 @@ html.embedded .toolbar{position:sticky;top:0;z-index:15}
   <div class="dialog-body mp-directory">
     <div class="mp-directory-search"><input type="search" id="directorySearch" placeholder="Search first name, last name or employee number" aria-label="Search employee directory"><select id="directoryDept"><option value="all">All departments</option><option value="electrical">Electrical</option><option value="security">Security</option><option value="data">Data</option><option value="fire_alarm">Fire Alarm</option><option value="service">Service</option><option value="unassigned">Unassigned</option></select><select id="directoryUnion"><option value="all">All employees</option><option value="union">Union</option><option value="nonunion">Non-union</option><option value="archived">Archived</option></select><button class="btn primary" id="directoryNew">+ New employee</button></div>
     <p class="help" id="directoryCount"></p>
-    <div class="mp-directory-grid"><div id="directoryResults" class="mp-directory-results" role="listbox" aria-label="Employee directory"></div>
+    <details class="mp-availability-details" id="availabilityDetails"><summary>Weekly availability &amp; job assignments</summary><div class="mp-availability-scroll" id="availabilityMatrix"></div></details><div class="mp-directory-grid"><div id="directoryResults" class="mp-directory-results" role="listbox" aria-label="Employee directory"></div>
     <div class="mp-directory-editor" id="employeeEditPane" hidden>
       <h3 id="employeeEditTitle">Employee details</h3>
       <div class="grid2">
