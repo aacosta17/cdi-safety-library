@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#101c2d"><title>Manpower Presenter | Field Management Workspace</title>
+<meta name="theme-color" content="#17372f"><title>Manpower Presenter | Field Management Workspace</title>
 <style>
 :root{color-scheme:light;--navy:#17342d;--deep:#0f241f;--accent:#1b7a6c;--accent-2:#2d9a88;--accent-soft:#e9f6f2;--line:#dfe7e3;--ink:#21362f;--muted:#687d76;--bg:#f3f7f5;--card:#fff;--scale:1}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;font-size:14px}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(45,154,136,.45);outline-offset:2px}h1,h2,h3,p{margin-top:0}h1{font-size:clamp(23px,2.4vw,34px);letter-spacing:-.045em;margin:4px 0}h2{font-size:17px}h3{font-size:15px}small,.subtle{color:var(--muted)}.hidden,[hidden]{display:none!important}
@@ -111,48 +111,86 @@ html.embedded .toolbar{position:sticky;top:0;z-index:15}
 .mp-week-availability button{padding:2px;border:0;text-align:left;cursor:pointer;font-size:10px;line-height:1.35;color:#405775;background:none;width:100%}
 .mp-week-availability td.warn{background:#fff3e9}.mp-week-availability td.busy{background:#eaf7f1}.mp-week-availability td.free{background:#f9fbfd}
 .mp-day-weather{display:block;font-size:10px;line-height:1.25;margin:4px 0 0;color:#738397}
-.calendar,.workarea.show-side .calendar{width:max(100%,calc(1330px * var(--scale)))!important;grid-template-columns:repeat(7,minmax(calc(190px * var(--scale)),1fr))!important}</style></head>
+.calendar,.workarea.show-side .calendar{width:max(100%,calc(1330px * var(--scale)))!important;grid-template-columns:repeat(7,minmax(calc(190px * var(--scale)),1fr))!important}</style><style id="fwClientGreenPresenterV3">/* Client-ready scheduling command surface. Presentation only; original control IDs retained. */
+:root{--navy:#17372f;--deep:#122921;--accent:#197667;--accent-2:#279782;--accent-soft:#edf8f3;--ink:#223a32;--muted:#698079;--bg:#f3f7f5;--line:#dce7e1}
+body{background:#f3f7f5}
+html.embedded body{background:#f3f7f5!important}
+.mp-command.toolbar{position:relative;display:flex;flex-direction:column;gap:0;padding:0;background:#fff!important;border:1px solid #dbe7e0;border-radius:16px;box-shadow:0 5px 20px rgba(13,48,36,.045);overflow:visible;margin-bottom:12px}
+html.embedded .mp-command.toolbar{position:sticky;top:0;z-index:15}
+.mp-command-first{width:100%;display:grid;grid-template-columns:minmax(170px,.82fr) minmax(440px,1.8fr) auto;align-items:center;gap:24px;padding:18px 21px 16px}
+.mp-command-identity{min-width:0}.mp-command-eyebrow{font-size:9px;letter-spacing:.14em;font-weight:850;color:#5e887a;white-space:nowrap}.mp-command-identity h2{font-size:19px;line-height:1.2;letter-spacing:-.04em;color:#18382f;margin:4px 0 0}
+.mp-week-nav{display:flex;align-items:center;justify-content:center;min-width:0;gap:6px}
+.mp-week-nav strong{font-size:15px;color:#27453b;white-space:nowrap;letter-spacing:-.025em;font-weight:800;margin-left:9px}
+.mp-week-nav .btn{min-height:37px;font-size:12px;border-radius:9px;background:#fff}
+.mp-week-nav .mp-nav-arrow{width:37px;min-width:37px;padding:0;font-size:19px;font-weight:500;line-height:1}
+.mp-week-nav .mp-today{padding:8px 11px;color:#3b6557;background:#f4f8f6}
+.mp-report-main{min-height:41px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:9px!important;padding:10px 15px!important;white-space:nowrap;box-shadow:none!important}
+.mp-report-main svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.mp-report-sub{font-size:9px;border:1px solid rgba(255,255,255,.4);padding:2px 4px;border-radius:4px;letter-spacing:.03em}
+.mp-command-second{width:100%;display:flex;align-items:center;gap:14px;min-height:66px;padding:10px 20px;background:#f8fbf9;border-top:1px solid #e5eee8;border-radius:0 0 16px 16px}
+.mp-group-label{color:#6f857d;font-size:9px;font-weight:850;letter-spacing:.11em;white-space:nowrap}
+.mp-field-group,.mp-density,.mp-command-tools{display:flex;align-items:center;gap:8px;min-width:0}
+.mp-field-group{flex:0 1 auto}.mp-field-group select{min-height:37px;max-width:none;width:auto;min-width:117px;padding:7px 27px 7px 11px;border-color:#d6e3dc;border-radius:8px;white-space:nowrap;background:#fff;color:#294a3d;font-size:12px;font-weight:650}
+.mp-field-group select:nth-of-type(1){min-width:142px}.mp-field-group select:nth-of-type(2){min-width:110px}
+.mp-command-divider{width:1px;height:26px;flex:0 0 1px;background:#e1eae5}
+.mp-density{flex:0 0 auto}.mp-zoom-step{display:grid;place-items:center;width:31px;height:31px;min-height:31px;border:1px solid #d5e4dc;border-radius:7px;background:#fff;color:#236553;font-size:18px;line-height:1;font-weight:650}.mp-zoom-step:hover{background:#e3f3ea;border-color:#acd3c1}
+.mp-density output{display:block;min-width:43px;text-align:center;font-size:12px!important;font-variant-numeric:tabular-nums;font-weight:850;color:#214e40!important}
+.mp-zoom-original{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;overflow:hidden!important;margin:0!important;padding:0!important;border:0!important}
+.mp-command-tools{flex:1 1 auto;justify-content:flex-end}
+.mp-command-tools .mp-tool-btn{font-size:11.5px;min-height:36px;white-space:nowrap;padding:8px 11px;border-radius:8px;background:#fff;color:#315b4a;border-color:#d7e4dc;box-shadow:none}
+.mp-command-tools .mp-tool-btn:hover{background:#eaf6ef}
+#bulkToggle,.mp-job-controls button,.job-actions{color:#236858!important;background:#e8f5ed!important;border-color:#d3e9dc!important}
+#bulkToggle:hover,.job-actions:hover{background:#d9eee1!important}
+#zoomValue{font-variant-numeric:tabular-nums}
+body.bulk-active .job:has(.bulk-check:checked){outline:2px solid #278b75}
+.bulk-check{accent-color:#197667}
+.mp-report-sheet h1,.mp-report-sheet h2{color:#1b493b}
+.mp-report-sheet h2{border-color:#dce7e1}.mp-report-sheet th{background:#edf6f0}
+.mp-directory-results button:hover,.mp-directory-results button.active{background:#e8f6ee}
+.mp-day-weather{color:#687e74}
+@media(max-width:1320px){.mp-command-first{grid-template-columns:minmax(150px,.65fr) minmax(370px,1.7fr) auto;gap:12px;padding:15px}.mp-command-second{gap:10px;padding:10px 14px}.mp-group-label{font-size:8px}.mp-field-group select{min-width:95px}.mp-field-group select:nth-of-type(1){min-width:120px}.mp-command-tools .mp-tool-btn{font-size:11px;padding-inline:9px}}
+@media(max-width:1120px){.mp-command-first{grid-template-columns:1fr auto;gap:12px}.mp-command-identity{grid-column:1}.mp-report-main{grid-column:2}.mp-week-nav{grid-column:1/-1;grid-row:2;justify-content:flex-start}.mp-command-second{flex-wrap:wrap}.mp-command-tools{justify-content:flex-start;flex-basis:100%}.mp-command-divider:last-of-type{display:none}}
+@media(max-width:650px){.mp-command-first{display:grid;grid-template-columns:1fr auto;padding:13px 12px}.mp-command-identity h2{font-size:17px}.mp-command-eyebrow{font-size:8px}.mp-report-main{font-size:11px;padding:8px!important}.mp-report-sub{display:none}.mp-week-nav{flex-wrap:wrap;justify-content:flex-start;gap:5px}.mp-week-nav strong{flex:1 0 100%;margin:7px 0 0;font-size:13px}.mp-command-second{gap:10px;padding:10px 12px}.mp-field-group{flex:1 1 100%;flex-wrap:wrap}.mp-field-group .mp-group-label{flex:1 0 100%}.mp-field-group select{flex:1;min-width:0!important}.mp-density{flex:1 1 auto}.mp-command-divider{display:none}.mp-command-tools{flex-basis:100%;display:grid;grid-template-columns:1fr 1fr;gap:7px}.mp-command-tools .mp-tool-btn{white-space:normal;min-height:43px}}
+@media(prefers-reduced-motion:reduce){.mp-zoom-step,.mp-report-main{transition:none!important}}
+</style></head>
 <body>
 <div id="authGate" role="status"><div class="loadcard"><h1>Manpower Planner</h1><p id="gateMessage">Checking your workspace access…</p><a id="gateBack" href="/index.html" hidden>Return to Field Management Workspace</a></div></div>
 <div id="app" hidden>
 <header class="top"><div><div class="eyebrow">Field Management Workspace · Weekly Planning</div><h1>Manpower Planner</h1><p>Live weekly crew scheduling · shared with your team</p></div><div class="head-actions"><span id="connection" class="top-status" role="status">Connecting…</span><button class="btn" id="undo" title="Undo your last change (Ctrl/⌘+Z)">↶ Undo</button><button class="btn" id="redo" title="Redo your last undone change (Ctrl/⌘+Shift+Z)">↷ Redo</button><button class="btn" id="fullscreen">⛶ Full screen</button><a class="btn" id="presenterExit" href="/index.html" target="_top" style="text-decoration:none">Exit</a></div></header>
 <div class="shell">
 <div id="notice" class="notice hidden" role="alert"></div>
-<div class="toolbar">
-  <div class="toolbar-topline">
-    <div class="toolbar-titleblock">
-      <div class="toolbar-kicker">Weekly planning controls</div>
-      <div class="toolbar-weekline">
-        <button id="previous" class="btn icon-btn" aria-label="Previous week">←</button>
-        <button id="current" class="btn">This week</button>
-        <button id="next" class="btn icon-btn" aria-label="Next week">→</button>
-        <strong id="weekRange"></strong>
-      </div>
+<div class="toolbar mp-command" aria-label="Weekly manpower controls">
+  <div class="mp-command-first">
+    <div class="mp-command-identity">
+      <span class="mp-command-eyebrow">FIELD OPERATIONS / WORKFORCE</span>
+      <h2>Manpower schedule</h2>
     </div>
-    <div class="toolbar-summary">Control the weekly schedule, filters, reports, and staffing views from one place.</div>
+    <div class="mp-week-nav" role="group" aria-label="Schedule week">
+      <button id="previous" type="button" class="btn mp-nav-arrow" aria-label="Previous week">&#8592;</button>
+      <button id="current" type="button" class="btn mp-today">This week</button>
+      <button id="next" type="button" class="btn mp-nav-arrow" aria-label="Next week">&#8594;</button>
+      <strong id="weekRange" aria-live="polite"></strong>
+    </div>
+    <button id="report" type="button" class="btn primary mp-report-main"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h7l5 5v15H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM14 2v6h5M9 13h6M9 17h6"/></svg> Work report <span class="mp-report-sub">PDF</span></button>
   </div>
-  <div class="toolbar-grid">
-    <div class="toolbar-card toolbar-filters">
-      <span class="toolbar-card-label">Filters</span>
-      <div class="toolbar-field-row">
-        <select id="divisionFilter" aria-label="Filter by division"><option value="all">All divisions</option><option value="electrical">Electrical</option><option value="security">Security</option><option value="data">Data</option><option value="fire_alarm">Fire Alarm</option><option value="mixed">Mixed</option></select>
-        <select id="jobFilter" aria-label="Job filter"><option value="all">All jobs</option><option value="priority">High priority</option><option value="behind">Behind schedule</option></select>
-      </div>
+  <div class="mp-command-second">
+    <div class="mp-field-group" role="group" aria-label="Schedule filters">
+      <span class="mp-group-label">SHOW</span>
+      <select id="divisionFilter" aria-label="Filter by division"><option value="all">All divisions</option><option value="electrical">Electrical</option><option value="security">Security</option><option value="data">Data</option><option value="fire_alarm">Fire Alarm</option><option value="mixed">Mixed</option></select>
+      <select id="jobFilter" aria-label="Filter jobs"><option value="all">All jobs</option><option value="priority">High priority</option><option value="behind">Behind schedule</option></select>
     </div>
-    <div class="toolbar-card toolbar-zoomcard">
-      <span class="toolbar-card-label">Calendar zoom</span>
-      <div class="toolbar-zoom-row">
-        <input id="zoom" type="range" min="65" max="115" value="85" step="5">
-        <output id="zoomValue" for="zoom">85%</output>
-      </div>
+    <div class="mp-command-divider" aria-hidden="true"></div>
+    <div class="mp-density" role="group" aria-label="Calendar zoom">
+      <span class="mp-group-label">CALENDAR SIZE</span>
+      <button type="button" class="mp-zoom-step" id="zoomOut" aria-label="Zoom out" title="Show more columns">&#8722;</button>
+      <output id="zoomValue" for="zoom" aria-live="polite">85%</output>
+      <button type="button" class="mp-zoom-step" id="zoomIn" aria-label="Zoom in" title="Increase calendar size">+</button>
+      <input id="zoom" class="mp-zoom-original" type="range" min="65" max="115" value="85" step="5" tabindex="-1" aria-hidden="true">
     </div>
-    <div class="toolbar-card toolbar-actions-card">
-      <span class="toolbar-card-label">Views & reports</span>
-      <div class="toolbar-action-row">
-        <button class="btn" id="toggleSide" aria-pressed="false">Show workforce &amp; notes</button>
-        <button class="btn" id="workforceTools">Employees &amp; availability</button>
-        <button class="btn primary" id="report">Detailed work report / PDF</button>
-      </div>
+    <div class="mp-command-divider" aria-hidden="true"></div>
+    <div class="mp-command-tools" role="group" aria-label="Planner tools">
+      <button class="btn mp-tool-btn" id="toggleSide" type="button" aria-pressed="false">Workforce &amp; notes</button>
+      <button class="btn mp-tool-btn" id="workforceTools" type="button">Employees &amp; availability</button>
     </div>
   </div>
 </div>
@@ -201,4 +239,17 @@ html.embedded .toolbar{position:sticky;top:0;z-index:15}
  </div>
 </div>
 <script defer src="js/presenter.js"></script>
-<div id="copyOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="copyTitle"><div class="dialog"><div class="dialog-head"><h2 id="copyTitle">Copy job and crew</h2><button class="btn" id="copyClose">✕</button></div><div class="dialog-body"><p>Copy all employees, leads, individual hours and job details. Scheduling conflicts will be flagged, not silently skipped.</p><div id="copyDates" class="copy-dates"></div><div id="copyPreview" class="conflict hidden"></div></div><div class="dialog-footer"><button class="btn" id="copyCancel">Cancel</button><button class="btn primary" id="copyConfirm">Copy to selected days</button></div></div></div></body></html>
+<div id="copyOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="copyTitle"><div class="dialog"><div class="dialog-head"><h2 id="copyTitle">Copy job and crew</h2><button class="btn" id="copyClose">✕</button></div><div class="dialog-body"><p>Copy all employees, leads, individual hours and job details. Scheduling conflicts will be flagged, not silently skipped.</p><div id="copyDates" class="copy-dates"></div><div id="copyPreview" class="conflict hidden"></div></div><div class="dialog-footer"><button class="btn" id="copyCancel">Cancel</button><button class="btn primary" id="copyConfirm">Copy to selected days</button></div></div></div><script id="mpClientReadyZoomControls">
+(function(){
+  'use strict';
+  function adjust(delta){
+    const slider=document.getElementById('zoom');
+    if(!slider)return;
+    const min=Number(slider.min)||65,max=Number(slider.max)||115;
+    slider.value=String(Math.max(min,Math.min(max,(Number(slider.value)||85)+delta)));
+    slider.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+  document.getElementById('zoomOut')?.addEventListener('click',()=>adjust(-5));
+  document.getElementById('zoomIn')?.addEventListener('click',()=>adjust(5));
+})();
+</script></body></html>
