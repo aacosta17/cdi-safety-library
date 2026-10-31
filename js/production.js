@@ -30,7 +30,7 @@ function renderEmployeeRoster(){
  const summary=$('assignedResources');if(summary)summary.innerHTML=assigned.size?(state.data?.resources||[]).map(r=>`<span class="assigned-chip">${escapeHtml(r.employee_name)}</span>`).join(''):'<p class="sub">No employees assigned to this project yet. Select employees from the directory below.</p>';
 }
 function message(m='',good=false){const el=$('banner');el.hidden=!m;el.className='message'+(good?' good':'');el.textContent=m;if(m)el.scrollIntoView({behavior:'smooth',block:'nearest'});}
-async function api(url,options={}){const r=await fetch(url,{credentials:'same-origin',cache:'no-store',...options,headers:{'X-Field-Request':'1',...(options.body&&! (options.body instanceof FormData)?{'Content-Type':'application/json'}:{}),...(options.headers||{})}});let j;try{j=await r.json()}catch{j={error:'Server did not return JSON.'}}if(!r.ok)throw Error(j.error||`Request failed (${r.status})`);return j;}
+async function api(url,options={}){const r=await fetch(url,{credentials:'same-origin',cache:'no-store',...options,headers:{'X-Field-Request':'1',...(options.body&&! (options.body instanceof FormData)?{'Content-Type':'application/json'}:{}),...(options.headers||{})}});let j;try{j=await r.json()}catch{throw Error('The project service returned an unreadable response. Refresh to try again.')}if(!r.ok)throw Error(j.error||`Request failed (${r.status})`);return j;}
 const post=(action,p={})=>api('/api/production',{method:'POST',body:JSON.stringify({action,jobId:state.jobId,...p})});
 async function save(action,p){try{message('');const r=await post(action,p);await refresh(state.jobId);message('Saved successfully.',true);return r}catch(e){message(e.message);throw e}}
 function formSubmit(id,handler){$(id).addEventListener('submit',async e=>{e.preventDefault();const btn=e.submitter||$(id).querySelector('button[type=submit]');if(btn)btn.disabled=true;try{await handler(data(e.target),e.target)}catch(e){if(!e.handled)message(e.message)}finally{if(btn)btn.disabled=false}})}
@@ -42,24 +42,25 @@ function renderProjectGallery(){
  $('projectCards').innerHTML=jobs.length?jobs.map(j=>{const budget=num(j.budget_hours),actual=num(j.actual_hours),used=budget?Math.round(100*actual/budget):0;return `<button class="project-card" type="button" data-open-project="${escapeHtml(j.id)}"><div class="project-card-top"><span class="project-code">${escapeHtml(j.code)}</span><span class="project-status ${escapeHtml(j.status)}">${escapeHtml(String(j.status).replace('_',' '))}</span></div><h3>${escapeHtml(j.title)}</h3><p>${escapeHtml(j.location||'Location not entered')}</p><div class="project-card-detail"><span>${escapeHtml(divisionLabel(j.division))}</span><span>${escapeHtml(j.project_manager||'PM not entered')}</span></div><div class="bar"><span style="width:${Math.max(0,Math.min(100,used))}%"></span></div><div class="project-card-bottom"><span>${fmt(actual)} / ${fmt(budget)} man-hours</span><strong>Open project →</strong></div></button>`}).join(''):'<div class="empty">No projects match this search. Try another department or project name.</div>';
 }
 const divisionLabel=v=>({electrical:'Electrical',security:'Security',data:'Data',fire_alarm:'Fire Alarm',mixed:'Mixed',unassigned:'Unassigned'})[v]||'Unassigned';
-async function refresh(wanted=state.jobId||(reportMode?pageParams.get('jobId')||'':'')){try{
- const r=await api('/api/production');state.jobs=r.jobs||[];state.user=r.user;
+let refreshSequence=0;
+async function refresh(wanted=state.jobId||(reportMode?pageParams.get('jobId')||'':'')){const sequence=++refreshSequence;document.body.classList.add('is-loading');$('app').setAttribute('aria-busy','true');$('printBtn').disabled=true;try{
+ const r=await api('/api/production');if(sequence!==refreshSequence)return;state.jobs=r.jobs||[];state.user=r.user;
  const select=$('jobSelect');select.innerHTML='<option value="">Select a project…</option>'+state.jobs.map(j=>`<option value="${escapeHtml(j.id)}">${escapeHtml(j.code)} · ${escapeHtml(j.title)}</option>`).join('');
  state.jobId=(wanted&&state.jobs.some(j=>j.id===wanted))?wanted:(reportMode?state.jobs[0]?.id||'':'');select.value=state.jobId;
- $('newJobBtn').hidden=!has('edit');$('jobModal').hidden=true;renderProjectGallery();
+ $('fieldLoginHelp').hidden=true;$('newJobBtn').hidden=!has('edit');$('jobModal').hidden=true;renderProjectGallery();
  const galleryView=!state.jobId&&!reportMode;
- $('projectGallery').hidden=!galleryView;document.querySelector('.job-bar').hidden=galleryView;
+ $('projectGallery').hidden=!galleryView;document.querySelector('.job-bar').hidden=galleryView;document.querySelector('.job-bar').parentElement.hidden=galleryView;
  $('backProjects').hidden=!!reportMode;
  $('deleteProjectBtn').hidden=!!reportMode||!state.jobId||!state.user?.owner;
- if(state.jobId){state.data=await api('/api/production?jobId='+encodeURIComponent(state.jobId));$('content').hidden=false;$('noJob').hidden=true;render();renderEmployeeRoster();if(!reportMode){const u=encodeURIComponent(state.jobId);$('dailyReportLink').href='production.html?mode=report&jobId='+u;$('lookaheadLink').href='production.html?mode=lookahead&jobId='+u;}}
- else{state.data=null;$('content').hidden=true;$('noJob').hidden=!reportMode&&!state.jobs.length;}
+ if(state.jobId){const detail=await api('/api/production?jobId='+encodeURIComponent(state.jobId));if(sequence!==refreshSequence)return;if(!detail.job)throw Error('The project response did not include job details.');state.data=detail;$('content').hidden=false;$('noJob').hidden=true;render();renderEmployeeRoster();if(!reportMode){const u=encodeURIComponent(state.jobId);$('dailyReportLink').href='production.html?mode=report&jobId='+u;$('lookaheadLink').href='production.html?mode=lookahead&jobId='+u;}}
+ else{state.data=null;$('content').hidden=true;$('noJob').hidden=!reportMode;}
  message('');
- }catch(e){message('Production data could not be loaded: '+e.message);
+ }catch(e){if(sequence!==refreshSequence)return;message('Production data could not be loaded: '+e.message);const retry=document.createElement('button');retry.type='button';retry.className='btn';retry.textContent='Try again';retry.addEventListener('click',()=>refresh(wanted));$('banner').append(document.createElement('br'),retry);$('content').hidden=true;
  if(reportMode&&/permission|access|sign.in|unauthoriz/i.test(e.message)){
   const back='/production.html?mode='+encodeURIComponent(reportMode)+(pageParams.get('jobId')?'&jobId='+encodeURIComponent(pageParams.get('jobId')):'');
   $('fieldLoginLink').href='index.html?returnTo='+encodeURIComponent(back);$('fieldLoginHelp').hidden=false;
  }
-}}
+}finally{if(sequence===refreshSequence){document.body.classList.remove('is-loading');$('app').setAttribute('aria-busy','false');$('printBtn').disabled=!state.jobId||!state.data||$('content').hidden;}}}
 function metric(name,value,description='',cls=''){return `<div class="metric"><span class="name">${escapeHtml(name)}</span><strong class="${cls}">${escapeHtml(value)}</strong><small>${escapeHtml(description)}</small></div>`}
 function render(){const d=state.data,j=d.job,actual=num(j.actual_hours),budget=num(j.budget_hours),remaining=budget-actual,pct=budget>0?actual/budget*100:0;const mat=d.materials,req=d.requests,rep=d.reports,look=d.lookaheads;
  $('jobInfo').textContent=`${divisionLabel(j.division)} · ${j.project_manager?'PM: '+j.project_manager+' · ':''}${j.status.replace('_',' ')} · ${rep.length} report(s)`;
@@ -196,3 +197,4 @@ if(lookaheadList)$('managementLookaheads').appendChild(lookaheadList);
 // Print button remains available from the management toolbar.
 setTab(reportMode||'overview');loadEmployeeDirectory();refresh();
 })();
+

@@ -1501,11 +1501,11 @@ function updateV34Panel(){
  [...panel.querySelectorAll('.stage-pill')].forEach((x,i)=>{x.classList.toggle('done',!!c.checks[i]);x.classList.toggle('active',!c.checks[i]&&i===Math.max(0,Math.min(4,(currentPTPStep||1)-1)))});
  const scopeBox=E('v34ScopeConfirmBox'),scopeBtn=E('v34ScopeConfirmBtn'),qualityCard=E('v34QualityCard');
  if(scopeBox)scopeBox.style.display=(currentPTPStep===3?'block':'none');
- if(E('v34ScopeSummary')) E('v34ScopeSummary').textContent=ready?v34ScopeSummary():'Finish the work plan and confirm the correct step order first. Your completed scope will appear here for one final confirmation.';
+ if(E('v34ScopeSummary')) if(E('v34ScopeSummary')) E('v34ScopeSummary').textContent=ready?v34ScopeSummary():'Finish the work plan and confirm the correct step order first. Your completed scope will appear here for one final confirmation.';
  if(scopeBox)scopeBox.classList.toggle('locked',!ready);
  if(scopeBtn)scopeBtn.disabled=!ready;
- if(E('v34ScopeState')) E('v34ScopeState').textContent=v34ScopeConfirmed?'✓ Scope confirmed':(ready?'Ready for final scope confirmation':'Available after work sequence is complete');
- if(E('v34ScopeState')) E('v34ScopeState').className=v34ScopeConfirmed?'scope-ok':'';
+ if(E('v34ScopeState')) if(E('v34ScopeState')) E('v34ScopeState').textContent=v34ScopeConfirmed?'✓ Scope confirmed':(ready?'Ready for final scope confirmation':'Available after work sequence is complete');
+ if(E('v34ScopeState')) if(E('v34ScopeState')) E('v34ScopeState').className=v34ScopeConfirmed?'scope-ok':'';
  const showQuality=(currentPTPStep>=5||v35QualityUnlocked);
  if(qualityCard)qualityCard.style.display=showQuality?'block':'none';
  const q=E('v34QualityList');
@@ -2105,4 +2105,5 @@ console.info('CDI Safety Hub v54 Form State + Scope Complete loaded');
   window.addEventListener('pageshow',setV66);
   setTimeout(setV66,300);
 })();
+
 
