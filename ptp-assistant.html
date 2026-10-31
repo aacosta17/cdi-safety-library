@@ -1,4 +1,22 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PTP Writing Assistant · Field Management</title>
+<!doctype html><html lang="en"><head><script>/* Theme is a display preference only; never stores workspace data. */
+(()=>{'use strict';
+const origin=new URL(document.baseURI).origin;const key='fw-appearance-v2',root=document.documentElement;
+let initial='dark';
+try{const saved=localStorage.getItem(key);if(saved==='light'||saved==='dark')initial=saved;}catch(_){}
+try{if(parent!==window&&parent.origin===origin)initial=parent.document.documentElement.dataset.theme||initial;}catch(_){}
+function apply(theme){theme=theme==='light'?'light':'dark';root.dataset.theme=theme;root.style.colorScheme=theme;document.querySelectorAll('[data-theme-choice]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.themeChoice===theme)));document.querySelector('meta[name="theme-color"]')?.setAttribute('content',theme==='dark'?'#101715':'#f3f6f2');}
+apply(initial);
+window.FieldAppearance={set(theme){apply(theme);try{localStorage.setItem(key,root.dataset.theme)}catch(_){};document.querySelectorAll('iframe').forEach(f=>{try{f.contentWindow.postMessage({type:'fw-appearance',theme:root.dataset.theme},origin)}catch(_){}});},get:()=>root.dataset.theme};
+window.addEventListener('storage',e=>{if(e.key===key)apply(e.newValue)});
+window.addEventListener('message',e=>{if(e.origin!==origin||e.source!==parent||e.data?.type!=='fw-appearance')return;apply(e.data.theme)});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-theme-choice]');if(b)window.FieldAppearance.set(b.dataset.themeChoice)});
+document.addEventListener('DOMContentLoaded',()=>{
+ document.querySelectorAll('iframe').forEach(f=>f.addEventListener('load',()=>{try{f.contentWindow.postMessage({type:'fw-appearance',theme:root.dataset.theme},origin)}catch(_){}}));
+ if(window===parent&&!document.body.classList.contains('workspace-host')){const bar=document.createElement('div');bar.className='standalone-appearance no-print';bar.innerHTML='<span>Appearance</span><button type="button" data-theme-choice="dark">Dark</button><button type="button" data-theme-choice="light">Light</button>';document.body.prepend(bar);}
+ apply(root.dataset.theme);
+});
+})();
+</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PTP Writing Assistant · Field Management</title>
 <style>
 :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:#203044;background:#f5f7fb}*{box-sizing:border-box}body{margin:0}.app{padding:28px clamp(14px,3vw,45px) 70px;max-width:1400px;margin:auto}.eyebrow{text-transform:uppercase;font-weight:800;letter-spacing:.12em;color:#14856b;font-size:11px;margin-bottom:10px}h1{margin:0 0 8px;font-size:clamp(26px,3.3vw,38px);letter-spacing:-.05em}h2{font-size:19px;letter-spacing:-.03em;margin:0 0 8px}h3{font-size:14px;margin:0 0 11px}.sub{font-size:13px;color:#697b8d;line-height:1.6;margin:0}.hero{display:flex;justify-content:space-between;align-items:start;gap:16px;flex-wrap:wrap;margin-bottom:22px}.hero button,.btn{border:1px solid #dce3eb;background:white;border-radius:10px;padding:11px 14px;font:700 13px inherit;cursor:pointer;color:#193247;min-height:42px}.btn.primary{background:#12384d;color:white;border-color:#12384d}.btn.green{background:#12836b;color:white;border-color:#12836b}.shell{border-radius:17px;background:white;border:1px solid #e0e7ef;padding:clamp(17px,2.5vw,30px);box-shadow:0 5px 20px #233d5a0b;margin:16px 0}.field label{display:block;color:#3c5064;font-size:12px;font-weight:750;margin-bottom:7px}.field input,.field select,.field textarea,.output textarea{width:100%;background:#fcfdff;border:1px solid #cddae7;border-radius:9px;padding:11px 12px;font:13px/1.5 inherit;color:#22384a;outline:none;min-height:42px}.field textarea{resize:vertical;min-height:90px}.field input:focus,.field textarea:focus,.field select:focus,.output textarea:focus{border-color:#1b9b7b;box-shadow:0 0 0 3px #159c7f20}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}.wide{grid-column:1/-1}.boxlabel{font-size:11px;letter-spacing:.075em;text-transform:uppercase;color:#8795a4;font-weight:850;margin:0 0 16px}.options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.check{display:flex;align-items:center;gap:9px;border:1px solid #e1e8ef;border-radius:11px;padding:12px;background:#fbfcfe;font-size:12px;font-weight:700;color:#435568;line-height:1.5;cursor:pointer}.check:has(input:checked){background:#effaf5;border-color:#81ccb3;color:#177458}.check input{accent-color:#13876a;width:15px;height:15px;flex:0 0 15px}.note{background:#f1f8f5;border:1px solid #d7ebe2;color:#356555;padding:13px 15px;border-radius:11px;font-size:12px;line-height:1.6;margin:14px 0}.warning{background:#fff7e8;border-color:#f1d9a1;color:#805a21}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:20px}.muted{color:#708194;font-size:12px}.output-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.output{background:#fafdfe;border:1px solid #e0e9ef;border-radius:13px;padding:16px;min-width:0}.output h3{font-size:15px;margin:0}.output textarea{font:13px/1.65 ui-monospace,Consolas,monospace;min-height:420px;margin:12px 0;resize:vertical;background:white}.headrow{display:flex;align-items:center;justify-content:space-between;gap:12px}.editing{border-top:1px solid #e1e8ef;margin-top:20px;padding-top:22px}.editline{display:grid;grid-template-columns:36px 1fr 1fr 1fr;gap:9px;border:1px solid #e2e8ef;border-radius:11px;padding:10px;margin:10px 0;align-items:start}.editline span{font-size:12px;color:#76889a;font-weight:800;padding-top:11px}.editline textarea{font:12px/1.5 inherit;padding:9px;border:1px solid #d6e0e9;border-radius:7px;min-height:70px;width:100%}.buttons{display:flex;flex-wrap:wrap;gap:8px}.message{padding:10px 13px;background:#e6f7ef;color:#0d694c;border:1px solid #b9dfcd;border-radius:9px;margin:12px 0;font-size:13px}[hidden]{display:none!important}@media(max-width:900px){.options{grid-template-columns:repeat(2,minmax(0,1fr))}.output-grid{grid-template-columns:1fr}.output textarea{min-height:190px}.editline{grid-template-columns:30px 1fr}.editline textarea{min-height:65px}}@media(max-width:540px){.app{padding:19px 11px 40px}.grid,.options{grid-template-columns:1fr}.shell{padding:16px}.editline{grid-template-columns:1fr}.editline span{padding:0}.output{padding:12px}}@media print{.hero button,.btn,.toolbar,.editing,.shell:first-of-type{display:none!important}.app{padding:0}.shell{border:0;box-shadow:none}.output-grid{grid-template-columns:repeat(3,1fr)}.output textarea{font-size:10px;border:0;padding:5px;min-height:700px}}
 
@@ -34,51 +52,10 @@
 }
 
 </style>
-<style id="fwClientGreenPTPV3">:root{--navy:#173a30;--green:#197667;background:#f4f8f5!important;color:#233e34!important}body{background:#f4f8f5!important}.btn.primary,.btn.green{background:#197667!important;border-color:#197667!important;color:white!important}input:focus,select:focus,textarea:focus{border-color:#44a181!important;box-shadow:0 0 0 3px rgba(39,139,93,.12)!important}button:focus-visible{outline-color:#40a987!important}</style><style id="premium20261030">
-/* Premium workspace • 2026-10-30. Screen-only: report geometry is preserved. */
-@media screen {
-:root{--accent:#157560;--accent-2:#2c967e;--accent-soft:#e8f4ee;--navy:#173c30;--blue:#157560;--ink:#203b31;--muted:#60766c;--line:#dce5df;--bg:#f3f5f1;--shadow:0 2px 4px #173c3003,0 12px 32px #173c3007}
-body{background:#f3f5f1!important;color:#203b31;-webkit-font-smoothing:antialiased}
-button,input,select,textarea{font-family:inherit}button,a{touch-action:manipulation}
-h1,h2,h3{letter-spacing:-.035em}h1{line-height:1.14}
-:is(.card,.shell,.toolbar,.panel,.form-card,.dialog,.fw-auth-card){border-color:#dce5df;box-shadow:var(--shadow)}
-:is(.card,.form-card,.panel){border-radius:18px}
-:is(.btn,.fw-button,.form-view-btn,.form-print-btn,.manual-btn){border-radius:11px;transition:background .18s,border-color .18s,box-shadow .18s,transform .18s}
-:is(.btn.primary,.btn.green,.fw-primary){background:linear-gradient(135deg,#187c65,#105a48)!important;border-color:#166b56!important;box-shadow:inset 0 1px 0 #ffffff24,0 4px 10px #125d4820;color:#fff!important}
-:is(button,a,input,select,textarea,summary):focus-visible{outline:3px solid #26896d!important;outline-offset:3px}
-input[type=checkbox],input[type=radio]{accent-color:#187b62}
-:is(input,select,textarea):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]){border-color:#cbd9d0;background:#fcfdfb;border-radius:10px;transition:box-shadow .18s,border-color .18s}
-:is(input,select,textarea):focus{border-color:#26896d!important;box-shadow:0 0 0 3px #26896d18!important}
-:is(.help,.sub,.muted){color:#60766c}
-:is(.dialog-head,.dialog-footer){background:#f7f9f5;border-color:#e1e8e2}
-.dialog{border-radius:20px;box-shadow:0 28px 90px #0f302a30}
-:is(.modal.open,.modal.show) .dialog{animation:fw-dialog-in .22s ease-out}
-:is(.top,.topline){background:linear-gradient(120deg,#102b23,#1c4c3a);color:#fff}
-.topline h1,.top h1{color:#fff}
-.toolbar{background:#fff;border-radius:18px}
-.metric{background:#fff;border-color:#e1e8e2;border-radius:12px}
-.metric b{font-variant-numeric:tabular-nums}
-.calendar-scroll{border-color:#d7e2d9;border-radius:16px;scrollbar-color:#a8beb0 #edf2ed}
-.day-header{background:#edf3ed;border-bottom-color:#d9e4dc}
-.day.today .day-header{background:#dceee2;color:#174f39}
-.job{border-radius:13px;box-shadow:0 2px 6px #193c2809}
-.mp-lead-group{border-radius:10px}
-.mp-command{border-color:#dce5df;box-shadow:0 4px 16px #173c3007}
-.tab.active{box-shadow:0 3px 8px #153c3012}
-@media(hover:hover) and (pointer:fine){
-:is(.btn,.fw-button,.form-view-btn):not(:disabled):hover{transform:translateY(-1px);box-shadow:0 5px 13px #173c3014}
-.job:hover{box-shadow:0 5px 15px #173c3012}
-}
-:is(.btn,.fw-button,.app-tool,.app-hero-primary,.app-hero-outline):not(:disabled):active{transform:translateY(1px)!important;box-shadow:none!important}
-@keyframes fw-dialog-in{from{opacity:0;transform:translateY(8px) scale(.99)}to{opacity:1;transform:none}}
-@media(pointer:coarse){.btn,.fw-button{min-height:44px}input,select,textarea{font-size:16px}}
-}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-
-</style><style>
+<style id="fwClientGreenPTPV3">:root{--navy:#173a30;--green:#197667;background:#f4f8f5!important;color:#233e34!important}body{background:#f4f8f5!important}.btn.primary,.btn.green{background:#197667!important;border-color:#197667!important;color:white!important}input:focus,select:focus,textarea:focus{border-color:#44a181!important;box-shadow:0 0 0 3px rgba(39,139,93,.12)!important}button:focus-visible{outline-color:#40a987!important}</style><style>
 @media screen{.overlay{grid-template-columns:minmax(0,1fr)}.overlay .dialog{min-width:0;max-width:100%;justify-self:center}.overlay:not(.hidden) .dialog{animation:fw-dialog-in .22s ease-out}.dialog-body{min-width:0}.fw-module-container{border-color:#dce5df}}
 @media(prefers-reduced-motion:reduce){.overlay .dialog{animation:none!important}}
-</style></head><body><div class="app"><div class="hero"><div><div class="eyebrow">Field Safety / Job Planning</div><h1>PTP Writing Assistant</h1><p class="sub">Describe the actual work. Generate editable work steps, associated hazards and specific control measures for any company's PTP form.</p></div><button id="startOver" class="btn">Start over</button></div><div id="status" class="message" hidden></div><div class="shell"><div class="boxlabel">01 / Describe the actual task</div><div class="grid"><div class="field"><label for="scope">Exactly what will the crew accomplish?</label><textarea id="scope" placeholder="Example: Run ¾-inch EMT above grid ceiling from room 210 to 214; install two boxes and pull control conductors."></textarea></div><div class="field"><label for="workarea">Where will the work take place?</label><textarea id="workarea" placeholder="Building, floor, area, access limitations, adjacent trades, work environment…"></textarea></div><div class="field"><label for="energy">Electrical exposure / isolation status</label><select id="energy"><option value="unknown">Not yet verified / unknown</option><option value="deenergized">Isolated and verified de-energized</option><option value="adjacent">Working near energized systems / equipment</option><option value="no-electrical">No electrical exposure anticipated</option></select></div><div class="field"><label for="access">Primary access method</label><select id="access"><option value="floor">From floor / ground level</option><option value="ladder">Ladder</option><option value="lift">Mobile elevating work platform (MEWP)</option><option value="scaffold">Scaffold or other approved elevated platform</option></select></div><div class="field"><label for="equipment">Specific tools / equipment</label><input id="equipment" placeholder="Bender, drill, fish tape, ladder, lift…"></div><div class="field"><label for="special">Other task details / restrictions</label><input id="special" placeholder="Restricted areas, shutdown window, overhead occupants…"></div></div>
+</style><link rel="stylesheet" href="css/workspace-v2.css?v=20261030-v2"></head><body class="module-ptp"><div class="app"><div class="hero"><div><div class="eyebrow">Field Safety / Job Planning</div><h1>PTP Writing Assistant</h1><p class="sub">Describe the actual work. Generate editable work steps, associated hazards and specific control measures for any company's PTP form.</p></div><button id="startOver" class="btn">Start over</button></div><div id="status" class="message" hidden></div><div class="shell"><div class="boxlabel">01 / Describe the actual task</div><div class="grid"><div class="field"><label for="scope">Exactly what will the crew accomplish?</label><textarea id="scope" placeholder="Example: Run ¾-inch EMT above grid ceiling from room 210 to 214; install two boxes and pull control conductors."></textarea></div><div class="field"><label for="workarea">Where will the work take place?</label><textarea id="workarea" placeholder="Building, floor, area, access limitations, adjacent trades, work environment…"></textarea></div><div class="field"><label for="energy">Electrical exposure / isolation status</label><select id="energy"><option value="unknown">Not yet verified / unknown</option><option value="deenergized">Isolated and verified de-energized</option><option value="adjacent">Working near energized systems / equipment</option><option value="no-electrical">No electrical exposure anticipated</option></select></div><div class="field"><label for="access">Primary access method</label><select id="access"><option value="floor">From floor / ground level</option><option value="ladder">Ladder</option><option value="lift">Mobile elevating work platform (MEWP)</option><option value="scaffold">Scaffold or other approved elevated platform</option></select></div><div class="field"><label for="equipment">Specific tools / equipment</label><input id="equipment" placeholder="Bender, drill, fish tape, ladder, lift…"></div><div class="field"><label for="special">Other task details / restrictions</label><input id="special" placeholder="Restricted areas, shutdown window, overhead occupants…"></div></div>
 <div class="boxlabel" style="margin-top:25px">02 / Which tasks are actually being performed?</div><div class="options" id="taskOptions"></div><div class="boxlabel" style="margin-top:26px">02B / Jobsite conditions to address</div><div class="options" id="conditionOptions"></div><div id="taskFollowups" class="followups" aria-live="polite" hidden>
   <div class="boxlabel" style="margin-top:26px">03 / A few job-specific details</div>
   <p class="muted">These questions change with the tasks and conditions selected above. Unverified items will be flagged in your draft.</p>
@@ -98,5 +75,6 @@ input[type=checkbox],input[type=radio]{accent-color:#187b62}
  <div class="headrow"><div><div class="boxlabel">05 / Learn about your identified hazards</div><h2>Your Safety Resource Guide</h2><p class="sub">Topics automatically selected from your PTP. Learn why hazards matter and review specific precautions.</p></div><a class="btn" href="safety-resources.html" target="_blank" rel="noopener">Browse full library ↗</a></div>
  <div class="resource-grid" id="recommendedResources"></div>
  <p class="muted" style="margin-top:16px">General educational references only. Verify your employer's policies, current regulations, equipment manuals and applicable jobsite procedures with qualified personnel.</p>
-</div></div><script src="js/safety-resources-data.js" defer></script><script src="js/ptp-assistant.js" defer></script></body></html>
+</div></div><script src="js/safety-resources-data.js?v=20261030-v2" defer></script><script src="js/ptp-assistant.js?v=20261030-v2" defer></script></body></html>
+
 

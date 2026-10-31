@@ -1,6 +1,24 @@
 <!doctype html>
 <html lang="en">
-<head>
+<head><script>/* Theme is a display preference only; never stores workspace data. */
+(()=>{'use strict';
+const origin=new URL(document.baseURI).origin;const key='fw-appearance-v2',root=document.documentElement;
+let initial='dark';
+try{const saved=localStorage.getItem(key);if(saved==='light'||saved==='dark')initial=saved;}catch(_){}
+try{if(parent!==window&&parent.origin===origin)initial=parent.document.documentElement.dataset.theme||initial;}catch(_){}
+function apply(theme){theme=theme==='light'?'light':'dark';root.dataset.theme=theme;root.style.colorScheme=theme;document.querySelectorAll('[data-theme-choice]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.themeChoice===theme)));document.querySelector('meta[name="theme-color"]')?.setAttribute('content',theme==='dark'?'#101715':'#f3f6f2');}
+apply(initial);
+window.FieldAppearance={set(theme){apply(theme);try{localStorage.setItem(key,root.dataset.theme)}catch(_){};document.querySelectorAll('iframe').forEach(f=>{try{f.contentWindow.postMessage({type:'fw-appearance',theme:root.dataset.theme},origin)}catch(_){}});},get:()=>root.dataset.theme};
+window.addEventListener('storage',e=>{if(e.key===key)apply(e.newValue)});
+window.addEventListener('message',e=>{if(e.origin!==origin||e.source!==parent||e.data?.type!=='fw-appearance')return;apply(e.data.theme)});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-theme-choice]');if(b)window.FieldAppearance.set(b.dataset.themeChoice)});
+document.addEventListener('DOMContentLoaded',()=>{
+ document.querySelectorAll('iframe').forEach(f=>f.addEventListener('load',()=>{try{f.contentWindow.postMessage({type:'fw-appearance',theme:root.dataset.theme},origin)}catch(_){}}));
+ if(window===parent&&!document.body.classList.contains('workspace-host')){const bar=document.createElement('div');bar.className='standalone-appearance no-print';bar.innerHTML='<span>Appearance</span><button type="button" data-theme-choice="dark">Dark</button><button type="button" data-theme-choice="light">Light</button>';document.body.prepend(bar);}
+ apply(root.dataset.theme);
+});
+})();
+</script>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#17372f"><title>Manpower Presenter | Field Management Workspace</title>
 <style>
@@ -240,52 +258,11 @@ body.bulk-active #bulkToggle{background:#e0f2e9!important;border-color:#9fceba!i
 .mp-menu-approval{color:#176952!important;font-weight:750!important}
 @media(max-width:880px){.mp-bulk-bar{align-items:stretch}.mp-bulk-main,.mp-bulk-end{width:100%}.mp-bulk-scope{flex:1;min-width:210px}.mp-bulk-scope select{flex:1}}
 @media(max-width:580px){.mp-schedule-head-actions{width:100%}.mp-schedule-head-actions .btn{flex:1}.mp-bulk-main .btn{flex:1 1 40%}.mp-bulk-end .btn{flex:1}.mp-bulk-scope{width:100%;flex:1 0 100%}.mp-bulk-scope select{max-width:none;min-width:0}}
-</style><style id="premium20261030">
-/* Premium workspace • 2026-10-30. Screen-only: report geometry is preserved. */
-@media screen {
-:root{--accent:#157560;--accent-2:#2c967e;--accent-soft:#e8f4ee;--navy:#173c30;--blue:#157560;--ink:#203b31;--muted:#60766c;--line:#dce5df;--bg:#f3f5f1;--shadow:0 2px 4px #173c3003,0 12px 32px #173c3007}
-body{background:#f3f5f1!important;color:#203b31;-webkit-font-smoothing:antialiased}
-button,input,select,textarea{font-family:inherit}button,a{touch-action:manipulation}
-h1,h2,h3{letter-spacing:-.035em}h1{line-height:1.14}
-:is(.card,.shell,.toolbar,.panel,.form-card,.dialog,.fw-auth-card){border-color:#dce5df;box-shadow:var(--shadow)}
-:is(.card,.form-card,.panel){border-radius:18px}
-:is(.btn,.fw-button,.form-view-btn,.form-print-btn,.manual-btn){border-radius:11px;transition:background .18s,border-color .18s,box-shadow .18s,transform .18s}
-:is(.btn.primary,.btn.green,.fw-primary){background:linear-gradient(135deg,#187c65,#105a48)!important;border-color:#166b56!important;box-shadow:inset 0 1px 0 #ffffff24,0 4px 10px #125d4820;color:#fff!important}
-:is(button,a,input,select,textarea,summary):focus-visible{outline:3px solid #26896d!important;outline-offset:3px}
-input[type=checkbox],input[type=radio]{accent-color:#187b62}
-:is(input,select,textarea):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]){border-color:#cbd9d0;background:#fcfdfb;border-radius:10px;transition:box-shadow .18s,border-color .18s}
-:is(input,select,textarea):focus{border-color:#26896d!important;box-shadow:0 0 0 3px #26896d18!important}
-:is(.help,.sub,.muted){color:#60766c}
-:is(.dialog-head,.dialog-footer){background:#f7f9f5;border-color:#e1e8e2}
-.dialog{border-radius:20px;box-shadow:0 28px 90px #0f302a30}
-:is(.modal.open,.modal.show) .dialog{animation:fw-dialog-in .22s ease-out}
-:is(.top,.topline){background:linear-gradient(120deg,#102b23,#1c4c3a);color:#fff}
-.topline h1,.top h1{color:#fff}
-.toolbar{background:#fff;border-radius:18px}
-.metric{background:#fff;border-color:#e1e8e2;border-radius:12px}
-.metric b{font-variant-numeric:tabular-nums}
-.calendar-scroll{border-color:#d7e2d9;border-radius:16px;scrollbar-color:#a8beb0 #edf2ed}
-.day-header{background:#edf3ed;border-bottom-color:#d9e4dc}
-.day.today .day-header{background:#dceee2;color:#174f39}
-.job{border-radius:13px;box-shadow:0 2px 6px #193c2809}
-.mp-lead-group{border-radius:10px}
-.mp-command{border-color:#dce5df;box-shadow:0 4px 16px #173c3007}
-.tab.active{box-shadow:0 3px 8px #153c3012}
-@media(hover:hover) and (pointer:fine){
-:is(.btn,.fw-button,.form-view-btn):not(:disabled):hover{transform:translateY(-1px);box-shadow:0 5px 13px #173c3014}
-.job:hover{box-shadow:0 5px 15px #173c3012}
-}
-:is(.btn,.fw-button,.app-tool,.app-hero-primary,.app-hero-outline):not(:disabled):active{transform:translateY(1px)!important;box-shadow:none!important}
-@keyframes fw-dialog-in{from{opacity:0;transform:translateY(8px) scale(.99)}to{opacity:1;transform:none}}
-@media(pointer:coarse){.btn,.fw-button{min-height:44px}input,select,textarea{font-size:16px}}
-}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-
 </style><style>
 @media screen{.overlay{grid-template-columns:minmax(0,1fr)}.overlay .dialog{min-width:0;max-width:100%;justify-self:center}.overlay:not(.hidden) .dialog{animation:fw-dialog-in .22s ease-out}.dialog-body{min-width:0}.fw-module-container{border-color:#dce5df}}
 @media(prefers-reduced-motion:reduce){.overlay .dialog{animation:none!important}}
-</style></head>
-<body>
+</style><link rel="stylesheet" href="css/workspace-v2.css?v=20261030-v2"></head>
+<body class="module-planner">
 <div id="authGate" role="status"><div class="loadcard"><h1>Manpower Planner</h1><p id="gateMessage">Checking your workspace access…</p><a id="gateBack" href="/index.html" hidden>Return to Field Management Workspace</a></div></div>
 <div id="app" hidden>
 <header class="top"><div><div class="eyebrow">Field Management Workspace · Weekly Planning</div><h1>Manpower Planner</h1><p>Live weekly crew scheduling · shared with your team</p></div><div class="head-actions"><span id="connection" class="top-status" role="status">Connecting…</span><button class="btn" id="undo" title="Undo your last change (Ctrl/⌘+Z)">↶ Undo</button><button class="btn" id="redo" title="Redo your last undone change (Ctrl/⌘+Shift+Z)">↷ Redo</button><button class="btn" id="fullscreen">⛶ Full screen</button><a class="btn" id="presenterExit" href="/index.html" target="_top" style="text-decoration:none">Exit</a></div></header>
@@ -402,7 +379,7 @@ input[type=checkbox],input[type=radio]{accent-color:#187b62}
     <div class="dialog-footer"><button id="mpWaiveAllCancel" class="btn" type="button">Cancel</button><button id="mpWaiveAllConfirm" class="btn primary" type="button">Approve all pending conflicts this week</button></div>
   </div>
 </div>
-<script defer src="js/presenter.js"></script>
+<script defer src="js/presenter.js?v=20261030-v2"></script>
 <div id="copyOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="copyTitle"><div class="dialog"><div class="dialog-head"><h2 id="copyTitle">Copy job and crew</h2><button class="btn" id="copyClose">✕</button></div><div class="dialog-body"><p>Copy all employees, leads, individual hours and job details. Scheduling conflicts will be flagged, not silently skipped.</p><div id="copyDates" class="copy-dates"></div><div id="copyPreview" class="conflict hidden"></div></div><div class="dialog-footer"><button class="btn" id="copyCancel">Cancel</button><button class="btn primary" id="copyConfirm">Copy to selected days</button></div></div></div><script id="mpClientReadyZoomControls">
 (function(){
   'use strict';
@@ -449,4 +426,5 @@ input[type=checkbox],input[type=radio]{accent-color:#187b62}
 })();
 </script>
 </body></html>
+
 
