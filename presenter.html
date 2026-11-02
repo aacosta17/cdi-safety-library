@@ -261,7 +261,7 @@ body.bulk-active #bulkToggle{background:#e0f2e9!important;border-color:#9fceba!i
 </style><style>
 @media screen{.overlay{grid-template-columns:minmax(0,1fr)}.overlay .dialog{min-width:0;max-width:100%;justify-self:center}.overlay:not(.hidden) .dialog{animation:fw-dialog-in .22s ease-out}.dialog-body{min-width:0}.fw-module-container{border-color:#dce5df}}
 @media(prefers-reduced-motion:reduce){.overlay .dialog{animation:none!important}}
-</style><link rel="stylesheet" href="css/workspace-v2.css?v=20261101-v4"><link rel="stylesheet" href="css/workspace-refinements.css?v=20261101-v4"></head>
+</style><link rel="stylesheet" href="css/workspace-v2.css?v=20261102-v5"><link rel="stylesheet" href="css/workspace-refinements.css?v=20261102-v5"></head>
 <body class="module-planner">
 <div id="authGate" role="status"><div class="loadcard"><h1>Manpower Planner</h1><p id="gateMessage">Checking your workspace access…</p><a id="gateBack" href="/index.html" hidden>Return to Field Management Workspace</a></div></div>
 <div id="app" hidden>
@@ -282,7 +282,10 @@ body.bulk-active #bulkToggle{background:#e0f2e9!important;border-color:#9fceba!i
       <button id="report" type="button" class="btn mp-action-report"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h7l5 5v15H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM14 2v6h5M9 13h6M9 17h6"/></svg> Work report</button>
     </div>
   </div>
-  <div class="mp-controls-row">
+  <div class="mp-planner-actions">
+ <button id="mpPoolTab" type="button" class="btn" aria-expanded="false" aria-controls="mpPoolPanel">Available pool</button>
+ <button id="mpSettingsTab" type="button" class="btn" aria-expanded="false" aria-controls="mpViewSettings">Filters &amp; display</button>
+ </div><div class="mp-controls-row" id="mpViewSettings">
     <div class="mp-filters" role="group" aria-label="Filter calendar">
       <span class="mp-controls-label">VIEW</span>
       <select id="divisionFilter" aria-label="Filter by division"><option value="all">All divisions</option><option value="electrical">Electrical</option><option value="security">Security</option><option value="data">Data</option><option value="fire_alarm">Fire Alarm</option><option value="mixed">Mixed</option></select>
@@ -316,7 +319,7 @@ body.bulk-active #bulkToggle{background:#e0f2e9!important;border-color:#9fceba!i
       </div>
     </div>
   </div>
-</section>
+</section><section hidden id="mpPoolPanel" aria-label="Available employee pool"><button type="button" class="btn" id="mpPoolBack">← Back to schedule</button><iframe title="Available employee pool" id="mpPoolFrame"></iframe></section>
 <div class="weekbar"><span id="viewNote" class="subtle">This calendar shows the shared schedule.</span><span id="editors" class="pill">Editors connecting…</span></div>
 <div class="metrics" id="metrics"></div>
 <section class="request-dashboard" id="requestDashboard"><div class="request-summary"><div><h2>Manpower requests</h2><p>Ask for more people, a change in the schedule, or an assigned employee.</p></div><div class="request-controls"><span class="request-count" id="requestCount">0 open</span><button id="toggleRequests" class="btn" type="button" aria-expanded="false">View requests / make a request</button></div></div><div id="requestContent" class="request-content" hidden><form id="requestForm" class="request-form"><label>Request type<select id="requestType" required><option value="more_staff">Additional manpower</option><option value="schedule_change">Change this week's schedule</option><option value="employee_transfer">Request assigned employee</option></select></label><label>Needed on<input id="requestDate" type="date" required></label><label>Project (optional)<select id="requestJob"><option value="">General request</option></select></label><label>Employee (optional)<select id="requestEmployee"><option value="">Select employee</option></select></label><label>Details<textarea id="requestDetails" minlength="6" maxlength="700" required placeholder="What needs to change? How many employees, which crew, and why?"></textarea></label><button class="btn primary" type="submit" id="sendRequest">Submit request</button></form><div><h3 style="margin-bottom:8px">Request dashboard</h3><div id="requests" class="request-list"></div></div></div></section>
@@ -379,7 +382,7 @@ body.bulk-active #bulkToggle{background:#e0f2e9!important;border-color:#9fceba!i
     <div class="dialog-footer"><button id="mpWaiveAllCancel" class="btn" type="button">Cancel</button><button id="mpWaiveAllConfirm" class="btn primary" type="button">Approve all pending conflicts this week</button></div>
   </div>
 </div>
-<script defer src="js/presenter.js?v=20261101-v4"></script>
+<script defer src="js/presenter.js?v=20261102-v5"></script>
 <div id="copyOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="copyTitle"><div class="dialog"><div class="dialog-head"><h2 id="copyTitle">Copy job and crew</h2><button class="btn" id="copyClose">✕</button></div><div class="dialog-body"><p>Copy all employees, leads, individual hours and job details. Scheduling conflicts will be flagged, not silently skipped.</p><div id="copyDates" class="copy-dates"></div><div id="copyPreview" class="conflict hidden"></div></div><div class="dialog-footer"><button class="btn" id="copyCancel">Cancel</button><button class="btn primary" id="copyConfirm">Copy to selected days</button></div></div></div><script id="mpClientReadyZoomControls">
 (function(){
   'use strict';
@@ -425,6 +428,6 @@ body.bulk-active #bulkToggle{background:#e0f2e9!important;border-color:#9fceba!i
  // Top-bar shortcuts mirror the existing permission-aware controls; no writes occur here.
 })();
 </script>
-<script src="js/workspace-refinements.js?v=20261101-v4" defer></script></body></html>
+<script src="js/workspace-refinements.js?v=20261102-v5" defer></script></body></html>
 
 
