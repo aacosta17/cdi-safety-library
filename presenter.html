@@ -261,7 +261,7 @@ body.bulk-active #bulkToggle{background:#e0f2e9!important;border-color:#9fceba!i
 </style><style>
 @media screen{.overlay{grid-template-columns:minmax(0,1fr)}.overlay .dialog{min-width:0;max-width:100%;justify-self:center}.overlay:not(.hidden) .dialog{animation:fw-dialog-in .22s ease-out}.dialog-body{min-width:0}.fw-module-container{border-color:#dce5df}}
 @media(prefers-reduced-motion:reduce){.overlay .dialog{animation:none!important}}
-</style><link rel="stylesheet" href="css/workspace-v2.css?v=20261030-v2"></head>
+</style><link rel="stylesheet" href="css/workspace-v2.css?v=20261101-v4"><link rel="stylesheet" href="css/workspace-refinements.css?v=20261101-v4"></head>
 <body class="module-planner">
 <div id="authGate" role="status"><div class="loadcard"><h1>Manpower Planner</h1><p id="gateMessage">Checking your workspace access…</p><a id="gateBack" href="/index.html" hidden>Return to Field Management Workspace</a></div></div>
 <div id="app" hidden>
@@ -379,7 +379,7 @@ body.bulk-active #bulkToggle{background:#e0f2e9!important;border-color:#9fceba!i
     <div class="dialog-footer"><button id="mpWaiveAllCancel" class="btn" type="button">Cancel</button><button id="mpWaiveAllConfirm" class="btn primary" type="button">Approve all pending conflicts this week</button></div>
   </div>
 </div>
-<script defer src="js/presenter.js?v=20261030-v2"></script>
+<script defer src="js/presenter.js?v=20261101-v4"></script>
 <div id="copyOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="copyTitle"><div class="dialog"><div class="dialog-head"><h2 id="copyTitle">Copy job and crew</h2><button class="btn" id="copyClose">✕</button></div><div class="dialog-body"><p>Copy all employees, leads, individual hours and job details. Scheduling conflicts will be flagged, not silently skipped.</p><div id="copyDates" class="copy-dates"></div><div id="copyPreview" class="conflict hidden"></div></div><div class="dialog-footer"><button class="btn" id="copyCancel">Cancel</button><button class="btn primary" id="copyConfirm">Copy to selected days</button></div></div></div><script id="mpClientReadyZoomControls">
 (function(){
   'use strict';
@@ -425,6 +425,6 @@ body.bulk-active #bulkToggle{background:#e0f2e9!important;border-color:#9fceba!i
  // Top-bar shortcuts mirror the existing permission-aware controls; no writes occur here.
 })();
 </script>
-</body></html>
+<script src="js/workspace-refinements.js?v=20261101-v4" defer></script></body></html>
 
 
