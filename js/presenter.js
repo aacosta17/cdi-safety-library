@@ -74,9 +74,32 @@ function jobHTML(j){const p=app.edits?.[j.id],changed=p&&Date.now()-new Date(p.a
  const crew=groupedAssignments(j);
  return `<article class="job ${changed?'recent':''} ${issue?'problem':''}" data-job-id="${esc(j.id)}"><div class="job-head"><input class="bulk-check" type="checkbox" data-bulk-id="${esc(j.id)}" ${app.selected.has(String(j.id))?'checked':''} aria-label="Select ${esc(j.name)} on ${esc(j.date)}"><div><h3>${esc(j.name)}</h3><div class="meta">${esc(j.number||'No job number')} · ${esc(displayDivision(j))} · ${Number(j.percent)||0}%</div></div><button class="job-actions" data-edit-job="${esc(j.id)}">Edit</button></div>${j.priority==='high'?'<span class="pill warn">High priority</span>':''}${j.status==='behind'?'<span class="pill warn">Behind</span>':''}${j.dayType==='ot'?'<span class="pill">Overtime</span>':''}${issue?`<div class="problem-text">⚠ ${issue} scheduling warning(s) · <button data-edit-job="${esc(j.id)}" type="button" class="mp-inline-waive">Review / waive</button></div>`:''}${waived?`<div class="meta">✓ ${waived} recorded waiver(s) (only valid for unchanged schedules)</div>`:''}<div class="staff">${crew||'<small>No crew assigned</small>'}</div>${j.notes?`<div class="meta">${esc(j.notes).slice(0,130)}</div>`:''}<div class="job-footer"><span>${p?`Edited by ${esc(p.by)} · ${time(p.at)}`:'No recent edit'}</span><strong>${(j.assignments||[]).length} staff</strong></div></article>`;}
 
+const toolbar = document.querySelector('.mp-command');
+const toolMenu = toolbar.querySelector('.mp-more-container');
+toolbar.querySelector('.mp-planner-actions').append(toolMenu);
+$('mpViewSettings').hidden = true;
+$('mpSettingsTab').onclick = () => {
+  const open = $('mpViewSettings').hidden;
+  $('mpViewSettings').hidden = !open;
+  $('mpSettingsTab').setAttribute('aria-expanded', String(open));
+};
+function togglePool(open) {
+  const panel = $('mpPoolPanel');
+  panel.hidden = !open;
+  document.body.classList.toggle('show-employee-pool', open);
+  $('mpPoolTab').setAttribute('aria-expanded', String(open));
+  if (open) {
+    $('mpPoolFrame').src = new URL('operations-center.html?view=people&surface=pool&v=20261102', document.baseURI).href;
+    $('mpPoolBack').focus();
+  } else {
+    $('mpPoolTab').focus();
+  }
+}
+$('mpPoolTab').onclick = () => togglePool($('mpPoolPanel').hidden);
+$('mpPoolBack').onclick = () => togglePool(false);
 let projectView=false;
 function renderProjectCards(){
- const scroll=$('calendarScroll');if(!$('projectViewToggle')){const bar=document.createElement('div');bar.className='mp-view-toggle';bar.innerHTML='<button class="btn" id="projectViewToggle" type="button" aria-pressed="false">Compact project view</button><a class="btn" href="operations-center.html?view=people" target="_blank" rel="noopener">PM rosters & available pool ↗</a>';scroll.before(bar);const cards=document.createElement('div');cards.id='compactProjects';cards.className='mp-project-grid';scroll.after(cards);$('projectViewToggle').onclick=()=>{projectView=!projectView;renderProjectCards()};cards.onclick=e=>{const b=e.target.closest('[data-edit-job]');if(b)openJob(b.dataset.editJob)};}
+ const scroll=$('calendarScroll');if(!$('projectViewToggle')){const bar=document.createElement('div');bar.className='mp-view-toggle';bar.innerHTML='<button class="btn" id="projectViewToggle" type="button" aria-pressed="false">Compact project view</button>';scroll.before(bar);const cards=document.createElement('div');cards.id='compactProjects';cards.className='mp-project-grid';scroll.after(cards);$('projectViewToggle').onclick=()=>{projectView=!projectView;renderProjectCards()};cards.onclick=e=>{const b=e.target.closest('[data-edit-job]');if(b)openJob(b.dataset.editJob)};}
  $('projectViewToggle').setAttribute('aria-pressed',String(projectView));$('projectViewToggle').textContent=projectView?'Show weekly calendar':'Compact project view';scroll.hidden=projectView;$('compactProjects').hidden=!projectView;
  const days=weekDates(),groups=new Map();days.flatMap(visibleJobs).forEach(j=>{const key=(j.number||j.name)+'|'+displayDivision(j);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(j)});
  $('compactProjects').innerHTML=[...groups.values()].map(jobs=>{const first=jobs[0],crew=new Set(jobs.flatMap(j=>(j.assignments||[]).map(a=>a.employeeId))),hours=jobs.reduce((n,j)=>n+(j.assignments||[]).reduce((n,a)=>n+(Number(a.hours)||0),0),0);return `<article class="mp-project-card"><div><span class="label">${esc(first.number||'No job number')} · ${esc(displayDivision(first))}</span><h2>${esc(first.name)}</h2></div><div class="mp-project-days">${days.map((d,i)=>{const matches=jobs.filter(j=>j.date===d);return `<div><span>${['M','T','W','T','F','S','S'][i]}</span><b class="${matches.length?'scheduled':''}" aria-label="${esc(d)}: ${matches.length?'Scheduled':'Not scheduled'}">${matches.length?'●':'–'}</b></div>`}).join('')}</div><p>${crew.size} employees · ${hours} scheduled hours · ${new Set(jobs.map(j=>j.date)).size} days</p><details><summary>Daily crew & hours</summary>${jobs.map(j=>`<div class="mp-project-day-detail"><strong>${esc(short(j.date))}</strong><button class="btn" data-edit-job="${esc(j.id)}">Edit day</button><div class="staff">${groupedAssignments(j)||'No crew assigned'}</div></div>`).join('')}</details></article>`}).join('')||'<p class="empty">No projects match this week and these filters.</p>';
