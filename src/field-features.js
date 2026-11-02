@@ -6,16 +6,81 @@ export const date=v=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(v))return false;const d=new
 export function weekDays(week){fail(date(week),'Choose a valid week.');const start=new Date(week+'T12:00:00Z');fail(start.getUTCDay()===1,'Week must begin on Monday.');return Array.from({length:5},(_,i)=>{const d=new Date(start);d.setUTCDate(d.getUTCDate()+i);return d.toISOString().slice(0,10)});}
 export function eligibility(record){if(!record)return {status:'Awaiting approval',hours:0};const days=weekDays(record.week),approved=days.every(d=>record.days?.some(x=>x.date===d&&x.status==='present'&&x.approved&&x.hours>0)),hours=(record.days||[]).reduce((sum,d)=>sum+(d.approved&&d.status==='present'?Number(d.hours)||0:0),0);return {status:approved&&hours>=40?'Eligible':approved?'Below 40 hours':'Awaiting full-week approval',hours};}
 export const initial=group=>({version:1,records:[],events:[],receipts:[],...(group==='people'?{owners:{},projects:{}}:group==='ppe'?{items:[],checkouts:[],requests:[]}:group==='fleet'?{vehicles:[],inspections:[],maintenance:[]}:group==='attendance'?{approvals:[]}:group==='alerts'?{alerts:[]}: {})});
+export function centralDate(time) {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).format(new Date(time));
+}
+
+export function resolveReleases(people, now) {
+  const today = centralDate(now);
+  for (const [employeeId, owner] of Object.entries(people.owners)) {
+    if (owner.pmId && owner.releaseOn && owner.releaseOn <= today) {
+      people.owners[employeeId] = {
+        pmId: null, availableFrom: owner.releaseOn, releasedBy: owner.scheduledBy
+      };
+    }
+  }
+  return people;
+}
+
+function approveRoster(doc, body, ctx) {
+  const { user, can, employees, owners, now } = ctx;
+  fail(can(user, 'manpower', 'approve') || can(user, 'production', 'approve'), 'PM permission required.', 403);
+  fail(body.confirm === true, 'Confirm the selected attendance entries.');
+  fail(Array.isArray(body.employeeIds) && body.employeeIds.length > 0, 'Select at least one employee.');
+  const ids = [...new Set(body.employeeIds)];
+  const roster = employees.filter(e => ids.includes(e.id) && !e.archived && !e.isArchived && owners[e.id]?.pmId === user.id);
+  fail(roster.length === ids.length, 'The roster changed. Refresh and review your selection.', 409);
+  const weekdays = weekDays(body.week);
+  fail(Array.isArray(body.dates) && body.dates.length > 0 && body.dates.every(d => weekdays.includes(d) && d <= centralDate(now)), 'Select completed workdays in this week.');
+  const hours = Number(body.hours);
+  fail(['present', 'absent'].includes(body.status) && Number.isFinite(hours) && (body.status === 'present' ? hours > 0 && hours <= 24 : hours === 0), 'Check the attendance status and hours.');
+  const updates = roster.map(employee => {
+    const id = employee.id + '|' + body.week;
+    const prior = doc.approvals.find(record => record.id === id);
+    const days = weekdays.map(date => {
+      const saved = prior?.days.find(day => day.date === date);
+      if (!body.dates.includes(date)) return saved || {date, status:'pending', hours:0, approved:false};
+      fail(!saved?.approved || body.replace === true, 'Some selected entries are already approved. Review them and enable replacement to continue.', 409);
+      return {date, status:body.status, hours, approved:true, by:user.displayName, userId:user.id, at:now};
+    });
+    return {...prior, id, employeeId:employee.id, employeeName:employee.name, week:body.week, days, updatedAt:now, updatedBy:user.displayName};
+  });
+  const updatedIds = new Set(updates.map(record => record.id));
+  doc.approvals = doc.approvals.filter(record => !updatedIds.has(record.id)).concat(updates);
+}
+
 export function applyFeature(group,doc,b,ctx){
  const {user,can,id,now,employees=[],managers=[],projects=[]}=ctx;const need=(module,level)=>fail(can(user,module,level),'This action requires '+module+' '+level+' permission.',403);const pm=()=>fail(user.owner||can(user,'manpower','approve')||can(user,'production','approve'),'PM approval permission required.',403);const employee=()=>{const e=employees.find(e=>String(e.id)===String(b.employeeId)&&!e.archived&&!e.isArchived);fail(e,'Select an active employee.');return e};
  const event=(text)=>{doc.events.unshift({id:id(),text,by:user.displayName,userId:user.id,at:now});doc.events=doc.events.slice(0,1000)};
  if(group==='people'){
   pm();
+  resolveReleases(doc, now);
+  if (b.action === 'scheduleRelease' || b.action === 'cancelRelease') {
+    const person = employee();
+    const current = doc.owners[person.id];
+    fail(current?.pmId && (user.owner || current.pmId === user.id), 'Only the assigned PM or owner may change this release.', 403);
+    if (b.action === 'scheduleRelease') {
+      fail(date(b.releaseOn) && b.releaseOn > centralDate(now), 'Choose a future release date.');
+      current.releaseOn = b.releaseOn;
+      current.scheduledBy = user.displayName;
+      event('Scheduled release of ' + person.name + ' for ' + b.releaseOn);
+    } else {
+      fail(current.releaseOn, 'There is no scheduled release to cancel.', 409);
+      delete current.releaseOn;
+      delete current.scheduledBy;
+      event('Canceled scheduled release for ' + person.name);
+    }
+  } else
   if(b.action==='assign'||b.action==='claim'||b.action==='release'){
    const e=employee(),current=doc.owners[e.id];
    if(b.action==='release'){fail(user.owner||current?.pmId===user.id,'Only the assigned PM or owner can release this employee.',403);doc.owners[e.id]={pmId:null,releasedAt:now,releasedBy:user.displayName,note:clean(b.note),availableFrom:date(b.availableFrom||'')?b.availableFrom:null};event('Released '+e.name+' to the available pool');}
    else {const target=b.action==='claim'?user.id:clean(b.pmId,100);fail(managers.some(m=>m.id===target),'Select an active PM.');if(b.action==='assign')fail(user.owner,'Only the owner can set another PM’s roster.',403);else fail(!current?.pmId,'This employee already belongs to a PM. Refresh the pool.',409);doc.owners[e.id]={pmId:target,assignedAt:now,assignedBy:user.displayName};event('Assigned '+e.name+' to '+managers.find(m=>m.id===target).displayName);}
   }else if(b.action==='projectTeam'){fail(user.owner,'Only the owner can assign project dashboard access.',403);fail(projects.some(p=>p.id===b.projectId),'Select an existing production project.');fail(!b.pmId||managers.some(m=>m.id===b.pmId),'Select an active PM.');const leads=[...new Set(b.leadIds||[])];fail(leads.length<=30&&leads.every(id=>ctx.leads.some(u=>u.id===id)),'Select active job leads.');doc.projects[b.projectId]={pmId:b.pmId||null,leadIds:leads,updatedBy:user.displayName,updatedAt:now};event('Updated project dashboard assignments');}else throw new FeatureError('Unknown roster action.');
+ }else if(group==='attendance' && b.action==='approveRoster'){
+  approveRoster(doc,b,ctx);
+  event('Approved roster attendance for '+b.employeeIds.length+' employees · '+b.week);
  }else if(group==='attendance'){
   fail(user.owner||can(user,'production','edit')||can(user,'manpower','approve'),'PM or job-lead permission required.',403);const e=employee(),days=weekDays(b.week);
   fail(Array.isArray(b.days)&&b.days.length===5,'Enter all five weekdays.');fail(new Set(b.days.map(d=>d.date)).size===5,'Dates must be unique.');
