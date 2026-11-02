@@ -2,3 +2,14 @@
 @media print{.oc-nav,.oc-heading button,.oc-form,.oc-filters,.actions,#ocStatus{display:none!important}.oc-card{break-inside:avoid;border:1px solid #ccc;padding:16px;margin:12px 0}.oc-app{color:#142b1e;background:white}}
 
 .oc-app .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 15px;text-decoration:none;white-space:normal;text-align:center;gap:8px}.oc-app .actions{display:flex;gap:8px;flex-wrap:wrap}.oc-app .field>label{display:block;margin-bottom:7px;font-size:12px;font-weight:650}.oc-app .eyebrow{font-size:10px;letter-spacing:.16em;color:var(--ui-accent)}.oc-app .oc-form label:has([type=checkbox]){display:flex;gap:10px;align-items:flex-start}.oc-app input[type=checkbox]{width:18px;min-height:18px;flex-shrink:0}.oc-app [hidden]{display:none!important}
+
+.crew-set{border:1px solid var(--ui-line);border-radius:12px;min-width:0;padding:16px}
+.crew-set legend,.single-attendance summary,.release-options summary{font-weight:650}
+.crew-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,165px),1fr));gap:8px;margin-top:12px}
+.oc-app .crew-choice{display:flex;gap:8px;align-items:center!important;border:1px solid var(--ui-line);border-radius:8px;padding:10px;cursor:pointer}
+.crew-choice:has(:checked){background:var(--ui-tint)}.crew-choice:has(:disabled){opacity:.52}
+.batch-summary{padding:12px;background:var(--ui-tint);border-radius:8px}
+.single-attendance,.release-options{border:1px solid var(--ui-line);border-radius:10px;padding:12px;margin:12px 0}
+.single-attendance summary,.release-options summary{cursor:pointer;padding:4px}
+.release-options{margin:0}.release-options .oc-form,.single-attendance>.field{margin-top:12px}
+.oc-app .crew-set input,.oc-app .crew-choice input{margin:0}
