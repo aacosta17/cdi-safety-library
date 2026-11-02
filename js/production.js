@@ -29,12 +29,27 @@ function renderEmployeeRoster(){
  $('rosterCards').innerHTML=people.length?people.map(e=>`<button type="button" class="roster-card ${assigned.has(String(e.id))?'selected':''}" data-resource-toggle="${escapeHtml(e.id)}" aria-pressed="${assigned.has(String(e.id))}" ${!state.jobId||!has('edit')?'disabled':''}><div class="roster-avatar">${escapeHtml(e.name.split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase())}</div><div><b>${escapeHtml(e.name)}</b><span>${escapeHtml([e.department,e.classification].filter(Boolean).join(' · ')||'Classification not assigned')}</span></div><strong class="resource-indicator">${assigned.has(String(e.id))?'Assigned ✓':'+ Assign'}</strong></button>`).join(''):'<p class="roster-empty">No matching employees, or the shared directory is not available.</p>';
  const summary=$('assignedResources');if(summary)summary.innerHTML=assigned.size?(state.data?.resources||[]).map(r=>`<span class="assigned-chip">${escapeHtml(r.employee_name)}</span>`).join(''):'<p class="sub">No employees assigned to this project yet. Select employees from the directory below.</p>';
 }
-function message(m='',good=false){const el=$('banner');el.hidden=!m;el.className='message'+(good?' good':'');el.textContent=m;if(m)el.scrollIntoView({behavior:'smooth',block:'nearest'});}
+function message(m='',good=false){const el=$('banner');el.hidden=!m;el.className='message'+(good?' good':'');el.textContent=m;if(m&&!good)el.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'nearest'});}
 async function api(url,options={}){const r=await fetch(url,{credentials:'same-origin',cache:'no-store',...options,headers:{'X-Field-Request':'1',...(options.body&&! (options.body instanceof FormData)?{'Content-Type':'application/json'}:{}),...(options.headers||{})}});let j;try{j=await r.json()}catch{throw Error('The project service returned an unreadable response. Refresh to try again.')}if(!r.ok)throw Error(j.error||`Request failed (${r.status})`);return j;}
 const post=(action,p={})=>api('/api/production',{method:'POST',body:JSON.stringify({action,jobId:state.jobId,...p})});
-async function save(action,p){try{message('');const r=await post(action,p);await refresh(state.jobId);message('Saved successfully.',true);return r}catch(e){message(e.message);throw e}}
-function formSubmit(id,handler){$(id).addEventListener('submit',async e=>{e.preventDefault();const btn=e.submitter||$(id).querySelector('button[type=submit]');if(btn)btn.disabled=true;try{await handler(data(e.target),e.target)}catch(e){if(!e.handled)message(e.message)}finally{if(btn)btn.disabled=false}})}
-function setTab(tab){if(reportMode&&tab!==reportMode)return;state.tab=tab;all('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));all('[data-panel]').forEach(el=>el.hidden=el.dataset.panel!==tab)}
+async function save(action,p){try{message('');const jobId=state.jobId;const r=await post(action,p);if(state.jobId===jobId){const loaded=await refresh(jobId);if(!loaded){const note=document.createElement('p');note.textContent='Your changes were saved. Reload the project to see the latest data; do not submit again.';$('banner').prepend(note);return {...r,refreshFailed:true};}}message('Saved successfully.',true);return r}catch(e){message(e.message);throw e}}
+const pendingForms=new WeakSet();let pendingFormCount=0;const contextDisabled=new Map();
+function lockProjectContext(lock){
+ if(lock){if(pendingFormCount++===0)for(const id of ['jobSelect','backProjects','newJobBtn','deleteProjectBtn','refreshBtn']){const el=$(id);if(el){contextDisabled.set(el,el.disabled);el.disabled=true;}}}
+ else if(--pendingFormCount===0){for(const [el,disabled] of contextDisabled)el.disabled=disabled;contextDisabled.clear();}
+}
+
+function formSubmit(id,handler){const form=$(id);form.addEventListener('submit',async e=>{
+ e.preventDefault();if(pendingForms.has(form))return;pendingForms.add(form);lockProjectContext(true);
+ const btn=e.submitter||form.querySelector('button[type=submit]'),label=btn?.textContent;
+ let feedback=form.querySelector('.form-feedback');if(!feedback){feedback=document.createElement('p');feedback.className='form-feedback';feedback.setAttribute('role','status');feedback.setAttribute('aria-atomic','true');form.append(feedback);}
+ feedback.hidden=true;form.setAttribute('aria-busy','true');
+ if(btn){btn.disabled=true;btn.setAttribute('aria-busy','true');btn.textContent=['dailyForm','lookaheadForm'].includes(id)?'Submitting…':'Saving…';}
+ try{await handler(data(form),form);feedback.textContent=['dailyForm','lookaheadForm'].includes(id)?'Report submitted. Your team can review it in Submitted reports.':'Changes saved.';feedback.className='form-feedback';feedback.hidden=false;}
+ catch(err){feedback.textContent=err.message||'Unable to save. Your entries are still here; try again.';feedback.className='form-feedback error';feedback.hidden=false;feedback.tabIndex=-1;feedback.focus({preventScroll:true});feedback.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});}
+ finally{pendingForms.delete(form);lockProjectContext(false);form.removeAttribute('aria-busy');if(btn){btn.disabled=id==='jobEdit'&&!has('edit');btn.removeAttribute('aria-busy');btn.textContent=label;}}
+ });}
+function setTab(tab){if(reportMode&&tab!==reportMode)return;state.tab=tab;all('.tab').forEach(b=>{const active=b.dataset.tab===tab;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active));b.tabIndex=active?0:-1;});all('[data-panel]').forEach(el=>el.hidden=el.dataset.panel!==tab)}
 function renderProjectGallery(){
  const query=($('projectSearch')?.value||'').toLowerCase().trim(),division=$('projectDivision')?.value||'all';
  const jobs=state.jobs.filter(j=>(division==='all'||(j.division||'unassigned')===division)&&(!query||[j.title,j.code,j.location,j.project_manager].join(' ').toLowerCase().includes(query)));
@@ -43,7 +58,7 @@ function renderProjectGallery(){
 }
 const divisionLabel=v=>({electrical:'Electrical',security:'Security',data:'Data',fire_alarm:'Fire Alarm',mixed:'Mixed',unassigned:'Unassigned'})[v]||'Unassigned';
 let refreshSequence=0;
-async function refresh(wanted=state.jobId||(reportMode?pageParams.get('jobId')||'':'')){const sequence=++refreshSequence;document.body.classList.add('is-loading');$('app').setAttribute('aria-busy','true');$('printBtn').disabled=true;try{
+async function refresh(wanted=state.jobId||(reportMode?pageParams.get('jobId')||'':'')){const sequence=++refreshSequence;document.body.classList.add('is-loading');$('app').setAttribute('aria-busy','true');$('refreshBtn').disabled=true;$('refreshBtn').setAttribute('aria-busy','true');$('printBtn').disabled=true;try{
  const r=await api('/api/production');if(sequence!==refreshSequence)return;state.jobs=r.jobs||[];state.user=r.user;
  const select=$('jobSelect');select.innerHTML='<option value="">Select a project…</option>'+state.jobs.map(j=>`<option value="${escapeHtml(j.id)}">${escapeHtml(j.code)} · ${escapeHtml(j.title)}</option>`).join('');
  state.jobId=(wanted&&state.jobs.some(j=>j.id===wanted))?wanted:(reportMode?state.jobs[0]?.id||'':'');select.value=state.jobId;
@@ -54,13 +69,13 @@ async function refresh(wanted=state.jobId||(reportMode?pageParams.get('jobId')||
  $('deleteProjectBtn').hidden=!!reportMode||!state.jobId||!state.user?.owner;
  if(state.jobId){const detail=await api('/api/production?jobId='+encodeURIComponent(state.jobId));if(sequence!==refreshSequence)return;if(!detail.job)throw Error('The project response did not include job details.');state.data=detail;$('content').hidden=false;$('noJob').hidden=true;render();renderEmployeeRoster();if(!reportMode){const u=encodeURIComponent(state.jobId);$('dailyReportLink').href='production.html?mode=report&jobId='+u;$('lookaheadLink').href='production.html?mode=lookahead&jobId='+u;}}
  else{state.data=null;$('content').hidden=true;$('noJob').hidden=!reportMode;}
- message('');
- }catch(e){if(sequence!==refreshSequence)return;message('Production data could not be loaded: '+e.message);const retry=document.createElement('button');retry.type='button';retry.className='btn';retry.textContent='Try again';retry.addEventListener('click',()=>refresh(wanted));$('banner').append(document.createElement('br'),retry);$('content').hidden=true;
+ message('');return true;
+ }catch(e){if(sequence!==refreshSequence)return false;message('Production data could not be loaded: '+e.message);const retry=document.createElement('button');retry.type='button';retry.className='btn';retry.textContent='Try again';retry.addEventListener('click',()=>refresh(wanted));$('banner').append(document.createElement('br'),retry);$('content').hidden=true;
  if(reportMode&&/permission|access|sign.in|unauthoriz/i.test(e.message)){
   const back='/production.html?mode='+encodeURIComponent(reportMode)+(pageParams.get('jobId')?'&jobId='+encodeURIComponent(pageParams.get('jobId')):'');
   $('fieldLoginLink').href='index.html?returnTo='+encodeURIComponent(back);$('fieldLoginHelp').hidden=false;
  }
-}finally{if(sequence===refreshSequence){document.body.classList.remove('is-loading');$('app').setAttribute('aria-busy','false');$('printBtn').disabled=!state.jobId||!state.data||$('content').hidden;}}}
+return false;}finally{if(sequence===refreshSequence){document.body.classList.remove('is-loading');$('app').setAttribute('aria-busy','false');$('refreshBtn').disabled=pendingFormCount>0;$('refreshBtn').removeAttribute('aria-busy');$('printBtn').disabled=!state.jobId||!state.data||$('content').hidden;}}}
 function metric(name,value,description='',cls=''){return `<div class="metric"><span class="name">${escapeHtml(name)}</span><strong class="${cls}">${escapeHtml(value)}</strong><small>${escapeHtml(description)}</small></div>`}
 function render(){const d=state.data,j=d.job,actual=num(j.actual_hours),budget=num(j.budget_hours),remaining=budget-actual,pct=budget>0?actual/budget*100:0;const mat=d.materials,req=d.requests,rep=d.reports,look=d.lookaheads;
  $('jobInfo').textContent=`${divisionLabel(j.division)} · ${j.project_manager?'PM: '+j.project_manager+' · ':''}${j.status.replace('_',' ')} · ${rep.length} report(s)`;
@@ -93,7 +108,7 @@ function collectAttendance(){return all('#attendanceRows .entry').map(e=>({name:
 function collectUsed(){return all('#usedRows .entry').map(e=>({id:e.querySelector('[data-material]').value,qty:num(e.querySelector('[data-qty]').value)})).filter(e=>e.id&&e.qty>0)}
 function collectNotes(){return all('#personnelRows .entry').map(e=>({employee:e.querySelector('[data-employee]').value.trim(),category:e.querySelector('[data-category]').value,observation:e.querySelector('[data-observation]').value.trim()})).filter(x=>x.employee&&x.observation)}
 function collectTasks(){return all('#taskRows .entry').map(e=>({task:e.querySelector('[data-task]').value.trim(),area:e.querySelector('[data-area]').value.trim(),readiness:e.querySelector('[data-readiness]').value})).filter(x=>x.task)}
-async function uploadPhotos(id){const input=$(id),files=[...input.files].slice(0,8),keys=[];if([...input.files].length>8)throw Error('Maximum eight photos per report.');for(const file of files){const fd=new FormData();fd.append('jobId',state.jobId);fd.append('photo',file);const r=await api('/api/production-photo',{method:'POST',body:fd});keys.push(r.key)}return keys}
+async function uploadPhotos(id){const input=$(id),files=[...input.files].slice(0,8),keys=[];if([...input.files].length>8)throw Error('Maximum eight photos per report.');for(const file of files){if(file.size>5*1024*1024)throw Error(file.name+' exceeds the 5 MB photo limit.');if(!['image/jpeg','image/png','image/webp'].includes(file.type))throw Error(file.name+' must be a JPG, PNG or WebP image.');}for(const file of files){const fd=new FormData();fd.append('jobId',state.jobId);fd.append('photo',file);const r=await api('/api/production-photo',{method:'POST',body:fd});keys.push(r.key)}return keys}
 async function importCrew(){try{const r=await api('/api/workspace-data?key=manpower');if(!r.data)throw Error('No shared Manpower schedule has been published yet.');const d=r.data,day=$('dailyForm').elements.reportDate.value,job=state.data.job,found=[];
  // The existing Manpower Planner stores a shared document rather than normalized shifts.
  // Find employees in day/job rows conservatively; never assume the scheduled hours are actual.
@@ -173,9 +188,11 @@ function collectDailyRequests(){return all('#dailyRequestRows .entry').map(row=>
 setupProjectScreen();
 $('jobSelect').addEventListener('change',e=>{state.jobId=e.target.value;state.tab=reportMode||'overview';refresh(state.jobId)});
 $('refreshBtn').addEventListener('click',()=>refresh(state.jobId));$('printBtn').addEventListener('click',()=>printReport(false));$('printWeekBtn').addEventListener('click',()=>printReport(true));
-$('newJobBtn').addEventListener('click',()=>{$('jobModal').hidden=false;$('jobModal').scrollIntoView({behavior:'smooth'})});$('cancelJob').addEventListener('click',()=>{$('jobModal').hidden=true});
-all('.tab').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));all('[data-goto]').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.goto)));
-document.addEventListener('click',e=>{const b=e.target.closest('[data-remove]');if(b){b.closest('.entry').remove();updateHours()}});
+$('newJobBtn').addEventListener('click',()=>{$('jobModal').hidden=false;$('jobModal').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});$('newJobForm').elements.code.focus({preventScroll:true})});$('cancelJob').addEventListener('click',()=>{$('jobModal').hidden=true;$('newJobBtn').focus()});
+$('tabs').setAttribute('role','tablist');$('tabs').setAttribute('aria-label','Project sections');
+all('.tab').forEach(b=>{const name=b.dataset.tab;b.id='project-tab-'+name;b.setAttribute('role','tab');b.setAttribute('aria-controls','project-panel-'+name);const panel=document.querySelector('[data-panel="'+name+'"]');if(panel){panel.id='project-panel-'+name;panel.setAttribute('role','tabpanel');panel.setAttribute('aria-labelledby',b.id);panel.tabIndex=0;}b.addEventListener('click',()=>setTab(name));});
+$('tabs').addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;const tabs=all('.tab'),current=tabs.indexOf(document.activeElement);if(current<0)return;e.preventDefault();const next=e.key==='Home'?0:e.key==='End'?tabs.length-1:(current+(e.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;setTab(tabs[next].dataset.tab);tabs[next].focus();tabs[next].scrollIntoView({block:'nearest',inline:'nearest'});});all('[data-goto]').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.goto)));
+document.addEventListener('click',e=>{const b=e.target.closest('[data-remove]');if(b){const row=b.closest('.entry'),container=row.parentElement,next=(row.nextElementSibling||row.previousElementSibling)?.querySelector('input,select');row.remove();updateHours();(next||container.closest('.segment')?.querySelector('button'))?.focus()}});
 $('attendanceRows').addEventListener('input',updateHours);$('attendanceRows').addEventListener('change',e=>{if(e.target.matches('[data-status]')&&e.target.value!=='present')e.target.closest('.entry').querySelector('[data-hours]').value=0;updateHours()});
 $('requestList').addEventListener('change',async e=>{if(!e.target.matches('[data-request]'))return;try{await save('requestStatus',{requestId:e.target.dataset.request,status:e.target.value})}catch{}});
 $('rosterQuery').addEventListener('input',renderEmployeeRoster);$('rosterDept').addEventListener('change',renderEmployeeRoster);

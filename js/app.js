@@ -5,15 +5,29 @@ function openVisorAgreement(){openFormReader(getVisorAgreementUrl(),'Z87 Visor A
 function openVisorAgreementPrint(){window.open(getVisorAgreementUrl(),'_blank','noopener')}
 
 // BUILD v21 — reusable in-page Forms reader
-let formPdfDoc=null,formPageNum=1,formRendering=false,formPendingPage=null,formCurrentFile='';
+let formPdfDoc=null,formPageNum=1,formRendering=false,formPendingPage=null,formCurrentFile='',formLoadVersion=0,formRenderTask=null,formReaderTrigger=null;
+document.addEventListener('click',e=>{const launch=e.target.closest('#forms .form-card .form-view-btn');if(launch)formReaderTrigger=launch;},true);
+function stopFormRender(){if(formRenderTask){try{formRenderTask.cancel()}catch(_){}formRenderTask=null;}formRendering=false;formPendingPage=null;}
+function formControls(){E('formPrev').disabled=!formPdfDoc||formRendering||formPageNum<=1;E('formNext').disabled=!formPdfDoc||formRendering||formPageNum>=formPdfDoc.numPages;E('formPageInput').disabled=!formPdfDoc;}
 async function openFormReader(file,title){
-  const panel=E('formReaderPanel'),status=E('formStatus');
-  panel.classList.remove('hidden');E('formReaderTitle').textContent=title;E('formReaderOpen').href=file;formCurrentFile=file;formPdfDoc=null;formPageNum=1;E('formPageCount').textContent='—';E('formPageInput').value=1;status.style.display='block';status.textContent='Loading form…';
-  panel.scrollIntoView({behavior:'smooth',block:'start'});
-  try{if(typeof pdfjsLib==='undefined')throw new Error('PDF reader unavailable');pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';formPdfDoc=await pdfjsLib.getDocument(file).promise;E('formPageCount').textContent=formPdfDoc.numPages;status.style.display='none';renderFormPage(1)}catch(err){status.textContent='This form could not load here. Use Open / Print above.';console.error(err)}
+ const version=++formLoadVersion,panel=E('formReaderPanel'),status=E('formStatus');if(!formReaderTrigger?.isConnected)formReaderTrigger=document.activeElement;stopFormRender();
+ panel.classList.remove('hidden');panel.setAttribute('aria-busy','true');E('formReaderTitle').textContent=title;E('formReaderOpen').href=file;formCurrentFile=file;formPdfDoc=null;formPageNum=1;E('formPageCount').textContent='—';E('formPageInput').value=1;E('formCanvas').hidden=true;status.style.display='block';status.textContent='Loading form…';status.setAttribute('role','status');formControls();
+ panel.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'});
+ try{if(typeof pdfjsLib==='undefined')throw new Error('PDF reader unavailable');pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';const loaded=await pdfjsLib.getDocument(file).promise;if(version!==formLoadVersion)return;formPdfDoc=loaded;E('formPageCount').textContent=loaded.numPages;E('formPageInput').max=loaded.numPages;await renderFormPage(1);}
+ catch(err){if(version!==formLoadVersion)return;status.textContent='This form could not load here. Use Open / Print above.';status.style.display='block';panel.setAttribute('aria-busy','false');formControls();}
 }
-async function renderFormPage(num){if(!formPdfDoc)return;if(formRendering){formPendingPage=num;return}formRendering=true;formPageNum=Math.max(1,Math.min(Number(num)||1,formPdfDoc.numPages));const page=await formPdfDoc.getPage(formPageNum);const wrap=document.querySelector('#formReaderPanel .manual-canvas-wrap');const base=page.getViewport({scale:1});const maxWidth=Math.min(wrap.clientWidth||900,1000);const scale=Math.max(.5,maxWidth/base.width);const viewport=page.getViewport({scale});const canvas=E('formCanvas'),ctx=canvas.getContext('2d');const dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.floor(viewport.width*dpr);canvas.height=Math.floor(viewport.height*dpr);canvas.style.width=Math.floor(viewport.width)+'px';canvas.style.height=Math.floor(viewport.height)+'px';ctx.setTransform(dpr,0,0,dpr,0,0);await page.render({canvasContext:ctx,viewport}).promise;E('formPageInput').value=formPageNum;E('formPrev').disabled=formPageNum<=1;E('formNext').disabled=formPageNum>=formPdfDoc.numPages;formRendering=false;if(formPendingPage!==null){const p=formPendingPage;formPendingPage=null;renderFormPage(p)}}
-function formPrevPage(){if(formPdfDoc&&formPageNum>1)renderFormPage(formPageNum-1)}function formNextPage(){if(formPdfDoc&&formPageNum<formPdfDoc.numPages)renderFormPage(formPageNum+1)}function formJumpPage(v){if(formPdfDoc)renderFormPage(v)}function closeFormReader(){E('formReaderPanel').classList.add('hidden')}
+async function renderFormPage(num){
+ if(!formPdfDoc)return;if(formRendering){formPendingPage=num;return;}
+ const version=formLoadVersion,pdf=formPdfDoc;formRendering=true;formPageNum=Math.max(1,Math.min(Math.floor(Number(num)||1),pdf.numPages));formControls();
+ E('formReaderPanel').setAttribute('aria-busy','true');
+ try{const page=await pdf.getPage(formPageNum);if(version!==formLoadVersion)return;const wrap=document.querySelector('#formReaderPanel .manual-canvas-wrap'),base=page.getViewport({scale:1});const maxWidth=Math.max(1,Math.min((wrap.clientWidth||900)-32,1000));const viewport=page.getViewport({scale:maxWidth/base.width});const canvas=E('formCanvas'),ctx=canvas.getContext('2d'),dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.floor(viewport.width*dpr);canvas.height=Math.floor(viewport.height*dpr);canvas.style.width=Math.floor(viewport.width)+'px';canvas.style.height=Math.floor(viewport.height)+'px';ctx.setTransform(dpr,0,0,dpr,0,0);formRenderTask=page.render({canvasContext:ctx,viewport});await formRenderTask.promise;if(version!==formLoadVersion)return;canvas.hidden=false;E('formStatus').style.display='none';E('formPageInput').value=formPageNum;}
+ catch(err){if(version!==formLoadVersion)return;E('formStatus').textContent='This page could not be displayed. Use Open / Print above.';E('formStatus').style.display='block';E('formCanvas').hidden=true;}
+ finally{if(version===formLoadVersion){formRenderTask=null;formRendering=false;E('formReaderPanel').setAttribute('aria-busy','false');formControls();if(formPendingPage!==null){const next=formPendingPage;formPendingPage=null;renderFormPage(next);}}}
+}
+function formPrevPage(){if(formPdfDoc&&formPageNum>1)renderFormPage(formPageNum-1)}
+function formNextPage(){if(formPdfDoc&&formPageNum<formPdfDoc.numPages)renderFormPage(formPageNum+1)}
+function formJumpPage(v){if(formPdfDoc)renderFormPage(v)}
+function closeFormReader(){formLoadVersion++;stopFormRender();formPdfDoc=null;E('formReaderPanel').classList.add('hidden');E('formReaderPanel').setAttribute('aria-busy','false');if(formReaderTrigger?.isConnected)formReaderTrigger.focus({preventScroll:true});}
 
 const __BUILD_MARKER__="v21";
 const SAFETY_HUB_BUILD="v21";
@@ -959,7 +973,18 @@ function generatePTP(){
    E("s5").classList.add("hidden");E("output").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"});
  }catch(err){console.error(err);alert("PTP could not be generated: "+err.message)}
 }
-function renderLibrary(){const q=(E("libSearch").value||"").toLowerCase(),cat=E("libCategory").value,rows=LIBRARY.filter(e=>{const blob=(e.hazard+" "+e.control+" "+(e.task||"")+" "+(e.tags||[]).join(" ")+" "+e.category).toLowerCase();return(!q||blob.includes(q))&&(!cat||e.category===cat)});E("libStats").textContent=`Showing ${rows.length} of ${LIBRARY.length} records`;E("libResults").innerHTML=rows.slice(0,150).map(e=>`<div class="libitem"><h4>${esc(e.hazard)}<span class="badge">${esc(e.source)}</span></h4><p><b>Control:</b> ${esc(e.control)}</p>${e.task?`<p><b>Common task:</b> ${esc(e.task)}</p>`:""}</div>`).join("")}[...new Set(LIBRARY.map(x=>x.category))].sort().forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;E("libCategory").appendChild(o)});E("libSearch").addEventListener("input",renderLibrary);E("libCategory").addEventListener("change",renderLibrary);
+let libraryLimit=24;
+function renderLibrary(more=false){
+ if(more!==true)libraryLimit=24;
+ const q=(E("libSearch").value||"").trim().toLowerCase(),cat=E("libCategory").value;
+ const rows=LIBRARY.filter(e=>{const blob=(e.hazard+" "+e.control+" "+(e.task||"")+" "+(e.tags||[]).join(" ")+" "+e.category).toLowerCase();return(!q||blob.includes(q))&&(!cat||e.category===cat)});
+ const shown=Math.min(libraryLimit,rows.length);
+ E("libStats").textContent=`Showing ${shown} of ${rows.length} matching records · ${LIBRARY.length} in the library`;
+ E("libResults").innerHTML=rows.slice(0,shown).map(e=>`<article class="libitem"><h4>${esc(e.hazard)}<span class="badge">${esc(e.category)} · ${esc(e.source)}</span></h4><p><b>Control:</b> ${esc(e.control)}</p>${e.task?`<p><b>Common task:</b> ${esc(e.task)}</p>`:""}</article>`).join("")||'<div class="library-empty"><strong>No matching hazards</strong><p>Try a shorter search or reset the category filter.</p></div>';
+ let button=E('libMore');if(!button){button=document.createElement('button');button.id='libMore';button.type='button';button.className='btn library-more';button.addEventListener('click',()=>{const firstNew=libraryLimit;libraryLimit+=24;renderLibrary(true);const card=E('libResults').children[firstNew];if(card){card.tabIndex=-1;card.focus({preventScroll:true});card.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});}});E('libResults').after(button);}
+ button.hidden=shown>=rows.length;button.textContent=`Show ${Math.min(24,rows.length-shown)} more records`;
+}
+[...new Set(LIBRARY.map(x=>x.category))].sort().forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;E("libCategory").appendChild(o)});E("libSearch").addEventListener("input",renderLibrary);E("libCategory").addEventListener("change",renderLibrary);
 function safetyHubSelfCheck(){
  const problems=[];
  if(typeof getSelectedPermits!=="function")problems.push("Permit reader");

@@ -59,10 +59,16 @@ function showResources(){
 }
 
 let rows=[];const selected=n=>[...document.querySelectorAll(`input[name=${n}]:checked`)].map(x=>x.value);
-const status=s=>{$('status').textContent=s;$('status').hidden=!s;};
+let statusTimer;const status=s=>{clearTimeout(statusTimer);$('status').textContent=s;$('status').hidden=!s;if(s)statusTimer=setTimeout(()=>{$('status').hidden=true},7000);};
 function add(step,hazard,control){rows.push({step,hazard,control})}
+
+const taskQuestions={conduit:'Raceway material, size, fastening method and support verification',pull:'Cable type, pull length, pulling method and communication between ends',terminate:'Equipment / circuit identification, isolation owner and verification method',test:'Test scope, instrument rating and authorization',security:'Device locations, access method and affected active systems',core:'Surface material, drilling method, scan results and penetration approval',demo:'Removal limits, service identification and isolation confirmation',excavate:'Excavation dimensions, locate reference and competent person',hot:'Hot-work permit, combustible controls and fire-watch arrangements',lift:'Load weight, rated equipment, travel path and signal person',survey:'Survey boundaries, access and adjacent trade coordination'};
+const taskDrafts={};
+function taskDetails(){document.querySelectorAll('[data-task-detail]').forEach(e=>taskDrafts[e.dataset.taskDetail]=e.value);$('taskDetails').innerHTML=selected('task').map(id=>`<div class="field"><label for="detail-${id}">${escapeHtml(taskQuestions[id])}</label><textarea id="detail-${id}" data-task-detail="${id}" placeholder="Document what has been verified">${escapeHtml(taskDrafts[id]||'')}</textarea></div>`).join('');}
+document.querySelectorAll('input[name="task"]').forEach(e=>e.addEventListener('change',taskDetails));taskDetails();
+
 function generate(){const requiredFollowups=getFollowups();const chosen=selected('task'),context=selected('condition'),area=$('workarea').value.trim(),scope=$('scope').value.trim(),energy=$('energy').value,access=$('access').value,tools=$('equipment').value.trim(),special=$('special').value.trim();
- if(!scope||!chosen.length){status('Describe the work and select at least one specific task to generate a useful plan.');return}
+ if(!scope||!chosen.length){status('Describe the work and select at least one specific task to generate a useful plan.');$('scope').setAttribute('aria-invalid',String(!scope));const missing=!scope?$('scope'):$('taskOptions').querySelector('input');missing.focus();missing.scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});return}$('scope').removeAttribute('aria-invalid');
  rows=[];const contextHazards=context.map(c=>conditions.find(t=>t.id===c)).filter(Boolean);
  add(`Review the planned work with the crew: ${scope}. Confirm work area${area?': '+area:''}.`,
  'Incomplete task understanding, unknown site conditions and conflicting work activities.'+(special?' Project restrictions require verification.':''),
@@ -94,9 +100,11 @@ function generate(){const requiredFollowups=getFollowups();const chosen=selected
  });
  if(requiredFollowups.length&&!unresolved.length)add('Confirm that the described controls remain effective immediately before work begins.','Task conditions or work methods may change after this plan is prepared.','Review completed assessments with the crew, verify current work conditions and re-evaluate if the scope, equipment or hazards change.');
 
+ for(const el of document.querySelectorAll('[data-task-detail]')){const t=tasks.find(t=>t.id===el.dataset.taskDetail);if(el.value.trim())add('Verify task details for '+t.name+': '+el.value.trim(),t.hazard,'Confirm these entered details with the task lead and apply the approved task controls. '+t.control);else unresolved.push(t.name+' details');}
+ for(const [id,label] of [['crewBrief','Crew briefing'],['permitPlan','Work permits'],['rescuePlan','Emergency / rescue arrangements'],['changePlan','Stop-work and restart']]){const value=$(id).value.trim();if(value)add(label+': '+value,'Incomplete coordination or unverified work arrangements.','Review these arrangements with the crew before starting; stop and reassess if they change.');else unresolved.push(label);}
  if(tools)add(`Inspect and safely use the specified tools and equipment: ${tools}.`,'Defective tools, improper use and tool-specific electrical, mechanical or struck-by hazards.','Use appropriate inspected tools, qualified operators when required, manufacturer instructions and equipment-specific guards and PPE.');
  add('Inspect completed work, remove debris and restore the work area for turnover.','Trips, leftover sharp material, unsecured equipment and incomplete identification of changes.','Perform a final crew walkdown, remove waste, confirm the work area is safe, label/secure equipment and report unresolved conditions.');
- draw();$('results').hidden=false;$('results').scrollIntoView({behavior:'smooth',block:'start'});status('');
+ draw();$('results').hidden=false;$('results').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'});status('');
  $('ptpReadiness').hidden=!unresolved.length;
  if(unresolved.length)$('ptpReadiness').textContent='DRAFT — '+unresolved.length+' task-specific item(s) not verified: '+unresolved.join('; ')+'. Confirm these requirements with the crew before relying on this PTP.';
  showResources();
@@ -104,12 +112,17 @@ function generate(){const requiredFollowups=getFollowups();const chosen=selected
 }
 function lists(){return{steps:rows.map((r,i)=>`${i+1}. ${r.step}`).join('\n\n'),hazards:rows.map((r,i)=>`${i+1}. ${r.hazard}`).join('\n\n'),controls:rows.map((r,i)=>`${i+1}. ${r.control}`).join('\n\n')}}
 function draw(){const v=lists();$('stepsOutput').value=v.steps;$('hazardsOutput').value=v.hazards;$('controlsOutput').value=v.controls;$('stepEditor').innerHTML=rows.map((r,i)=>`<div class="editline"><span>${i+1}.</span><textarea data-row="${i}" data-col="step" aria-label="Work step ${i+1}">${escapeHtml(r.step)}</textarea><textarea data-row="${i}" data-col="hazard" aria-label="Hazard ${i+1}">${escapeHtml(r.hazard)}</textarea><textarea data-row="${i}" data-col="control" aria-label="Mitigation ${i+1}">${escapeHtml(r.control)}</textarea></div>`).join('')}
-async function copy(text){try{await navigator.clipboard.writeText(text);status('Copied to clipboard.')}catch{const e=document.createElement('textarea');e.value=text;document.body.append(e);e.select();const worked=document.execCommand('copy');e.remove();status(worked?'Copied to clipboard.':'Clipboard access is unavailable here; select the text and copy it manually.')}}
+async function copy(text,button){try{await navigator.clipboard.writeText(text);status('Copied to clipboard.');if(button){const label=button.textContent;button.textContent='Copied ✓';button.disabled=true;setTimeout(()=>{button.textContent=label;button.disabled=false},1500);}}catch{const e=document.createElement('textarea');e.value=text;document.body.append(e);e.select();const worked=document.execCommand('copy');e.remove();status(worked?'Copied to clipboard.':'Clipboard access is unavailable here; select the text and copy it manually.')}}
 document.querySelectorAll('input[name="task"],input[name="condition"]').forEach(el=>el.addEventListener('change',getFollowups));
 $('energy').addEventListener('change',getFollowups);$('access').addEventListener('change',getFollowups);getFollowups();
 $('generate').addEventListener('click',generate);
-$('copySteps').addEventListener('click',()=>copy($('stepsOutput').value));$('copyHazards').addEventListener('click',()=>copy($('hazardsOutput').value));$('copyControls').addEventListener('click',()=>copy($('controlsOutput').value));
-$('copyAll').addEventListener('click',()=>copy('WORK STEPS\n'+$('stepsOutput').value+'\n\nASSOCIATED HAZARDS\n'+$('hazardsOutput').value+'\n\nMITIGATIONS / CONTROLS\n'+$('controlsOutput').value));$('print').addEventListener('click',()=>window.print());
+$('copySteps').addEventListener('click',()=>copy($('stepsOutput').value,$('copySteps')));$('copyHazards').addEventListener('click',()=>copy($('hazardsOutput').value,$('copyHazards')));$('copyControls').addEventListener('click',()=>copy($('controlsOutput').value,$('copyControls')));
+$('copyAll').addEventListener('click',()=>copy('WORK STEPS\n'+$('stepsOutput').value+'\n\nASSOCIATED HAZARDS\n'+$('hazardsOutput').value+'\n\nMITIGATIONS / CONTROLS\n'+$('controlsOutput').value,$('copyAll')));function buildPtpPrint(){
+ let paper=$('ptpPrintOutput');if(!paper){paper=document.createElement('article');paper.id='ptpPrintOutput';document.body.append(paper);}
+ paper.innerHTML='<p class="ptp-print-kicker">FIELD MANAGEMENT / PRE-TASK PLAN</p><h1>Pre-task plan</h1>'+($('workarea').value.trim()?'<p><b>Work area:</b> '+escapeHtml($('workarea').value.trim())+'</p>':'')+['caution','ptpReadiness'].map(id=>$(id).hidden?'':'<p class="ptp-print-note">'+escapeHtml($(id).textContent)+'</p>').join('')+[['Work steps','stepsOutput'],['Associated hazards','hazardsOutput'],['Mitigations / controls','controlsOutput']].map(([title,id])=>'<section class="ptp-print-section"><h2>'+title+'</h2><p>'+escapeHtml($(id).value)+'</p></section>').join('')+'<p class="ptp-print-note">Review with the crew and verify actual site conditions, required controls and authorizations before work.</p>';
+}
+window.addEventListener('beforeprint',buildPtpPrint);$('print').addEventListener('click',()=>{buildPtpPrint();window.print();});
 $('applyEdits').addEventListener('click',()=>{document.querySelectorAll('#stepEditor [data-row]').forEach(el=>rows[Number(el.dataset.row)][el.dataset.col]=el.value.trim());draw();status('Updated all three numbered categories. Review before copying.')});
 $('startOver').addEventListener('click',()=>{if(!confirm('Clear the questionnaire and generated PTP content?'))return;location.reload()});
 })();
+
