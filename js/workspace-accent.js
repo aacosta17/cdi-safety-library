@@ -24,14 +24,14 @@ try{chosen=norm(localStorage.getItem(KEY))}catch(_){}
 try{if(parent!==window&&parent.origin===origin)chosen=norm(parent.FieldAppearance?.getColor?.()||chosen)}catch(_){}
 function mode(){return document.documentElement.dataset.theme==='light'?'light':'dark'}
 function palette(){
- const dark=mode()==='dark',bg=dark?'#17211d':'#ffffff';
+ const dark=mode()==='dark',bg=dark?'#161c25':'#ffffff';
  const accent=chosen===DEFAULT?(dark?'#b8ed83':'#347644'):readable(chosen,bg,dark?'#ffffff':'#000000');
- const feature=dark?mix(chosen,'#17211d',.30):mix(chosen,'#ffffff',.22);
+ const feature=dark?mix(chosen,'#161c25',.30):mix(chosen,'#ffffff',.22);
  return {
-  '--ui-accent':accent,'--ui-accent-ink':contrast('#101715',accent)>contrast('#ffffff',accent)?'#101715':'#ffffff',
+  '--ui-accent':accent,'--ui-accent-ink':contrast('#10141a',accent)>contrast('#ffffff',accent)?'#10141a':'#ffffff',
   '--ui-tint':mix(chosen,bg,dark?.77:.91),
   '--brand-color':chosen,'--brand-feature-bg':feature,
-  '--brand-feature-ink':contrast('#101715',feature)>contrast('#ffffff',feature)?'#101715':'#ffffff',
+  '--brand-feature-ink':contrast('#10141a',feature)>contrast('#ffffff',feature)?'#10141a':'#ffffff',
   '--brand-report':readable(chosen,'#ffffff','#000000'),
   '--brand-report-soft':mix(chosen,'#ffffff',.91)
  };
@@ -40,6 +40,7 @@ function paint(doc){
  const root=doc.documentElement;if(!root)return;
  const colors=palette();
  for(const [key,val] of Object.entries(colors))root.style.setProperty(key,val);
+ const meta=doc.querySelector('meta[name="theme-color"]');if(meta&&mode()==='dark')meta.content='#0d1117';
  doc.querySelectorAll('[data-accent-choice]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.accentChoice===chosen)));
  doc.querySelectorAll('.fw-accent-preview').forEach(el=>el.style.backgroundColor=chosen);
  const input=doc.getElementById('fwCustomAccent');if(input)input.value=chosen;
@@ -52,7 +53,7 @@ function paintFrame(frame){
    paint(doc);
    if(doc.head&&!doc.querySelector('link[href*="theme-colors.css"]')){
     const link=doc.createElement('link');link.id='fw-brand-colors-css';link.rel='stylesheet';
-    link.href=new URL('css/theme-colors.css?v=20261104-color',document.baseURI).href;doc.head.append(link);
+    link.href=new URL('css/theme-colors.css?v=20261104-darkfix',document.baseURI).href;doc.head.append(link);
    }
   }
   frame.contentWindow?.postMessage({type:'fw-brand-color',color:chosen},origin==='null'?'*':origin);
