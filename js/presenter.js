@@ -89,7 +89,7 @@ function togglePool(open) {
   document.body.classList.toggle('show-employee-pool', open);
   $('mpPoolTab').setAttribute('aria-expanded', String(open));
   if (open) {
-    $('mpPoolFrame').src = new URL('operations-center.html?view=people&surface=pool&v=20261102', document.baseURI).href;
+    $('mpPoolFrame').src = new URL('operations-center.html?view=people&surface=pool&v=20261106-setup', document.baseURI).href;
     $('mpPoolBack').focus();
   } else {
     $('mpPoolTab').focus();

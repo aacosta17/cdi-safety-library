@@ -1,6 +1,15 @@
 /* Global workspace color preference, layered over the existing light/dark toggle. */
 (()=>{'use strict';
-const KEY='fw-brand-color-v1',DEFAULT='#347644',origin=new URL(document.baseURI).origin;
+const KEY='fw-brand-color-v1',PREF_KEY='fw-page-setup-v1',SAVED_KEY='fw-saved-themes-v1',DEFAULT='#347644',origin=new URL(document.baseURI).origin;
+const DEFAULT_PREFS={background:'charcoal',fontSize:'normal',density:'comfortable',cardStyle:'rounded',intensity:'balanced',animations:'on'};
+const ALLOWED={background:['black','charcoal','midnight'],fontSize:['small','normal','large'],density:['compact','comfortable'],cardStyle:['square','rounded','extra'],intensity:['subtle','balanced','vibrant'],animations:['on','off']};
+const DARK_SURFACES={
+ black:['#08090c','#11141a','#1b2028','#252c36','#343d49'],
+ charcoal:['#0d1117','#161c25','#202936','#283443','#303c4d'],
+ midnight:['#0b1424','#132036','#1b2c45','#263a56','#334963']
+};
+function cleanPrefs(raw){const result={...DEFAULT_PREFS};if(raw&&typeof raw==='object')for(const [key,choices] of Object.entries(ALLOWED)){if(choices.includes(raw[key]))result[key]=raw[key]}return result}
+function readJSON(key,fallback){try{const value=JSON.parse(localStorage.getItem(key));return value===null?fallback:value}catch(_){return fallback}}
 const CHOICES=[
  ['Classic Green',DEFAULT],['Emerald','#16a34a'],['Teal','#0d9488'],['Cyan','#0891b2'],
  ['Blue','#2563eb'],['Royal Blue','#1d4ed8'],['Indigo','#4f46e5'],['Purple','#7c3aed'],
@@ -20,16 +29,18 @@ function readable(color,bg,toward){
  return toward;
 }
 let chosen=DEFAULT;
+let preferences=cleanPrefs(readJSON(PREF_KEY,{}));
 try{chosen=norm(localStorage.getItem(KEY))}catch(_){}
-try{if(parent!==window&&parent.origin===origin)chosen=norm(parent.FieldAppearance?.getColor?.()||chosen)}catch(_){}
+try{if(parent!==window&&parent.origin===origin){chosen=norm(parent.FieldAppearance?.getColor?.()||chosen);preferences=cleanPrefs(parent.FieldAppearance?.getPreferences?.()||preferences)}}catch(_){}
 function mode(){return document.documentElement.dataset.theme==='light'?'light':'dark'}
 function palette(){
- const dark=mode()==='dark',bg=dark?'#161c25':'#ffffff';
+ const dark=mode()==='dark',bg=dark?DARK_SURFACES[preferences.background][1]:'#ffffff';
  const accent=chosen===DEFAULT?(dark?'#b8ed83':'#347644'):readable(chosen,bg,dark?'#ffffff':'#000000');
- const feature=dark?mix(chosen,'#161c25',.30):mix(chosen,'#ffffff',.22);
+ const tintStrength=preferences.intensity==='subtle'?.91:preferences.intensity==='vibrant'?.62:.77;
+ const feature=dark?mix(chosen,bg,preferences.intensity==='subtle'?.80:preferences.intensity==='vibrant'?.16:.30):mix(chosen,'#ffffff',preferences.intensity==='subtle'?.70:preferences.intensity==='vibrant'?.08:.22);
  return {
   '--ui-accent':accent,'--ui-accent-ink':contrast('#10141a',accent)>contrast('#ffffff',accent)?'#10141a':'#ffffff',
-  '--ui-tint':mix(chosen,bg,dark?.77:.91),
+  '--ui-tint':mix(chosen,bg,dark?tintStrength:Math.min(.97,tintStrength+.14)),
   '--brand-color':chosen,'--brand-feature-bg':feature,
   '--brand-feature-ink':contrast('#10141a',feature)>contrast('#ffffff',feature)?'#10141a':'#ffffff',
   '--brand-report':readable(chosen,'#ffffff','#000000'),
@@ -38,6 +49,14 @@ function palette(){
 }
 function paint(doc){
  const root=doc.documentElement;if(!root)return;
+ for(const [name,value] of Object.entries(preferences))root.dataset[name]=value;
+ const surfaceNames=['--ui-bg','--ui-surface','--ui-raised','--ui-hover','--ui-line'];
+ if(mode()==='dark')DARK_SURFACES[preferences.background].forEach((color,i)=>root.style.setProperty(surfaceNames[i],color));
+ else surfaceNames.forEach(name=>root.style.removeProperty(name));
+ const scale=preferences.fontSize==='small'?.9:preferences.fontSize==='large'?1.15:1;
+ root.style.setProperty('--ui-text-scale',String(scale));
+ for(const [name,base] of [['--ui-body-font',14],['--ui-small-font',12],['--ui-label-font',12],['--ui-heading-font',30],['--ui-card-title-font',15]])root.style.setProperty(name,(base*scale).toFixed(1)+'px');
+ root.style.setProperty('--ui-card-radius',preferences.cardStyle==='square'?'7px':preferences.cardStyle==='extra'?'24px':'16px');
  const colors=palette();
  for(const [key,val] of Object.entries(colors))root.style.setProperty(key,val);
  const meta=doc.querySelector('meta[name="theme-color"]');if(meta&&mode()==='dark')meta.content='#0d1117';
@@ -45,6 +64,7 @@ function paint(doc){
  doc.querySelectorAll('.fw-accent-preview').forEach(el=>el.style.backgroundColor=chosen);
  const input=doc.getElementById('fwCustomAccent');if(input)input.value=chosen;
  const label=doc.getElementById('fwColorHex');if(label)label.textContent=chosen.toUpperCase();
+ try{doc.dispatchEvent(new CustomEvent('fw-appearance-updated'))}catch(_){}
 }
 function paintFrame(frame){
  try{
@@ -53,10 +73,10 @@ function paintFrame(frame){
    paint(doc);
    if(doc.head&&!doc.querySelector('link[href*="theme-colors.css"]')){
     const link=doc.createElement('link');link.id='fw-brand-colors-css';link.rel='stylesheet';
-    link.href=new URL('css/theme-colors.css?v=20261104-darkfix',document.baseURI).href;doc.head.append(link);
+    link.href=new URL('css/theme-colors.css?v=20261106-setup',document.baseURI).href;doc.head.append(link);
    }
   }
-  frame.contentWindow?.postMessage({type:'fw-brand-color',color:chosen},origin==='null'?'*':origin);
+  frame.contentWindow?.postMessage({type:'fw-brand-color',color:chosen,preferences},origin==='null'?'*':origin);
  }catch(_){/* Some third-party frames cannot be themed. */}
 }
 function paintAll(){paint(document);document.querySelectorAll('iframe').forEach(paintFrame)}
@@ -66,6 +86,38 @@ function setColor(value,save=true){
  if(save)try{localStorage.setItem(KEY,chosen)}catch(_){}
  paintAll();return true;
 }
+function setPreferences(partial,save=true){
+ if(!partial||typeof partial!=='object')return false;
+ const allowed={};for(const [key,choices] of Object.entries(ALLOWED))if(choices.includes(partial[key]))allowed[key]=partial[key];
+ preferences={...preferences,...allowed};
+ if(save)try{localStorage.setItem(PREF_KEY,JSON.stringify(preferences))}catch(_){}
+ paintAll();return true;
+}
+function savedThemes(){
+ const records=readJSON(SAVED_KEY,[]);
+ return Array.isArray(records)?records.filter(x=>x&&typeof x.id==='string'&&typeof x.name==='string'&&valid(x.color)).slice(0,8):[];
+}
+function saveTheme(name){
+ const safe=String(name||'').trim().slice(0,32);if(!safe)return null;
+ const record={id:'theme-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6),name:safe,color:chosen,mode:mode(),preferences:{...preferences}};
+ let list=savedThemes().filter(x=>x.name.toLowerCase()!==safe.toLowerCase());
+ list=[record,...list].slice(0,8);
+ try{localStorage.setItem(SAVED_KEY,JSON.stringify(list))}catch(_){return null}
+ paintAll();return record;
+}
+function deleteTheme(id){
+ const current=savedThemes(),next=current.filter(x=>x.id!==id);
+ if(next.length===current.length)return false;
+ try{localStorage.setItem(SAVED_KEY,JSON.stringify(next))}catch(_){return false}
+ paintAll();return true;
+}
+function applyTheme(record){
+ if(!record||!valid(record.color))return false;
+ setPreferences(cleanPrefs(record.preferences));
+ setColor(record.color);
+ if(typeof original.set==='function')original.set(record.mode==='light'?'light':'dark');
+ return true;
+}
 function colorChanged(){paintAll()}
 const original=window.FieldAppearance||{};
 if(typeof original.set==='function'){
@@ -73,11 +125,20 @@ if(typeof original.set==='function'){
  original.set=(theme)=>{previous(theme);colorChanged()};
 }
 original.setColor=setColor;original.getColor=()=>chosen;original.resetColor=()=>setColor(DEFAULT);
+original.setPreferences=setPreferences;original.getPreferences=()=>({...preferences});
+original.getSavedThemes=savedThemes;original.saveTheme=saveTheme;original.deleteTheme=deleteTheme;original.applyTheme=applyTheme;
+original.resetPreferences=()=>setPreferences(DEFAULT_PREFS);
 window.FieldAppearance=original;
 paint(document); // Apply the saved color before the page styles are loaded.
-window.addEventListener('storage',e=>{if(e.key===KEY)setColor(norm(e.newValue),false);else if(e.key==='fw-appearance-v2')setTimeout(colorChanged,0)});
+window.addEventListener('storage',e=>{
+ if(e.key===KEY)setColor(norm(e.newValue),false);
+ else if(e.key===PREF_KEY)setPreferences(cleanPrefs(readJSON(PREF_KEY,{})),false);
+ else if(e.key===SAVED_KEY)paintAll();
+ else if(e.key==='fw-appearance-v2')setTimeout(colorChanged,0);
+});
 window.addEventListener('message',e=>{
  if(e.origin!==origin||e.source!==parent||e.data?.type!=='fw-brand-color')return;
+ if(e.data.preferences)setPreferences(e.data.preferences,false);
  setColor(norm(e.data.color),false);
 });
 function picker(){
@@ -102,6 +163,11 @@ function picker(){
  dialog.querySelectorAll('[data-accent-choice]').forEach(button=>button.addEventListener('click',()=>setColor(button.dataset.accentChoice)));
  dialog.querySelector('#fwCustomAccent').addEventListener('input',e=>setColor(e.target.value));
  dialog.querySelector('#fwResetAccent').addEventListener('click',()=>setColor(DEFAULT));
+ if(topbar&&typeof window.showFieldModule==='function'){
+  const full=document.createElement('button');full.type='button';full.className='fw-open-settings';full.textContent='Full Page Setup';
+  full.addEventListener('click',()=>{dialog.close();window.showFieldModule('pageSetupHost')});
+  dialog.querySelector('.fw-color-footer').prepend(full);
+ }
  paint(document);
 }
 function watchFrames(){
