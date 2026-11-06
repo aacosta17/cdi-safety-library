@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<head><script src="js/workspace-theme.js?v=20261104-darkfix"></script><script src="js/workspace-accent.js?v=20261104-darkfix"></script>
+<head><script src="js/workspace-theme.js?v=20261104-darkfix"></script><script src="js/workspace-accent.js?v=20261106-setup"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -537,7 +537,7 @@ main>section .hero h1{color:white!important}main>section .hero p{color:#d5ebe0!i
 #manpower .manpower-shell,#manpower .mp-unified-host{border-color:#dce8df!important;background:#f3f7f5!important}
 /* Preserve semantic warning/error/weather colors and legibility. */
 @media(max-width:850px){main>.nav{background:#132d24!important}}
-</style><link rel="stylesheet" href="css/workspace-v2.css?v=20261104-darkfix"><link rel="stylesheet" href="css/workspace-host-v2.css?v=20261102-v5"><link rel="stylesheet" href="css/workspace-refinements.css?v=20261102-v5"><link rel="stylesheet" href="css/theme-colors.css?v=20261104-darkfix"></head>
+</style><link rel="stylesheet" href="css/workspace-v2.css?v=20261104-darkfix"><link rel="stylesheet" href="css/workspace-host-v2.css?v=20261102-v5"><link rel="stylesheet" href="css/workspace-refinements.css?v=20261102-v5"><link rel="stylesheet" href="css/theme-colors.css?v=20261106-setup"></head>
 <body class="workspace-host">
 <a class="workspace-skip" id="wsSkip" href="#home">Skip to workspace</a><header><div class="workspace-topbar"><button type="button" id="wsMenu" aria-label="Open navigation" aria-controls="workspaceNav" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><div class="brand"><span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2" fill="#88a7ff"/><rect x="14" y="3" width="7" height="7" rx="2" fill="#e5ecff"/><rect x="3" y="14" width="7" height="7" rx="2" fill="#e5ecff"/><rect x="14" y="14" width="7" height="7" rx="2" fill="#69d5cd"/></svg></span><div class="brandtext"><b>Field Management<br>Workspace Tool</b><small>Operations · Safety · Planning</small></div></div><div class="workspace-crumb"><span>Workspace /</span><b id="wsPageName">Overview</b></div><div class="workspace-top-actions"><button type="button" class="workspace-search" id="wsSearch" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><span>Find a tool</span><kbd>⌘ K</kbd></button><div class="appearance-switch" role="group" aria-label="Appearance"><button type="button" data-theme-choice="dark" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 15a8 8 0 0 1-11-11 8 8 0 1 0 11 11Z"/></svg>Dark</button><button type="button" data-theme-choice="light" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1 1m12 12 1 1M5 19l1-1M18 6l1-1"/></svg>Light</button></div></div></div></header><button type="button" class="mobile-scrim" id="wsScrim" aria-label="Close navigation"></button>
 <main>
@@ -553,6 +553,8 @@ main>section .hero h1{color:white!important}main>section .hero p{color:#d5ebe0!i
   <button id="nLibrary" type="button" onclick="showView('library')"><span class="navico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10.3 3.5-8 14A2 2 0 0 0 4 20.5h16a2 2 0 0 0 1.7-3l-8-14a2 2 0 0 0-3.4 0z"/><path d="M12 9v4m0 4h.01"/></svg></span>Hazard Library</button>
   <button id="nForms" type="button" onclick="showView('forms')"><span class="navico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 10h18"/></svg></span>Forms &amp; Documents</button>
   <a class="portal-link" href="https://cdiventuresinc-hff.viewpointforcloud.com/account/login?ReturnUrl=%2FHome" target="_blank" rel="noopener"><span class="navico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9"/><path d="M20 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6"/></svg></span>Employee Portal</a>
+  <div class="app-nav-label">Settings</div>
+  <button id="nPageSetup" type="button" onclick="showFieldModule('pageSetupHost')"><span class="navico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2.2 2.2M16.8 16.8 19 19M19 5l-2.2 2.2M7.2 16.8 5 19"/></svg></span>Page Setup</button>
   <div id="fwAccountTag" hidden><span id="fwLoggedInName"></span><button type="button" id="fwSignOut">Sign out</button></div>
   <div class="app-nav-note"><strong>Field-ready tools</strong>Plan work, review hazards, and manage crews — all in one workspace.</div>
 </div>
@@ -660,10 +662,13 @@ main>section .hero h1{color:white!important}main>section .hero p{color:#d5ebe0!i
 </section>
 
 <section id="ptpAssistantHost" class="fw-module-host hidden" aria-label="PTP writing assistant">
- <div class="fw-module-container"><iframe title="PTP Writing Assistant" id="fwPtpFrame" data-src="ptp-assistant.html?v=20261102-v5" loading="lazy"></iframe></div>
+ <div class="fw-module-container"><iframe title="PTP Writing Assistant" id="fwPtpFrame" data-src="ptp-assistant.html?v=20261106-setup" loading="lazy"></iframe></div>
 </section>
-<section id="operationsHost" class="fw-module-host hidden" aria-label="Operations center"><iframe title="Operations center" data-src="operations-center.html?v=20261102-v5" style="width:100%;height:calc(100dvh - 110px);min-height:640px;border:0" loading="lazy"></iframe></section><section id="resourcesHost" class="fw-module-host hidden" aria-label="Safety resources"><iframe title="Safety resources" data-src="safety-resources.html?v=20261102-v5" style="width:100%;height:calc(100dvh - 110px);min-height:640px;border:0" loading="lazy"></iframe></section><section id="productionHost" class="fw-module-host hidden" aria-label="Project operations">
- <div class="fw-module-container"><iframe title="Project Operations and Production" id="fwProductionFrame" data-src="production.html?v=20261102-v5" loading="lazy"></iframe></div>
+<section id="operationsHost" class="fw-module-host hidden" aria-label="Operations center"><iframe title="Operations center" data-src="operations-center.html?v=20261106-setup" style="width:100%;height:calc(100dvh - 110px);min-height:640px;border:0" loading="lazy"></iframe></section><section id="resourcesHost" class="fw-module-host hidden" aria-label="Safety resources"><iframe title="Safety resources" data-src="safety-resources.html?v=20261106-setup" style="width:100%;height:calc(100dvh - 110px);min-height:640px;border:0" loading="lazy"></iframe></section><section id="productionHost" class="fw-module-host hidden" aria-label="Project operations">
+ <div class="fw-module-container"><iframe title="Project Operations and Production" id="fwProductionFrame" data-src="production.html?v=20261106-setup" loading="lazy"></iframe></div>
+</section>
+<section id="pageSetupHost" class="fw-module-host hidden" aria-label="Page setup and appearance settings">
+ <div class="fw-module-container"><iframe title="Page Setup" id="fwPageSetupFrame" data-src="page-setup.html?v=20261106-setup" loading="lazy"></iframe></div>
 </section>
 <section id="ptp" class="hidden">
 <div class="ptp-progress-wrap no-print"><div class="progress"><div id="pr1" class="prog jump active" role="button" tabindex="0" onclick="go(1)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go(1)}">1. Job Info</div><div id="pr2" class="prog jump" role="button" tabindex="0" onclick="go(2)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go(2)}">2. Crew</div><div id="pr3" class="prog jump" role="button" tabindex="0" onclick="go(3)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go(3)}">3. Work Steps</div><div id="pr4" class="prog jump" role="button" tabindex="0" onclick="go(4)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go(4)}">4. Checklist</div><div id="pr5" class="prog">5. Review</div></div><button class="ptp-reset" type="button" onclick="resetApp()">↻ Start Over</button></div>
@@ -1281,7 +1286,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 <script id="fwProductionPtpModule" type="text/javascript">
 (function(){
- const hosts=['ptpAssistantHost','productionHost','operationsHost','resourcesHost'];
+ const hosts=['ptpAssistantHost','productionHost','operationsHost','resourcesHost','pageSetupHost'];
  function hide(){document.querySelectorAll('[data-operations-view]').forEach(b=>b.classList.remove('active'));hosts.forEach(id=>document.getElementById(id)?.classList.add('hidden'));['nProduction','nOperations','nResources'].forEach(id=>document.getElementById(id)?.classList.remove('active'))}
  const oldShowView=window.showView;
  if(typeof oldShowView==='function')window.showView=function(view){
@@ -1294,7 +1299,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    if (!button || button.hidden) return;
    const view = button.dataset.operationsView;
    const frame = document.querySelector('#operationsHost iframe');
-   const destination = 'operations-center.html?view=' + encodeURIComponent(view) + '&surface=sidebar&v=20261102';
+   const destination = 'operations-center.html?view=' + encodeURIComponent(view) + '&surface=sidebar&v=20261106-setup';
    frame.dataset.src = destination;
    if (frame.getAttribute('src') !== destination) frame.setAttribute('src', destination);
    window.showFieldModule('operationsHost');
@@ -1307,7 +1312,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   document.querySelectorAll('main > section').forEach(x=>x.classList.add('hidden'));
   document.querySelectorAll('main > .nav button,main > .nav a.portal-link').forEach(x=>x.classList.remove('active'));
   const host=document.getElementById(hostId);host.classList.remove('hidden');
-  const btn=document.getElementById(({productionHost:'nProduction',ptpAssistantHost:'nPTP',operationsHost:'nOperations',resourcesHost:'nResources'})[hostId]);btn?.classList.add('active');
+  const btn=document.getElementById(({productionHost:'nProduction',ptpAssistantHost:'nPTP',operationsHost:'nOperations',resourcesHost:'nResources',pageSetupHost:'nPageSetup'})[hostId]);btn?.classList.add('active');
   const frame=host.querySelector('iframe');
   if(hostId==='productionHost' && frame?.dataset.reportMode){delete frame.dataset.reportMode;frame.src=frame.dataset.src;}
   if(frame&&!frame.getAttribute('src'))frame.setAttribute('src',frame.dataset.src);

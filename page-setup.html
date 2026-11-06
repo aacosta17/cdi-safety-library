@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+ <meta name="theme-color" content="#0d1117">
+ <title>Page Setup · Field Management Workspace</title>
+ <script src="js/workspace-theme.js?v=20261106-setup"></script>
+ <script src="js/workspace-accent.js?v=20261106-setup"></script>
+ <link rel="stylesheet" href="css/workspace-v2.css?v=20261106-setup">
+ <link rel="stylesheet" href="css/theme-colors.css?v=20261106-setup">
+ <link rel="stylesheet" href="css/page-setup.css?v=20261106-setup">
+ <script src="js/page-setup.js?v=20261106-setup" defer></script>
+</head>
+<body class="module-page-setup">
+ <main class="ps-page">
+  <header class="ps-heading">
+   <div><p class="ps-eyebrow">WORKSPACE / PERSONALIZATION</p><h1>Page Setup</h1><p>Make the workspace your own. Changes preview instantly across your tools.</p></div>
+   <button id="psReset" type="button" class="ps-button ps-ghost">Reset everything</button>
+  </header>
+  <div class="ps-layout">
+   <div class="ps-controls">
+    <section class="ps-panel" aria-labelledby="psPresetsTitle">
+     <div class="ps-section-head"><div><h2 id="psPresetsTitle">Quick themes</h2><p>Start with a professionally balanced combination.</p></div></div>
+     <div class="ps-presets">
+      <button type="button" data-preset="midnight" class="ps-preset"><span class="ps-preset-sample" style="--sample-bg:#0b1424;--sample-surface:#132036;--sample-accent:#3b82f6"></span><strong>Midnight Blue</strong></button>
+      <button type="button" data-preset="obsidian" class="ps-preset"><span class="ps-preset-sample" style="--sample-bg:#08090c;--sample-surface:#11141a;--sample-accent:#8b5cf6"></span><strong>Obsidian</strong></button>
+      <button type="button" data-preset="emerald" class="ps-preset"><span class="ps-preset-sample" style="--sample-bg:#0d1117;--sample-surface:#161c25;--sample-accent:#16a34a"></span><strong>Emerald</strong></button>
+      <button type="button" data-preset="professional" class="ps-preset"><span class="ps-preset-sample" style="--sample-bg:#f3f6f2;--sample-surface:#fff;--sample-accent:#1d4ed8"></span><strong>Professional</strong></button>
+     </div>
+    </section>
+    <section class="ps-panel" aria-labelledby="psColorTitle">
+     <div class="ps-section-head"><div><h2 id="psColorTitle">Full color grid</h2><p>Choose from 240 shades, then fine-tune any color.</p></div><span id="psColorSwatch" class="ps-selected-color" aria-hidden="true"></span></div>
+     <div class="ps-grid-scroll"><div class="ps-color-grid" id="psColorGrid" role="group" aria-label="240 selectable color shades"></div></div>
+     <div class="ps-sliders">
+      <label>Saturation <output id="psSaturationValue">80%</output><input type="range" id="psSaturation" min="0" max="100" value="80"></label>
+      <label>Brightness <output id="psBrightnessValue">50%</output><input type="range" id="psBrightness" min="10" max="95" value="50"></label>
+     </div>
+     <div class="ps-custom-color">
+      <label for="psNativeColor">Color picker <input type="color" id="psNativeColor" value="#347644"></label>
+      <label for="psHex">HEX color <input id="psHex" type="text" maxlength="7" autocomplete="off" spellcheck="false" placeholder="#347644" pattern="#[0-9a-fA-F]{6}"></label>
+     </div>
+    </section>
+    <section class="ps-panel" aria-labelledby="psModeTitle">
+     <div class="ps-section-head"><div><h2 id="psModeTitle">Light and dark mode</h2><p>Choose the appearance that feels right for your workspace.</p></div></div>
+     <div class="ps-segments" role="group" aria-label="Color mode">
+      <button type="button" data-mode="dark">Dark</button><button type="button" data-mode="light">Light</button>
+     </div>
+     <h3>Dark background</h3>
+     <div class="ps-backgrounds" role="group" aria-label="Dark-mode background">
+      <button type="button" data-background="black"><span style="background:#08090c"></span><strong>AMOLED Black</strong></button>
+      <button type="button" data-background="charcoal"><span style="background:#20242b"></span><strong>Charcoal</strong></button>
+      <button type="button" data-background="midnight"><span style="background:#0b1424"></span><strong>Midnight Blue</strong></button>
+     </div>
+    </section>
+    <section class="ps-panel" aria-labelledby="psDetailsTitle">
+     <div class="ps-section-head"><div><h2 id="psDetailsTitle">Interface details</h2><p>Keep the same tools, with your preferred spacing and style.</p></div></div>
+     <div class="ps-fields">
+      <label for="psFont">Font size<select id="psFont" data-pref="fontSize"><option value="small">Small</option><option value="normal">Normal</option><option value="large">Large</option></select></label>
+      <label for="psDensity">Layout spacing<select id="psDensity" data-pref="density"><option value="compact">Compact</option><option value="comfortable">Comfortable</option></select></label>
+      <label for="psCorners">Card corners<select id="psCorners" data-pref="cardStyle"><option value="square">Squared</option><option value="rounded">Rounded</option><option value="extra">Extra rounded</option></select></label>
+      <label for="psIntensity">Accent intensity<select id="psIntensity" data-pref="intensity"><option value="subtle">Subtle</option><option value="balanced">Balanced</option><option value="vibrant">Vibrant</option></select></label>
+      <label for="psAnimations">Animations<select id="psAnimations" data-pref="animations"><option value="on">On</option><option value="off">Off</option></select></label>
+     </div>
+    </section>
+    <section class="ps-panel" aria-labelledby="psSavedTitle">
+     <div class="ps-section-head"><div><h2 id="psSavedTitle">Saved themes</h2><p>Save up to eight combinations and switch anytime.</p></div></div>
+     <form id="psSaveForm" class="ps-save-row"><label class="ps-sr-only" for="psThemeName">Theme name</label><input id="psThemeName" maxlength="32" placeholder="Name this theme" required><button type="submit" class="ps-button ps-primary">Save theme</button></form>
+     <div id="psSavedThemes" class="ps-saved-list"></div>
+    </section>
+   </div>
+   <aside class="ps-preview-pane" aria-label="Live appearance preview">
+    <div class="ps-preview-head"><div><h2>Live preview</h2><p>Your changes are applied as you go.</p></div><span class="ps-live-dot"></span></div>
+    <div class="ps-preview-browser">
+      <div class="ps-preview-top"><span class="ps-preview-logo"></span><span>Field Management</span><span class="ps-preview-dots">● ● ●</span></div>
+      <div class="ps-preview-body"><div class="ps-preview-sidebar"><span></span><span></span><span></span></div><div class="ps-preview-main"><span class="ps-preview-overline">WORKSPACE</span><h3>Project Overview</h3><div class="ps-preview-card"><strong>Workforce Planning</strong><p>People, schedules, and reports in one place.</p><span class="ps-preview-action">Primary action</span></div><div class="ps-preview-mini"><span></span><span></span></div></div></div>
+    </div>
+    <p class="ps-preview-note">Safety alerts, employee ratings, and warning colors stay consistent. Printed reports keep a readable white background and use your accent color for branding.</p>
+    <div id="psStatus" class="ps-status" role="status" aria-live="polite">Preferences save automatically on this device.</div>
+   </aside>
+  </div>
+ </main>
+</body>
+</html>
